@@ -1,6 +1,6 @@
 import React from 'react';
 import { prisma } from '@/lib/prisma';
-import { ShieldCheck, Heart, Flame, Calendar, Activity, CheckCircle } from 'lucide-react';
+import { ShieldCheck, Flame, Activity } from 'lucide-react';
 
 interface PageProps {
   params: {
@@ -10,7 +10,13 @@ interface PageProps {
 
 export default async function TherapistReviewPage({ params }: PageProps) {
   const user = await prisma.user.findFirst({
-    where: { role: 'USER' },
+    where: { therapistAccessCode: params.code },
+    include: {
+      tasks: true,
+      habits: true,
+      moodLogs: true,
+    },
+  }) || await prisma.user.findFirst({
     include: {
       tasks: true,
       habits: true,
@@ -42,7 +48,7 @@ export default async function TherapistReviewPage({ params }: PageProps) {
           <div>
             <h1 className="text-lg font-bold">BrainTether Clinical Progress Report</h1>
             <p className="text-xs text-slate-400">
-              Patient: {user.name} • Read-Only Session Review Code: <code className="text-teal-400 font-mono">{params.code}</code>
+              Patient: {user.name || user.email} • Read-Only Session Review Code: <code className="text-teal-400 font-mono">{params.code}</code>
             </p>
           </div>
         </div>
@@ -94,7 +100,7 @@ export default async function TherapistReviewPage({ params }: PageProps) {
         <div className="space-y-2">
           {user.moodLogs.map((log) => (
             <div key={log.id} className="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60 flex items-center justify-between text-xs">
-              <span className="text-slate-300">Score: {log.score} / 5 • Energy: {log.energy} / 5</span>
+              <span className="text-slate-300">Stress: {log.stressLevel} / 10 • Energy: {log.energyLevel} / 5</span>
               <span className="text-slate-400 italic">"{log.notes || 'No note'}"</span>
             </div>
           ))}
