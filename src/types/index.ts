@@ -85,6 +85,7 @@ export interface AccountabilityPartner {
 
 export interface BodyDoublingSession {
   active: boolean;
+  status?: 'ACTIVE' | 'IDLE' | 'COMPLETED';
   partner?: AccountabilityPartner;
   startTime?: string;
   durationMinutes: number;
