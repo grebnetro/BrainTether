@@ -39,7 +39,7 @@ interface AppContextType {
   setSearchQuery: (q: string) => void;
 
   // Actions
-  addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => void;
+  addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   moveTask: (taskId: string, newStatus: TaskStatus) => void;
@@ -50,7 +50,7 @@ interface AppContextType {
   completedDailyStressPoints: number;
 
   // Habits
-  addHabit: (habit: Omit<Habit, 'id' | 'userId' | 'streakCount' | 'currentStreak' | 'completedDates' | 'history'>) => void;
+  addHabit: (habit: Omit<Habit, 'id' | 'streakCount' | 'currentStreak' | 'completedDates' | 'history'>) => void;
   logHabitCompletion: (habitId: string) => void;
 
   // Mood
@@ -115,11 +115,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUserProfile(prev => ({ ...prev, ...updates }));
   };
 
-  const addTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
+  const addTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
     const newTask: Task = {
       ...taskData,
       id: `task-${Date.now()}`,
-      userId: 'user-1',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -158,11 +157,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
-  const addHabit = (habitData: Omit<Habit, 'id' | 'userId' | 'streakCount' | 'currentStreak' | 'completedDates' | 'history'>) => {
+  const addHabit = (habitData: Omit<Habit, 'id' | 'streakCount' | 'currentStreak' | 'completedDates' | 'history'>) => {
     const newHabit: Habit = {
       ...habitData,
       id: `habit-${Date.now()}`,
-      userId: 'user-1',
       streakCount: 0,
       currentStreak: 0,
       completedDates: [],
@@ -192,7 +190,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addMoodLog = (score: number, energy: number, notes?: string) => {
     const newLog: MoodLog = {
       id: `mood-${Date.now()}`,
-      userId: 'user-1',
       timestamp: new Date().toISOString(),
       score,
       energy,
@@ -224,10 +221,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       prev.map(t => {
         if (t.id !== taskId) return t;
         const generatedSubtasks = [
-          { id: `st-${Date.now()}-1`, title: `Clarify first 5-minute action step for "${t.title}"`, completed: false },
-          { id: `st-${Date.now()}-2`, title: 'Gather links, tabs & documents needed', completed: false },
-          { id: `st-${Date.now()}-3`, title: 'Draft initial outline or preliminary draft', completed: false },
-          { id: `st-${Date.now()}-4`, title: 'Review and mark task complete', completed: false },
+          { id: `st-${Date.now()}-1`, taskId, title: `Clarify first 5-minute action step for "${t.title}"`, completed: false },
+          { id: `st-${Date.now()}-2`, taskId, title: 'Gather links, tabs & documents needed', completed: false },
+          { id: `st-${Date.now()}-3`, taskId, title: 'Draft initial outline or preliminary draft', completed: false },
+          { id: `st-${Date.now()}-4`, taskId, title: 'Review and mark task complete', completed: false },
         ];
         return {
           ...t,
@@ -239,11 +236,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const totalDailyStressPoints = tasks
-    .filter(t => t.status !== 'DONE')
+    .filter(t => t.status !== 'COMPLETED')
     .reduce((acc, curr) => acc + curr.stressPoints, 0);
 
   const completedDailyStressPoints = tasks
-    .filter(t => t.status === 'DONE')
+    .filter(t => t.status === 'COMPLETED')
     .reduce((acc, curr) => acc + curr.stressPoints, 0);
 
   return (
