@@ -1,0 +1,140 @@
+// Prisma Schema for BrainTether - Neurodivergent Productivity & Habit Platform
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  avatarUrl       String?
+  role            String   @default("USER") // USER, THERAPIST
+  themePreference String   @default("DARK") // DARK, LIGHT
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  goals                  Goal[]
+  tasks                  Task[]
+  habits                 Habit[]
+  moodLogs               MoodLog[]
+  accountabilitySent     AccountabilityLink[] @relation("RequesterLink")
+  accountabilityReceived AccountabilityLink[] @relation("PartnerLink")
+  hostedSessions         BodyDoublingSession[] @relation("HostUser")
+  partnerSessions        BodyDoublingSession[] @relation("PartnerUser")
+  therapistAccessGiven   TherapistAccess[]    @relation("PatientAccess")
+  therapistAccessReceived TherapistAccess[]   @relation("TherapistAccess")
+}
+
+model Goal {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  category    String   // Health, Career, Space, Personal
+  color       String   // Hex code or tailwind color class
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tasks  Task[]
+  habits Habit[]
+}
+
+model Task {
+  id                 String    @id @default(uuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId             String?
+  goal               Goal?     @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  title              String
+  description        String?
+  status             String    @default("TODO") // TODO, IN_PROGRESS, COMPLETED, ARCHIVED
+  priority           String    @default("MEDIUM") // LOW, MEDIUM, HIGH
+  stressPoints       Int       @default(3) // 1-10 rating (Avoidance / Anxiety index)
+  category           String    @default("General") // Money, Household, Self-Care, Work, Health
+  dueDate            DateTime?
+  assignedPartnerId  String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  subtasks Subtask[]
+}
+
+model Subtask {
+  id        String   @id @default(uuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  title     String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Habit {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId      String?
+  goal        Goal?     @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  title       String
+  description String?
+  frequency   String    @default("DAILY") // DAILY, WEEKLY
+  targetDays  Int       @default(21) // 21-day milestone target
+  streakCount Int       @default(0)
+  lastLogged  DateTime?
+  historyJson String    @default("[]") // JSON string of completion dates
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model MoodLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score     Int      // 1 (Very Poor) to 5 (Great)
+  energy    Int      // 1-5 scale energy level
+  notes     String?
+  loggedAt  DateTime @default(now())
+}
+
+model AccountabilityLink {
+  id          String   @id @default(uuid())
+  requesterId String
+  requester   User     @relation("RequesterLink", fields: [requesterId], references: [id], onDelete: Cascade)
+  partnerId   String
+  partner     User     @relation("PartnerLink", fields: [partnerId], references: [id], onDelete: Cascade)
+  status      String   @default("PENDING") // PENDING, ACCEPTED, BLOCKED
+  createdAt   DateTime @default(now())
+}
+
+model BodyDoublingSession {
+  id              String   @id @default(uuid())
+  hostUserId      String
+  host            User     @relation("HostUser", fields: [hostUserId], references: [id], onDelete: Cascade)
+  partnerUserId   String?
+  partner         User?    @relation("PartnerUser", fields: [partnerUserId], references: [id], onDelete: SetNull)
+  durationMinutes Int      @default(25) // Pomodoro body doubling window
+  status          String   @default("WAITING") // WAITING, ACTIVE, COMPLETED, CANCELLED
+  hostTaskSummary String?
+  partnerTaskSummary String?
+  startedAt       DateTime?
+  endedAt         DateTime?
+  createdAt       DateTime @default(now())
+}
+
+model TherapistAccess {
+  id              String   @id @default(uuid())
+  patientId       String
+  patient         User     @relation("PatientAccess", fields: [patientId], references: [id], onDelete: Cascade)
+  therapistId     String
+  therapist       User     @relation("TherapistAccess", fields: [therapistId], references: [id], onDelete: Cascade)
+  allowMoodView   Boolean  @default(true)
+  allowStressView Boolean  @default(true)
+  allowNotesView  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
