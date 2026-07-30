@@ -73,6 +73,8 @@ export interface MoodLog {
   timestamp: string;
   score: number; // 1 (overwhelmed) to 10 (radiant flow)
   energy: number; // 1 (drained) to 10 (hyperfocus)
+  energyLevel?: number;
+  stressLevel?: number;
   notes?: string;
 }
 
