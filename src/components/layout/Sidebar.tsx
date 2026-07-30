@@ -13,11 +13,11 @@ import {
   Users, 
   ShieldCheck, 
   BrainCircuit, 
-  Zap, 
   Flame, 
   Sparkles,
   ChevronRight,
-  User
+  User,
+  Info
 } from 'lucide-react';
 
 interface NavItem {
@@ -71,6 +71,13 @@ export const Sidebar: React.FC = () => {
       icon: ShieldCheck,
       description: 'Granular read-only access',
     },
+    {
+      id: 'about',
+      label: 'About & Features',
+      icon: Info,
+      badge: 'Guide',
+      description: 'Feature docs & instructions',
+    },
   ];
 
   return (
@@ -114,7 +121,6 @@ export const Sidebar: React.FC = () => {
             </span>
           </div>
 
-          {/* Progress Bar */}
           <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
             <div 
               className={`h-full transition-all duration-500 rounded-full ${

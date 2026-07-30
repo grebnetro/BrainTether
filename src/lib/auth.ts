@@ -1,16 +1,18 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
+import GoogleProvider from 'next-auth/providers/google';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
-  session: {
-    strategy: 'jwt',
-  },
-  pages: {
-    signIn: '/auth/signin',
-  },
+  adapter: PrismaAdapter(prisma),
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || 'demo-google-client-id',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'demo-google-client-secret',
+    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -20,23 +22,17 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email) return null;
 
-        const email = credentials.email.toLowerCase().trim();
-
-        // Check if user exists
         let user = await prisma.user.findUnique({
-          where: { email },
+          where: { email: credentials.email },
         });
 
-        // Demo fallback: create default demo user if signing in for the first time
         if (!user) {
           user = await prisma.user.create({
             data: {
-              email,
-              name: email.split('@')[0],
-              role: 'USER',
-              themePreference: 'DARK',
-              dailyStressCeiling: 25,
-              defaultSoundscape: 'RAIN',
+              email: credentials.email,
+              name: credentials.email.split('@')[0],
+              image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+              hasCompletedOnboarding: false,
             },
           });
         }
@@ -45,23 +41,32 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           name: user.name,
           email: user.email,
-          image: user.avatarUrl,
+          image: user.image,
         };
       },
     }),
   ],
+  session: {
+    strategy: 'jwt',
+  },
+  pages: {
+    signIn: '/auth/signin',
+  },
   callbacks: {
-    async session({ session, token }) {
-      if (session.user && token.sub) {
-        (session.user as any).id = token.sub;
-      }
-      return session;
-    },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
-        token.sub = user.id;
+        token.id = user.id;
+      }
+      if (trigger === 'update' && session) {
+        return { ...token, ...session };
       }
       return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        (session.user as any).id = token.id;
+      }
+      return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET || 'braintether-secret-zen-key-2026',

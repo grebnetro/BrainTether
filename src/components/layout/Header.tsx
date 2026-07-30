@@ -10,18 +10,22 @@ import {
   Search, 
   Plus, 
   Filter, 
-  Flame, 
   Heart,
-  Tag
+  BookOpen
 } from 'lucide-react';
 import { StressLevelRange, TaskCategory } from '../../types';
 
 interface HeaderProps {
   onOpenNewTaskModal: () => void;
   onOpenOverwhelmModal: () => void;
+  onOpenTutorial?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenNewTaskModal, onOpenOverwhelmModal }) => {
+export const Header: React.FC<HeaderProps> = ({ 
+  onOpenNewTaskModal, 
+  onOpenOverwhelmModal,
+  onOpenTutorial 
+}) => {
   const { 
     theme, 
     toggleTheme, 
@@ -60,6 +64,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewTaskModal, onOpenOverwh
     therapist: {
       title: 'Therapist & Coach Portal',
       subtitle: 'Granular read-only access for care provider check-ins',
+    },
+    about: {
+      title: 'About BrainTether & Feature Guide',
+      subtitle: 'Complete workflow documentation and usage instructions',
     },
   };
 
@@ -101,6 +109,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewTaskModal, onOpenOverwh
             <span>I'm Overwhelmed</span>
           </button>
 
+          {/* Onboarding Tutorial Trigger */}
+          {onOpenTutorial && (
+            <button
+              onClick={onOpenTutorial}
+              className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold text-teal-400 bg-teal-500/10 border border-teal-500/30 hover:bg-teal-500/20 rounded-xl transition-all shadow-sm"
+              title="Open Interactive ADHD Workflow Tutorial"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Guide</span>
+            </button>
+          )}
+
           {/* Search Input */}
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -128,7 +148,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewTaskModal, onOpenOverwh
                 <span>Filters</span>
               </button>
 
-              {/* Filter Dropdown */}
               {showFilters && (
                 <div className="absolute right-0 mt-2 w-64 p-4 rounded-xl bg-zen-surface-light dark:bg-zen-surface-dark border border-zen-border-light dark:border-zen-border-dark shadow-xl z-50 animate-in fade-in slide-in-from-top-2">
                   <div className="flex items-center justify-between mb-3 pb-2 border-b border-zen-border-light dark:border-zen-border-dark">
@@ -225,7 +244,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewTaskModal, onOpenOverwh
           >
             <img
               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
-              alt="Alex Morgan"
+              alt="User Avatar"
               className="w-8 h-8 rounded-full border-2 border-teal-500/40 object-cover"
             />
           </Link>

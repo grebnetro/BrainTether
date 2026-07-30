@@ -1,56 +1,60 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useApp } from '@/context/AppContext';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { Header } from '@/components/layout/Header';
-import { KanbanBoard } from '@/components/kanban/KanbanBoard';
-import { CalendarView } from '@/components/calendar/CalendarView';
-import { HabitsTracker } from '@/components/habits/HabitsTracker';
-import { MoodAnalytics } from '@/components/mood/MoodAnalytics';
-import { BodyDoubling } from '@/components/accountability/BodyDoubling';
-import { TherapistPortal } from '@/components/therapist/TherapistPortal';
-import { TaskModal } from '@/components/kanban/TaskModal';
-import { OverwhelmModal } from '@/components/focus/OverwhelmModal';
-import { Task, TaskStatus } from '@/types';
+import React, { useState, useEffect } from 'react';
+import { useApp } from '../../context/AppContext';
+import { Sidebar } from '../../components/layout/Sidebar';
+import { Header } from '../../components/layout/Header';
+import { KanbanBoard } from '../../components/kanban/KanbanBoard';
+import { CalendarView } from '../../components/calendar/CalendarView';
+import { HabitsTracker } from '../../components/habits/HabitsTracker';
+import { MoodAnalytics } from '../../components/mood/MoodAnalytics';
+import { BodyDoublingRoom } from '../../components/accountability/BodyDoublingRoom';
+import { TherapistReview } from '../../components/therapist/TherapistReview';
+import { AboutView } from '../../components/about/AboutView';
+import { NewTaskModal } from '../../components/tasks/NewTaskModal';
+import { OverwhelmModal } from '../../components/tasks/OverwhelmModal';
+import { OnboardingWizard } from '../../components/onboarding/OnboardingWizard';
+import { AmbientPlayer } from '../../components/audio/AmbientPlayer';
+import { TaskCategory } from '../../types';
 
 export default function DashboardPage() {
-  const { activeView } = useApp();
+  const { activeView, addTask, userProfile, updateUserProfile } = useApp();
+  const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
+  const [isOverwhelmModalOpen, setIsOverwhelmModalOpen] = useState(false);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
 
-  // Task Modal state
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [modalInitialStatus, setModalInitialStatus] = useState<TaskStatus>('TODO');
-  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
+  useEffect(() => {
+    const hasSeenGuide = localStorage.getItem('braintether_onboarding_completed');
+    if (!hasSeenGuide) {
+      setIsOnboardingOpen(true);
+    }
+  }, []);
 
-  // Overwhelm Modal state
-  const [isOverwhelmOpen, setIsOverwhelmOpen] = useState(false);
-
-  const handleOpenNewTaskModal = () => {
-    setTaskToEdit(null);
-    setModalInitialStatus('TODO');
-    setIsTaskModalOpen(true);
+  const handleCompleteOnboarding = () => {
+    localStorage.setItem('braintether_onboarding_completed', 'true');
+    setIsOnboardingOpen(false);
   };
 
-  const handleOpenNewTaskWithStatus = (status: TaskStatus) => {
-    setTaskToEdit(null);
-    setModalInitialStatus(status);
-    setIsTaskModalOpen(true);
+  const handleSaveProfile = (profileData: { name: string; avatarUrl: string }) => {
+    updateUserProfile(profileData);
   };
 
-  const handleEditTask = (task: Task) => {
-    setTaskToEdit(task);
-    setIsTaskModalOpen(true);
+  const handleCreateFirstTask = (taskData: { title: string; stressPoints: number; category: TaskCategory }) => {
+    addTask({
+      title: taskData.title,
+      description: 'First actionable task created during onboarding.',
+      stressPoints: taskData.stressPoints,
+      category: taskData.category,
+      priority: taskData.stressPoints > 7 ? 'HIGH' : 'MEDIUM',
+      status: 'TODO',
+    });
+    handleCompleteOnboarding();
   };
 
-  const renderMainView = () => {
+  const renderActiveView = () => {
     switch (activeView) {
       case 'kanban':
-        return (
-          <KanbanBoard
-            onOpenNewTaskModalWithStatus={handleOpenNewTaskWithStatus}
-            onEditTask={handleEditTask}
-          />
-        );
+        return <KanbanBoard onOpenNewTaskModal={() => setIsNewTaskModalOpen(true)} />;
       case 'calendar':
         return <CalendarView />;
       case 'habits':
@@ -58,53 +62,55 @@ export default function DashboardPage() {
       case 'mood':
         return <MoodAnalytics />;
       case 'accountability':
-        return <BodyDoubling />;
+        return <BodyDoublingRoom />;
       case 'therapist':
-        return <TherapistPortal />;
+        return <TherapistReview accessCode="BT-772-MIND" isReadonly={false} />;
+      case 'about':
+        return <AboutView />;
       default:
-        return (
-          <KanbanBoard
-            onOpenNewTaskModalWithStatus={handleOpenNewTaskWithStatus}
-            onEditTask={handleEditTask}
-          />
-        );
+        return <KanbanBoard onOpenNewTaskModal={() => setIsNewTaskModalOpen(true)} />;
     }
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-zen-bg-light dark:bg-zen-bg-dark transition-colors duration-300">
+    <div className="flex h-screen bg-zen-bg-light dark:bg-zen-bg-dark text-slate-800 dark:text-slate-100 overflow-hidden font-sans">
       
-      {/* Left Sidebar Navigation */}
+      {/* Sidebar Navigation */}
       <Sidebar />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        
-        {/* Top Header */}
+      {/* Main Workspace Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         <Header 
-          onOpenNewTaskModal={handleOpenNewTaskModal} 
-          onOpenOverwhelmModal={() => setIsOverwhelmOpen(true)}
+          onOpenNewTaskModal={() => setIsNewTaskModalOpen(true)}
+          onOpenOverwhelmModal={() => setIsOverwhelmModalOpen(true)}
+          onOpenTutorial={() => setIsOnboardingOpen(true)}
         />
 
-        {/* View Content */}
-        <main className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
-          {renderMainView()}
+        <main className="p-6 max-w-7xl mx-auto w-full flex-1">
+          {renderActiveView()}
         </main>
       </div>
 
-      {/* Task Creation/Editing Modal */}
-      <TaskModal
-        isOpen={isTaskModalOpen}
-        onClose={() => setIsTaskModalOpen(false)}
-        initialStatus={modalInitialStatus}
-        taskToEdit={taskToEdit}
+      {/* Modals & Audio Synth */}
+      <NewTaskModal 
+        isOpen={isNewTaskModalOpen} 
+        onClose={() => setIsNewTaskModalOpen(false)} 
       />
 
-      {/* Executive Dysfunction Overwhelm Modal */}
-      <OverwhelmModal
-        isOpen={isOverwhelmOpen}
-        onClose={() => setIsOverwhelmOpen(false)}
+      <OverwhelmModal 
+        isOpen={isOverwhelmModalOpen} 
+        onClose={() => setIsOverwhelmModalOpen(false)} 
       />
+
+      <OnboardingWizard
+        isOpen={isOnboardingOpen}
+        onClose={handleCompleteOnboarding}
+        onSaveProfile={handleSaveProfile}
+        onCreateFirstTask={handleCreateFirstTask}
+      />
+
+      <AmbientPlayer />
+
     </div>
   );
 }

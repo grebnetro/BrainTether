@@ -1,103 +1,83 @@
+export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'WAITING' | 'COMPLETED';
+
+export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+
+export type TaskCategory = 
+  | 'Household' 
+  | 'Money' 
+  | 'Self-Care' 
+  | 'Work' 
+  | 'Health' 
+  | 'General';
+
 export type ViewType = 
   | 'kanban' 
   | 'calendar' 
   | 'habits' 
   | 'mood' 
   | 'accountability' 
-  | 'therapist';
+  | 'therapist'
+  | 'about';
 
-export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'COMPLETED' | 'ARCHIVED';
+export type ThemeMode = 'light' | 'dark';
 
-export type TaskCategory = 'Household' | 'Money' | 'Self-Care' | 'Work' | 'Health' | 'General';
+export type StressLevelRange = 'ALL' | 'LOW' | 'MID' | 'HIGH'; // LOW (1-3), MID (4-6), HIGH (7-10)
 
-export type StressLevelRange = 'ALL' | 'LOW' | 'MID' | 'HIGH';
-
-export interface Subtask {
+export interface Task {
   id: string;
-  taskId?: string;
   title: string;
-  completed: boolean;
+  description?: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  stressPoints: number; // 1 (low avoidance) to 10 (paralyzing avoidance)
+  category: TaskCategory;
+  dueDate?: string;
+  assignedPartnerId?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Goal {
   id: string;
-  userId: string;
   title: string;
   description?: string;
-  category: string;
-  color: string;
-}
-
-export interface Task {
-  id: string;
-  userId: string;
-  goalId?: string;
-  goal?: Goal;
-  title: string;
-  description?: string;
-  status: TaskStatus;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH';
-  stressPoints: number; // 1 - 10
   category: TaskCategory;
-  dueDate?: string;
-  assignedPartnerId?: string;
-  assignedPartnerName?: string;
-  assignedPartnerAvatar?: string;
-  createdAt: string;
-  subtasks: Subtask[];
+  targetDate?: string;
+  color: string;
 }
 
 export interface Habit {
   id: string;
-  userId: string;
-  goalId?: string;
-  goal?: Goal;
   title: string;
-  description?: string;
-  frequency: 'DAILY' | 'WEEKLY';
-  targetDays: number;
-  streakCount: number;
-  lastLogged?: string;
-  history: string[]; // ISO date strings
+  targetDays: number; // ADHD 21-day streak milestone
+  currentStreak: number;
+  completedDates: string[]; // ISO date strings
+  category: TaskCategory;
 }
 
 export interface MoodLog {
   id: string;
-  userId: string;
-  score: number; // 1 to 5
-  energy: number; // 1 to 5
+  energyLevel: number; // 1 (drained) to 5 (vibrant)
+  stressLevel: number; // 1 (calm) to 10 (overwhelmed)
+  moodTag: string; // e.g. "Focus", "Anxious", "Calm", "Burnout"
   notes?: string;
-  loggedAt: string; // ISO date string
+  createdAt: string;
 }
 
 export interface BodyDoublingSession {
   id: string;
-  hostName: string;
-  hostAvatar: string;
-  partnerName?: string;
-  partnerAvatar?: string;
-  durationMinutes: number;
-  elapsedSeconds: number;
-  status: 'WAITING' | 'ACTIVE' | 'FINISHED';
-  myTaskSummary: string;
-  partnerTaskSummary?: string;
-  sharedNote?: string;
+  partnerName: string;
+  partnerAvatar: string;
+  status: 'IDLE' | 'ACTIVE' | 'COMPLETED';
+  soundscape: 'rain' | 'brown' | 'ocean' | 'none';
+  startedAt?: string;
 }
 
-export interface AccountabilityPartner {
-  id: string;
+export interface UserProfile {
   name: string;
   email: string;
-  avatar: string;
-  status: 'ONLINE' | 'IN_SESSION' | 'OFFLINE';
-  lastEncouragement?: string;
-}
-
-export interface TherapistPermission {
-  allowMoodView: boolean;
-  allowStressView: boolean;
-  allowNotesView: boolean;
-  accessCode: string;
-  therapistName?: string;
-  therapistEmail?: string;
+  avatarUrl: string;
+  dailyStressCeiling: number; // threshold before warning (default: 30)
+  defaultSoundscape: string;
+  therapistAccessCode: string;
 }

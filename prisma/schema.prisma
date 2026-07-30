@@ -1,55 +1,47 @@
-// Prisma Schema for BrainTether - Neurodivergent Productivity & Habit Platform
-
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
 }
 
-model User {
-  id                 String    @id @default(uuid())
-  name               String?
-  email              String    @unique
-  emailVerified      DateTime?
-  password           String?   // Hashed password for credentials auth
-  avatarUrl          String?
-  role               String    @default("USER") // USER, THERAPIST
-  themePreference    String    @default("DARK") // DARK, LIGHT
-  dailyStressCeiling Int       @default(25)     // Custom max daily stress points threshold
-  defaultSoundscape  String    @default("RAIN") // RAIN, BROWN_NOISE, OCEAN_WAVES
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+generator client {
+  provider = "prisma-client-js"
+}
 
-  accounts               Account[]
-  sessions               Session[]
-  goals                  Goal[]
-  tasks                  Task[]
-  habits                 Habit[]
-  moodLogs               MoodLog[]
-  accountabilitySent     AccountabilityLink[] @relation("RequesterLink")
-  accountabilityReceived AccountabilityLink[] @relation("PartnerLink")
-  hostedSessions         BodyDoublingSession[] @relation("HostUser")
-  partnerSessions        BodyDoublingSession[] @relation("PartnerUser")
-  therapistAccessGiven   TherapistAccess[]    @relation("PatientAccess")
-  therapistAccessReceived TherapistAccess[]   @relation("TherapistAccess")
+model User {
+  id                    String      @id @default(cuid())
+  name                  String?
+  email                 String?     @unique
+  emailVerified         DateTime?
+  image                 String?
+  passwordHash          String?
+  therapistAccessCode   String?     @unique @default("BT-772-MIND")
+  dailyStressCeiling    Int         @default(30)
+  defaultSoundscape     String      @default("rain")
+  hasCompletedOnboarding Boolean    @default(false)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  accounts              Account[]
+  sessions              Session[]
+  tasks                 Task[]
+  habits                Habit[]
+  moodLogs              MoodLog[]
+  bodyDoublingSessions  BodyDoublingSession[]
 }
 
 model Account {
-  id                String  @id @default(uuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -57,7 +49,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(uuid())
+  id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -73,109 +65,71 @@ model VerificationToken {
 }
 
 model Goal {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title       String
   description String?
-  category    String   // Health, Career, Space, Personal
-  color       String   // Hex code or tailwind color class
+  category    String   @default("General")
+  targetDate  DateTime?
+  color       String   @default("#14b8a6")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  tasks  Task[]
-  habits Habit[]
+  tasks       Task[]
 }
 
 model Task {
-  id                String    @id @default(uuid())
-  userId            String
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  goalId            String?
-  goal              Goal?     @relation(fields: [goalId], references: [id], onDelete: SetNull)
-  title             String
-  description       String?
-  status            String    @default("TODO") // TODO, IN_PROGRESS, COMPLETED, ARCHIVED
-  priority          String    @default("MEDIUM") // LOW, MEDIUM, HIGH
-  stressPoints      Int       @default(3) // 1-10 rating (Avoidance / Anxiety index)
-  category          String    @default("General") // Money, Household, Self-Care, Work, Health
-  dueDate           DateTime?
+  id               String   @id @default(cuid())
+  userId           String
+  goalId           String?
+  title            String
+  description      String?
+  status           String   @default("TODO") // TODO, IN_PROGRESS, WAITING, COMPLETED
+  priority         String   @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  stressPoints     Int      @default(5) // 1 (low avoidance) to 10 (paralyzing avoidance)
+  category         String   @default("General") // Household, Money, Self-Care, Work, Health
+  dueDate          DateTime?
   assignedPartnerId String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  subtasks Subtask[]
-}
-
-model Subtask {
-  id        String   @id @default(uuid())
-  taskId    String
-  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  title     String
-  completed Boolean  @default(false)
-  createdAt DateTime @default(now())
+  user             User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal             Goal?    @relation(fields: [goalId], references: [id], onDelete: SetNull)
 }
 
 model Habit {
-  id          String    @id @default(uuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  goalId      String?
-  goal        Goal?     @relation(fields: [goalId], references: [id], onDelete: SetNull)
-  title       String
-  description String?
-  frequency   String    @default("DAILY") // DAILY, WEEKLY
-  targetDays  Int       @default(21) // 21-day milestone target
-  streakCount Int       @default(0)
-  lastLogged  DateTime?
-  historyJson String    @default("[]") // JSON string of completion dates
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id             String   @id @default(cuid())
+  userId         String
+  title          String
+  description    String?
+  targetDays     Int      @default(21) // ADHD 21-day streak milestone
+  currentStreak  Int      @default(0)
+  completedDates String   @default("[]") // JSON string of dates
+  createdAt      DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model MoodLog {
-  id       String   @id @default(uuid())
-  userId   String
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  score    Int      // 1 (Very Poor) to 5 (Great)
-  energy   Int      // 1-5 scale energy level
-  notes    String?
-  loggedAt DateTime @default(now())
-}
-
-model AccountabilityLink {
-  id          String   @id @default(uuid())
-  requesterId String
-  requester   User     @relation("RequesterLink", fields: [requesterId], references: [id], onDelete: Cascade)
-  partnerId   String
-  partner     User     @relation("PartnerLink", fields: [partnerId], references: [id], onDelete: Cascade)
-  status      String   @default("PENDING") // PENDING, ACCEPTED, BLOCKED
+  id          String   @id @default(cuid())
+  userId      String
+  energyLevel Int      // 1 (drained) to 5 (vibrant)
+  stressLevel Int      // 1 (calm) to 10 (overwhelmed)
+  moodTag     String   // e.g. "Focus", "Anxious", "Calm", "Burnout"
+  notes       String?
   createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model BodyDoublingSession {
-  id                 String    @id @default(uuid())
-  hostUserId         String
-  host               User      @relation("HostUser", fields: [hostUserId], references: [id], onDelete: Cascade)
-  partnerUserId      String?
-  partner            User?     @relation("PartnerUser", fields: [partnerUserId], references: [id], onDelete: SetNull)
-  durationMinutes    Int       @default(25) // Pomodoro body doubling window
-  status             String    @default("WAITING") // WAITING, ACTIVE, COMPLETED, CANCELLED
-  hostTaskSummary    String?
-  partnerTaskSummary String?
-  startedAt          DateTime?
-  endedAt            DateTime?
-  createdAt          DateTime  @default(now())
-}
+  id          String   @id @default(cuid())
+  userId      String
+  partnerName String   @default("Sarah M.")
+  partnerAvatar String @default("https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150")
+  status      String   @default("ACTIVE") // IDLE, ACTIVE, COMPLETED
+  soundscape  String   @default("rain") // rain, brown, ocean, none
+  startedAt   DateTime @default(now())
 
-model TherapistAccess {
-  id              String   @id @default(uuid())
-  patientId       String
-  patient         User     @relation("PatientAccess", fields: [patientId], references: [id], onDelete: Cascade)
-  therapistId     String
-  therapist       User     @relation("TherapistAccess", fields: [therapistId], references: [id], onDelete: Cascade)
-  allowMoodView   Boolean  @default(true)
-  allowStressView Boolean  @default(true)
-  allowNotesView  Boolean  @default(false)
-  createdAt       DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
