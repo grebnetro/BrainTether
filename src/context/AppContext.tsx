@@ -9,6 +9,7 @@ import {
   INITIAL_TASKS, INITIAL_GOALS, INITIAL_HABITS, INITIAL_MOOD_LOGS, 
   INITIAL_PARTNERS, INITIAL_BODY_DOUBLING, INITIAL_THERAPIST_ACCESS 
 } from '../lib/initialData';
+import { MINDSTATE_AVATARS } from '../components/onboarding/OnboardingWizard';
 
 interface AppContextType {
   theme: 'dark' | 'light';
@@ -67,9 +68,9 @@ interface AppContextType {
 }
 
 const INITIAL_USER_PROFILE: UserProfile = {
-  name: 'Alex Morgan',
-  email: 'alex@braintether.app',
-  avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+  name: 'Michael Ortenberg',
+  email: 'michael.ortenberg@gmail.com',
+  avatarUrl: MINDSTATE_AVATARS[9].url,
   dailyStressCeiling: 30,
   defaultSoundscape: 'rain',
   therapistAccessCode: 'BT-772-MIND',
@@ -114,18 +115,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUserProfile(prev => ({ ...prev, ...updates }));
   };
 
-  const totalDailyStressPoints = tasks
-    .filter(t => t.status !== 'COMPLETED')
-    .reduce((acc, curr) => acc + curr.stressPoints, 0);
-
-  const completedDailyStressPoints = tasks
-    .filter(t => t.status === 'COMPLETED')
-    .reduce((acc, curr) => acc + curr.stressPoints, 0);
-
-  const addTask = (newTaskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
+  const addTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
     const newTask: Task = {
-      ...newTaskData,
+      ...taskData,
       id: `task-${Date.now()}`,
+      userId: 'user-1',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -133,7 +127,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateTask = (id: string, updates: Partial<Task>) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+    setTasks(prev =>
+      prev.map(t => (t.id === id ? { ...t, ...updates, updatedAt: new Date().toISOString() } : t))
+    );
   };
 
   const deleteTask = (id: string) => {
@@ -141,102 +137,114 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const moveTask = (taskId: string, newStatus: TaskStatus) => {
-    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: newStatus } : t));
+    setTasks(prev =>
+      prev.map(t =>
+        t.id === taskId
+          ? { ...t, status: newStatus, updatedAt: new Date().toISOString() }
+          : t
+      )
+    );
   };
 
   const toggleSubtask = (taskId: string, subtaskId: string) => {
-    setTasks(prev => prev.map(t => {
-      if (t.id !== taskId) return t;
-      const subs = t.subtasks || [];
-      return {
-        ...t,
-        subtasks: subs.map(st => st.id === subtaskId ? { ...st, completed: !st.completed } : st)
-      };
-    }));
+    setTasks(prev =>
+      prev.map(t => {
+        if (t.id !== taskId || !t.subtasks) return t;
+        const updatedSubtasks = t.subtasks.map(st =>
+          st.id === subtaskId ? { ...st, completed: !st.completed } : st
+        );
+        return { ...t, subtasks: updatedSubtasks, updatedAt: new Date().toISOString() };
+      })
+    );
   };
 
   const addHabit = (habitData: Omit<Habit, 'id' | 'userId' | 'streakCount' | 'currentStreak' | 'completedDates' | 'history'>) => {
     const newHabit: Habit = {
       ...habitData,
       id: `habit-${Date.now()}`,
-      currentStreak: 1,
-      streakCount: 1,
-      completedDates: [new Date().toISOString().split('T')[0]],
-      history: [new Date().toISOString().split('T')[0]],
+      userId: 'user-1',
+      streakCount: 0,
+      currentStreak: 0,
+      completedDates: [],
+      history: [],
     };
     setHabits(prev => [newHabit, ...prev]);
   };
 
   const logHabitCompletion = (habitId: string) => {
     const today = new Date().toISOString().split('T')[0];
-    setHabits(prev => prev.map(h => {
-      if (h.id !== habitId) return h;
-      const dates = h.completedDates || h.history || [];
-      const alreadyDoneToday = dates.includes(today);
-      if (alreadyDoneToday) return h;
-      const current = h.currentStreak || h.streakCount || 0;
-      return {
-        ...h,
-        currentStreak: current + 1,
-        streakCount: current + 1,
-        completedDates: [...dates, today],
-        history: [...dates, today]
-      };
-    }));
+    setHabits(prev =>
+      prev.map(h => {
+        if (h.id !== habitId) return h;
+        if (h.completedDates.includes(today)) return h; // already completed today
+        const newDates = [...h.completedDates, today];
+        const newStreak = h.currentStreak + 1;
+        return {
+          ...h,
+          completedDates: newDates,
+          currentStreak: newStreak,
+          streakCount: Math.max(h.streakCount, newStreak),
+        };
+      })
+    );
   };
 
   const addMoodLog = (score: number, energy: number, notes?: string) => {
     const newLog: MoodLog = {
       id: `mood-${Date.now()}`,
-      energyLevel: energy,
-      stressLevel: score,
-      moodTag: score > 7 ? 'Anxious' : 'Focus',
+      userId: 'user-1',
+      timestamp: new Date().toISOString(),
+      score,
+      energy,
       notes,
-      createdAt: new Date().toISOString(),
     };
     setMoodLogs(prev => [newLog, ...prev]);
   };
 
   const toggleTherapistPermission = (field: keyof TherapistPermission) => {
-    setTherapistPermission(prev => ({
-      ...prev,
-      [field]: !prev[field]
-    }));
+    setTherapistPermission(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
   const startBodyDoubling = (taskSummary: string, durationMinutes = 25) => {
     setBodyDoublingSession({
-      id: `session-${Date.now()}`,
-      partnerName: 'Maya Chen',
-      partnerAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
-      status: 'ACTIVE',
-      soundscape: 'rain',
+      active: true,
+      partner: INITIAL_PARTNERS[0],
+      startTime: new Date().toISOString(),
+      durationMinutes,
+      taskSummary,
     });
   };
 
   const endBodyDoubling = () => {
-    setBodyDoublingSession(prev => ({
-      ...prev,
-      status: 'COMPLETED'
-    }));
+    setBodyDoublingSession(prev => ({ ...prev, active: false }));
   };
 
   const breakDownTaskWithAI = (taskId: string) => {
-    setTasks(prev => prev.map(t => {
-      if (t.id !== taskId) return t;
-      const existingSubs = t.subtasks || [];
-      const generatedSteps = [
-        { id: `sub-ai-1-${Date.now()}`, taskId: t.id, title: 'Step 1: Set a 5-minute timer & prepare workspace', completed: false },
-        { id: `sub-ai-2-${Date.now()}`, taskId: t.id, title: 'Step 2: Do only the smallest initial action (1 minute)', completed: false },
-        { id: `sub-ai-3-${Date.now()}`, taskId: t.id, title: 'Step 3: Pause and reward yourself with a deep breath', completed: false },
-      ];
-      return {
-        ...t,
-        subtasks: [...existingSubs, ...generatedSteps],
-        stressPoints: Math.max(1, t.stressPoints - 2)
-      };
-    }));
+    setTasks(prev =>
+      prev.map(t => {
+        if (t.id !== taskId) return t;
+        const generatedSubtasks = [
+          { id: `st-${Date.now()}-1`, title: `Clarify first 5-minute action step for "${t.title}"`, completed: false },
+          { id: `st-${Date.now()}-2`, title: 'Gather links, tabs & documents needed', completed: false },
+          { id: `st-${Date.now()}-3`, title: 'Draft initial outline or preliminary draft', completed: false },
+          { id: `st-${Date.now()}-4`, title: 'Review and mark task complete', completed: false },
+        ];
+        return {
+          ...t,
+          subtasks: [...(t.subtasks || []), ...generatedSubtasks],
+          updatedAt: new Date().toISOString(),
+        };
+      })
+    );
   };
+
+  const totalDailyStressPoints = tasks
+    .filter(t => t.status !== 'DONE')
+    .reduce((acc, curr) => acc + curr.stressPoints, 0);
+
+  const completedDailyStressPoints = tasks
+    .filter(t => t.status === 'DONE')
+    .reduce((acc, curr) => acc + curr.stressPoints, 0);
 
   return (
     <AppContext.Provider
@@ -284,6 +292,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 export const useApp = () => {
   const context = useContext(AppContext);
-  if (!context) throw new Error('useApp must be used within an AppProvider');
+  if (!context) {
+    throw new Error('useApp must be used within an AppProvider');
+  }
   return context;
 };

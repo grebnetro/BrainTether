@@ -8,7 +8,6 @@ import versionData from '../../../version.json';
 import Link from 'next/link';
 import { 
   User, 
-  Mail, 
   Flame, 
   Volume2, 
   ShieldCheck, 
@@ -18,19 +17,11 @@ import {
   Save, 
   Camera, 
   Sliders, 
-  Key,
   Copy,
-  ExternalLink
+  ExternalLink,
+  Upload
 } from 'lucide-react';
-
-const AVATAR_PRESETS = [
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
-  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150',
-  'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150',
-];
+import { MINDSTATE_AVATARS } from '../../components/onboarding/OnboardingWizard';
 
 export default function ProfilePage() {
   const { 
@@ -40,16 +31,28 @@ export default function ProfilePage() {
     toggleTherapistPermission 
   } = useApp();
 
-  const [name, setName] = useState(userProfile.name);
-  const [email, setEmail] = useState(userProfile.email);
-  const [selectedAvatar, setSelectedAvatar] = useState(userProfile.avatarUrl);
+  const [name, setName] = useState(userProfile.name || 'Michael Ortenberg');
+  const [email, setEmail] = useState(userProfile.email || 'michael.ortenberg@gmail.com');
+  const [selectedAvatar, setSelectedAvatar] = useState(userProfile.avatarUrl || MINDSTATE_AVATARS[9].url);
   const [customAvatarUrl, setCustomAvatarUrl] = useState('');
-  const [dailyStressCeiling, setDailyStressCeiling] = useState(userProfile.dailyStressCeiling);
-  const [defaultSoundscape, setDefaultSoundscape] = useState(userProfile.defaultSoundscape);
+  const [dailyStressCeiling, setDailyStressCeiling] = useState(userProfile.dailyStressCeiling || 30);
+  const [defaultSoundscape, setDefaultSoundscape] = useState(userProfile.defaultSoundscape || 'rain');
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
+  const [dragging, setDragging] = useState(false);
 
   const currentAvatar = customAvatarUrl || selectedAvatar;
+
+  const handleImageFile = (file: File) => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setCustomAvatarUrl(e.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +113,7 @@ export default function ProfilePage() {
                   <img
                     src={currentAvatar}
                     alt={name}
-                    className="w-20 h-20 rounded-full border-4 border-teal-500/40 object-cover shadow-xl"
+                    className="w-20 h-20 rounded-full border-4 border-teal-500/40 object-cover bg-slate-950 p-1 shadow-xl"
                   />
                   <div className="absolute inset-0 rounded-full bg-slate-950/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <Camera className="w-5 h-5 text-white" />
@@ -140,7 +143,7 @@ export default function ProfilePage() {
             <div className="p-6 rounded-3xl bg-zen-surface-dark border border-zen-border-dark shadow-xl space-y-6">
               <h2 className="text-sm font-bold text-slate-200 flex items-center gap-2">
                 <User className="w-4 h-4 text-teal-400" />
-                Personal Details & Avatar
+                Personal Details & Avatar Theme
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -153,7 +156,7 @@ export default function ProfilePage() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-zen-border-dark text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-zen-border-dark text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                   />
                 </div>
 
@@ -166,40 +169,87 @@ export default function ProfilePage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-zen-border-dark text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-zen-border-dark text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                   />
                 </div>
               </div>
 
+              {/* 10 Levels of Mind State Cartoon Avatars */}
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-2">
-                  Choose Avatar Preset
+                <label className="block text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
+                  <span>10 Levels of Mind State Avatars (Sad to Radiant Joy)</span>
+                  <span className="text-[10px] text-teal-400 font-mono">Theme: Fun Emoji Cartoon</span>
                 </label>
-                <div className="grid grid-cols-6 gap-3">
-                  {AVATAR_PRESETS.map((presetUrl) => (
-                    <button
-                      type="button"
-                      key={presetUrl}
-                      onClick={() => {
-                        setSelectedAvatar(presetUrl);
-                        setCustomAvatarUrl('');
-                      }}
-                      className={`relative rounded-full overflow-hidden border-2 transition-all aspect-square ${
-                        selectedAvatar === presetUrl && !customAvatarUrl
-                          ? 'border-teal-400 ring-4 ring-teal-500/20 scale-105'
-                          : 'border-transparent opacity-70 hover:opacity-100'
-                      }`}
-                    >
-                      <img src={presetUrl} alt="Avatar" className="w-full h-full object-cover" />
-                      {selectedAvatar === presetUrl && !customAvatarUrl && (
-                        <div className="absolute inset-0 bg-teal-500/30 flex items-center justify-center">
-                          <Check className="w-4 h-4 text-white" />
-                        </div>
-                      )}
-                    </button>
-                  ))}
+                <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+                  {MINDSTATE_AVATARS.map((item) => {
+                    const isSelected = selectedAvatar === item.url && !customAvatarUrl;
+                    return (
+                      <button
+                        type="button"
+                        key={item.level}
+                        onClick={() => {
+                          setSelectedAvatar(item.url);
+                          setCustomAvatarUrl('');
+                        }}
+                        className={`relative p-2 rounded-xl border flex flex-col items-center justify-center transition-all ${
+                          isSelected
+                            ? 'border-teal-400 bg-teal-500/10 ring-2 ring-teal-500/30 scale-105 shadow-md'
+                            : 'border-zen-border-dark bg-slate-900/60 opacity-80 hover:opacity-100 hover:border-slate-600'
+                        }`}
+                      >
+                        <img src={item.url} alt={item.label} className="w-8 h-8 object-contain" />
+                        <span className="text-[8px] font-bold text-slate-300 mt-1 text-center line-clamp-1">{item.label}</span>
+                        {isSelected && (
+                          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-teal-500 text-white flex items-center justify-center shadow">
+                            <Check className="w-2.5 h-2.5" />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
+
+              {/* Drag and Drop Custom Photo Upload */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Or Upload Custom Photo (Drag & Drop or Click)
+                </label>
+                <div 
+                  onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragging(false);
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                      handleImageFile(e.dataTransfer.files[0]);
+                    }
+                  }}
+                  className={`p-4 rounded-2xl border-2 border-dashed text-center cursor-pointer transition-all ${
+                    dragging 
+                      ? 'border-teal-400 bg-teal-500/10' 
+                      : 'border-zen-border-dark bg-slate-900/60 hover:border-slate-600'
+                  }`}
+                >
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={(e) => e.target.files?.[0] && handleImageFile(e.target.files[0])}
+                    className="hidden" 
+                    id="profile-avatar-file"
+                  />
+                  <label htmlFor="profile-avatar-file" className="cursor-pointer space-y-1.5 block">
+                    <Upload className="w-5 h-5 text-teal-400 mx-auto" />
+                    <span className="text-xs font-bold text-slate-200 block">
+                      Drag & Drop your photo here, or click to browse
+                    </span>
+                    <span className="text-[10px] text-slate-400 block">
+                      Supports JPG, PNG, GIF, WebP (Converted automatically)
+                    </span>
+                  </label>
+                </div>
+              </div>
+
             </div>
 
             {/* Cognitive & ADHD Preferences */}

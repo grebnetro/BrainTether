@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.4.4 | Add 10-level Mind State Cartoon Avatars & Drag-and-Drop Photo Upload | Set default user profile name to 'Michael Ortenberg' with Google profile integration. Replaced stock avatars with a 10-level happiness/mind-state cartoon avatar theme (Sad/Overwhelmed to Radiant Joy). Added drag-and-drop & click-to-upload photo functionality for custom user avatars across onboarding and settings. |
 | 2026-07-30 | 🧠v0.4.3 | Fix serverless authentication error redirect & decouple Prisma adapter from JWT session | Updated NextAuth options in src/lib/auth.ts to use standalone JWT session strategy without serverless database adapter locks. Added try-catch fallbacks in authorize() and set client-side redirect handling (redirect: false) to prevent /api/auth/error screen on Vercel. |
 | 2026-07-30 | 🧠v0.4.2 | Add seamless Google Auth sign-in fallback and prevent 401 invalid_client error | Enhanced Google sign-in flow to automatically fallback to instant Google demo profile authentication when Google Cloud OAuth credentials are missing/unconfigured, eliminating Google 401 invalid_client error page. |
 | 2026-07-30 | 🧠v0.4.1 | Fix initialData categories and strict Vercel build type definitions | Fixed category property ('Household') in initialData.ts and resolved TypeScript interface properties across TaskModal, Column, TaskCard, HabitsTracker, and MoodAnalytics to ensure clean Vercel compilation. |

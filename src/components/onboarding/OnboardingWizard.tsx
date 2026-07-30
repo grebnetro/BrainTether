@@ -9,13 +9,11 @@ import {
   Heart, 
   Users, 
   Repeat, 
-  ShieldCheck, 
   Check, 
   ArrowRight, 
-  Plus, 
-  Smile, 
   BookOpen, 
-  Volume2
+  Upload,
+  Image as ImageIcon
 } from 'lucide-react';
 import { TaskCategory } from '../../types';
 
@@ -26,13 +24,17 @@ interface OnboardingWizardProps {
   onCreateFirstTask: (taskData: { title: string; stressPoints: number; category: TaskCategory }) => void;
 }
 
-const AVATAR_PRESETS = [
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
-  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150',
-  'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150',
+export const MINDSTATE_AVATARS = [
+  { level: 1, label: 'L1: Overwhelmed', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level1-Sad' },
+  { level: 2, label: 'L2: High Stress', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level2-Stressed' },
+  { level: 3, label: 'L3: Drained', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level3-Drained' },
+  { level: 4, label: 'L4: Seeking Focus', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level4-Seeking' },
+  { level: 5, label: 'L5: Neutral Calm', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level5-Neutral' },
+  { level: 6, label: 'L6: Gentle Spark', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level6-Spark' },
+  { level: 7, label: 'L7: Active Flow', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level7-Focused' },
+  { level: 8, label: 'L8: High Energy', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level8-Stamina' },
+  { level: 9, label: 'L9: Deep Mastery', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level9-Flow' },
+  { level: 10, label: 'L10: Radiant Joy', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level10-Joy' },
 ];
 
 export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
@@ -44,9 +46,10 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Step 1 State: Profile & Avatar
-  const [name, setName] = useState('Alex Morgan');
-  const [selectedAvatar, setSelectedAvatar] = useState(AVATAR_PRESETS[0]);
+  const [name, setName] = useState('Michael Ortenberg');
+  const [selectedAvatar, setSelectedAvatar] = useState(MINDSTATE_AVATARS[9].url);
   const [customAvatarUrl, setCustomAvatarUrl] = useState('');
+  const [dragging, setDragging] = useState(false);
 
   // Step 3 State: First Task Starter
   const [taskTitle, setTaskTitle] = useState('');
@@ -57,9 +60,20 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 
   const currentAvatar = customAvatarUrl || selectedAvatar;
 
+  const handleImageFile = (file: File) => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setCustomAvatarUrl(e.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleStep1Submit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSaveProfile({ name, avatarUrl: currentAvatar });
+    onSaveProfile({ name: name.trim() || 'Michael Ortenberg', avatarUrl: currentAvatar });
     setStep(2);
   };
 
@@ -122,70 +136,109 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                   Who is using this BrainTether workspace?
                 </h3>
                 <p className="text-xs text-slate-400 max-w-md mx-auto">
-                  Customize your display name and avatar image to personalize your stress tracking workspace.
+                  Customize your display name and choose a 10-level Mind State avatar or drag & drop a photo.
                 </p>
               </div>
 
-              <div className="space-y-4 max-w-lg mx-auto">
-                {/* Name Input */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Display Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name..."
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-zen-border-dark text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+              <div className="space-y-5 max-w-lg mx-auto">
+                {/* Active Avatar Preview + Name Input */}
+                <div className="flex items-center space-x-4 p-4 rounded-2xl bg-slate-900 border border-zen-border-dark">
+                  <img
+                    src={currentAvatar}
+                    alt={name}
+                    className="w-16 h-16 rounded-2xl border-2 border-teal-400 object-cover bg-slate-950 p-1 shrink-0"
                   />
-                </div>
-
-                {/* Avatar Picker */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-2">
-                    Choose Your Avatar Preset
-                  </label>
-                  <div className="grid grid-cols-6 gap-3">
-                    {AVATAR_PRESETS.map((presetUrl) => (
-                      <button
-                        type="button"
-                        key={presetUrl}
-                        onClick={() => {
-                          setSelectedAvatar(presetUrl);
-                          setCustomAvatarUrl('');
-                        }}
-                        className={`relative rounded-full overflow-hidden border-2 transition-all aspect-square ${
-                          selectedAvatar === presetUrl && !customAvatarUrl
-                            ? 'border-teal-400 ring-4 ring-teal-500/20 scale-105'
-                            : 'border-transparent opacity-70 hover:opacity-100'
-                        }`}
-                      >
-                        <img src={presetUrl} alt="Avatar Preset" className="w-full h-full object-cover" />
-                        {selectedAvatar === presetUrl && !customAvatarUrl && (
-                          <div className="absolute inset-0 bg-teal-500/30 flex items-center justify-center">
-                            <Check className="w-4 h-4 text-white" />
-                          </div>
-                        )}
-                      </button>
-                    ))}
+                  <div className="flex-1">
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Display Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter your name..."
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-zen-border-dark text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                    />
                   </div>
                 </div>
 
-                {/* Custom Avatar URL */}
+                {/* 10 Levels of Mind State Cartoon Avatars */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Or Enter Custom Photo URL (Optional)
+                  <label className="block text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
+                    <span>10 Levels of Mind State Avatars (Sad to Radiant Joy)</span>
+                    <span className="text-[10px] text-teal-400 font-mono">Theme: Fun Emoji Cartoon</span>
                   </label>
-                  <input
-                    type="url"
-                    value={customAvatarUrl}
-                    onChange={(e) => setCustomAvatarUrl(e.target.value)}
-                    placeholder="https://example.com/my-photo.jpg"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-zen-border-dark text-slate-200 placeholder-slate-500 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
-                  />
+                  <div className="grid grid-cols-5 gap-2.5">
+                    {MINDSTATE_AVATARS.map((item) => {
+                      const isSelected = selectedAvatar === item.url && !customAvatarUrl;
+                      return (
+                        <button
+                          type="button"
+                          key={item.level}
+                          onClick={() => {
+                            setSelectedAvatar(item.url);
+                            setCustomAvatarUrl('');
+                          }}
+                          className={`relative p-2 rounded-xl border flex flex-col items-center justify-center transition-all ${
+                            isSelected
+                              ? 'border-teal-400 bg-teal-500/10 ring-2 ring-teal-500/30 scale-105 shadow-md'
+                              : 'border-zen-border-dark bg-slate-900/60 opacity-80 hover:opacity-100 hover:border-slate-600'
+                          }`}
+                        >
+                          <img src={item.url} alt={item.label} className="w-9 h-9 object-contain" />
+                          <span className="text-[9px] font-bold text-slate-300 mt-1 text-center line-clamp-1">{item.label}</span>
+                          {isSelected && (
+                            <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-teal-500 text-white flex items-center justify-center shadow">
+                              <Check className="w-3 h-3" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
+
+                {/* Drag and Drop Custom Photo Upload */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    Or Upload Custom Photo (Drag & Drop or Click)
+                  </label>
+                  <div 
+                    onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setDragging(false);
+                      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        handleImageFile(e.dataTransfer.files[0]);
+                      }
+                    }}
+                    className={`p-4 rounded-2xl border-2 border-dashed text-center cursor-pointer transition-all ${
+                      dragging 
+                        ? 'border-teal-400 bg-teal-500/10' 
+                        : 'border-zen-border-dark bg-slate-900/60 hover:border-slate-600'
+                    }`}
+                  >
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={(e) => e.target.files?.[0] && handleImageFile(e.target.files[0])}
+                      className="hidden" 
+                      id="onboarding-avatar-file"
+                    />
+                    <label htmlFor="onboarding-avatar-file" className="cursor-pointer space-y-1.5 block">
+                      <Upload className="w-5 h-5 text-teal-400 mx-auto" />
+                      <span className="text-xs font-bold text-slate-200 block">
+                        Drag & Drop your photo here, or click to browse
+                      </span>
+                      <span className="text-[10px] text-slate-400 block">
+                        Supports JPG, PNG, GIF, WebP (Converted automatically)
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
               </div>
 
               <div className="pt-4 flex justify-end">
