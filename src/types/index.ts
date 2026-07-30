@@ -64,6 +64,8 @@ export interface Habit {
   currentStreak: number;
   completedDates: string[]; // YYYY-MM-DD
   history: { date: string; completed: boolean }[];
+  frequency?: string;
+  targetDays?: number;
 }
 
 export interface MoodLog {
