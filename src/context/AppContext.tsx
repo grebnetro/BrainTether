@@ -42,6 +42,7 @@ interface AppContextType {
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   moveTask: (taskId: string, newStatus: TaskStatus) => void;
+  toggleSubtask: (taskId: string, subtaskId: string) => void;
 
   // Stress Metrics
   totalDailyStressPoints: number;
@@ -143,6 +144,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: newStatus } : t));
   };
 
+  const toggleSubtask = (taskId: string, subtaskId: string) => {
+    setTasks(prev => prev.map(t => {
+      if (t.id !== taskId) return t;
+      const subs = t.subtasks || [];
+      return {
+        ...t,
+        subtasks: subs.map(st => st.id === subtaskId ? { ...st, completed: !st.completed } : st)
+      };
+    }));
+  };
+
   const addHabit = (habitData: Omit<Habit, 'id' | 'userId' | 'streakCount' | 'currentStreak' | 'completedDates' | 'history'>) => {
     const newHabit: Habit = {
       ...habitData,
@@ -212,8 +224,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const breakDownTaskWithAI = (taskId: string) => {
     setTasks(prev => prev.map(t => {
       if (t.id !== taskId) return t;
+      const existingSubs = t.subtasks || [];
+      const generatedSteps = [
+        { id: `sub-ai-1-${Date.now()}`, taskId: t.id, title: 'Step 1: Set a 5-minute timer & prepare workspace', completed: false },
+        { id: `sub-ai-2-${Date.now()}`, taskId: t.id, title: 'Step 2: Do only the smallest initial action (1 minute)', completed: false },
+        { id: `sub-ai-3-${Date.now()}`, taskId: t.id, title: 'Step 3: Pause and reward yourself with a deep breath', completed: false },
+      ];
       return {
         ...t,
+        subtasks: [...existingSubs, ...generatedSteps],
         stressPoints: Math.max(1, t.stressPoints - 2)
       };
     }));
@@ -246,6 +265,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateTask,
         deleteTask,
         moveTask,
+        toggleSubtask,
         totalDailyStressPoints,
         completedDailyStressPoints,
         addHabit,
