@@ -75,6 +75,7 @@ export interface MoodLog {
   energy: number; // 1 (drained) to 10 (hyperfocus)
   energyLevel?: number;
   stressLevel?: number;
+  createdAt?: string;
   notes?: string;
 }
 
