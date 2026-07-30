@@ -59,7 +59,7 @@ export interface Habit {
   id: string;
   title: string;
   description?: string;
-  category: TaskCategory;
+  category?: TaskCategory;
   streakCount: number;
   currentStreak: number;
   completedDates: string[]; // YYYY-MM-DD
