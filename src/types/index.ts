@@ -60,9 +60,9 @@ export interface Habit {
   description?: string;
   frequency?: string;
   targetDays: number; // ADHD 21-day streak milestone
-  currentStreak: number;
+  currentStreak?: number;
   streakCount?: number;
-  completedDates: string[]; // ISO date strings
+  completedDates?: string[]; // ISO date strings
   history?: string[];
   category?: TaskCategory;
 }

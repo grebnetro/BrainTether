@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.4.0 | Major release: Onboarding wizard, Google auth, clean board init, About guide, Forgot Password & instant bypass | Comprehensive platform release: Added 3-step onboarding wizard, Google auth login with fallback, clean board initialization, About & Features guide tab, Forgot Password recovery page (/auth/forgot-password), 1-click workspace bypass, and resolved all Prisma & Vercel TypeScript build type checks. |
 | 2026-07-30 | 🧠v0.3.1 | Add Forgot Password recovery page and sign-in reset link | Created dedicated Forgot Password recovery page (/auth/forgot-password) with account verification and 1-click password reset. Added Forgot Password link to sign-in form. |
 | 2026-07-30 | 🧠v0.3.0 | Add onboarding wizard, Google auth, clean board & About tab | Added 3-step New User Onboarding Wizard with profile & avatar setup prompt, interactive ADHD instruction sheet tutorial, clean account initialization for new users, Google OAuth sign-in/sign-up support, and an About & Features guide tab in the main sidebar. |
 | 2026-07-30 | 🧠v0.2.1 | Enforce mandatory authentication route middleware | Created NextAuth middleware (middleware.ts) protecting /dashboard and /profile routes. Unauthenticated visitors are automatically redirected to /auth/signin. |

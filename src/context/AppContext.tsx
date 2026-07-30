@@ -48,7 +48,7 @@ interface AppContextType {
   completedDailyStressPoints: number;
 
   // Habits
-  addHabit: (habit: Omit<Habit, 'id' | 'userId' | 'streakCount' | 'history'>) => void;
+  addHabit: (habit: Omit<Habit, 'id' | 'userId' | 'streakCount' | 'currentStreak' | 'completedDates' | 'history'>) => void;
   logHabitCompletion: (habitId: string) => void;
 
   // Mood
@@ -125,7 +125,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const newTask: Task = {
       ...newTaskData,
       id: `task-${Date.now()}`,
-      userId: 'user-1',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -144,13 +143,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: newStatus } : t));
   };
 
-  const addHabit = (habitData: Omit<Habit, 'id' | 'userId' | 'streakCount' | 'history'>) => {
+  const addHabit = (habitData: Omit<Habit, 'id' | 'userId' | 'streakCount' | 'currentStreak' | 'completedDates' | 'history'>) => {
     const newHabit: Habit = {
       ...habitData,
       id: `habit-${Date.now()}`,
-      userId: 'user-1',
+      currentStreak: 1,
       streakCount: 1,
       completedDates: [new Date().toISOString().split('T')[0]],
+      history: [new Date().toISOString().split('T')[0]],
     };
     setHabits(prev => [newHabit, ...prev]);
   };
@@ -159,12 +159,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const today = new Date().toISOString().split('T')[0];
     setHabits(prev => prev.map(h => {
       if (h.id !== habitId) return h;
-      const alreadyDoneToday = h.completedDates.includes(today);
+      const dates = h.completedDates || h.history || [];
+      const alreadyDoneToday = dates.includes(today);
       if (alreadyDoneToday) return h;
+      const current = h.currentStreak || h.streakCount || 0;
       return {
         ...h,
-        streakCount: h.streakCount + 1,
-        completedDates: [...h.completedDates, today]
+        currentStreak: current + 1,
+        streakCount: current + 1,
+        completedDates: [...dates, today],
+        history: [...dates, today]
       };
     }));
   };
