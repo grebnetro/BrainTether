@@ -1,24 +1,24 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useApp } from '@/context/AppContext';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { Header } from '@/components/layout/Header';
-import { KanbanBoard } from '@/components/kanban/KanbanBoard';
-import { CalendarView } from '@/components/calendar/CalendarView';
-import { HabitsTracker } from '@/components/habits/HabitsTracker';
-import { MoodAnalytics } from '@/components/mood/MoodAnalytics';
-import { BodyDoublingRoom } from '@/components/accountability/BodyDoublingRoom';
-import { TherapistReview } from '@/components/therapist/TherapistReview';
-import { AboutView } from '@/components/about/AboutView';
-import { NewTaskModal } from '@/components/tasks/NewTaskModal';
-import { OverwhelmModal } from '@/components/tasks/OverwhelmModal';
-import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard';
-import { AmbientPlayer } from '@/components/audio/AmbientPlayer';
-import { TaskCategory } from '@/types';
+import { useApp } from '../context/AppContext';
+import { Sidebar } from '../components/layout/Sidebar';
+import { Header } from '../components/layout/Header';
+import { KanbanBoard } from '../components/kanban/KanbanBoard';
+import { TaskModal } from '../components/kanban/TaskModal';
+import { CalendarView } from '../components/calendar/CalendarView';
+import { HabitsTracker } from '../components/habits/HabitsTracker';
+import { MoodAnalytics } from '../components/mood/MoodAnalytics';
+import { BodyDoubling } from '../components/accountability/BodyDoubling';
+import { TherapistPortal } from '../components/therapist/TherapistPortal';
+import { AboutView } from '../components/about/AboutView';
+import { OverwhelmModal } from '../components/focus/OverwhelmModal';
+import { OnboardingWizard } from '../components/onboarding/OnboardingWizard';
+import { AmbientPlayer } from '../components/audio/AmbientPlayer';
+import { TaskCategory } from '../types';
 
 export default function DashboardPage() {
-  const { activeView, addTask, userProfile, updateUserProfile } = useApp();
+  const { activeView, addTask, updateUserProfile } = useApp();
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
   const [isOverwhelmModalOpen, setIsOverwhelmModalOpen] = useState(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
@@ -62,9 +62,9 @@ export default function DashboardPage() {
       case 'mood':
         return <MoodAnalytics />;
       case 'accountability':
-        return <BodyDoublingRoom />;
+        return <BodyDoubling />;
       case 'therapist':
-        return <TherapistReview accessCode="BT-772-MIND" isReadonly={false} />;
+        return <TherapistPortal />;
       case 'about':
         return <AboutView />;
       default:
@@ -92,7 +92,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Modals & Audio Synth */}
-      <NewTaskModal 
+      <TaskModal 
         isOpen={isNewTaskModalOpen} 
         onClose={() => setIsNewTaskModalOpen(false)} 
       />
