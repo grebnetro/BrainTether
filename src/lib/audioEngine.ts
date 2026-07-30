@@ -83,6 +83,10 @@ class AudioEngine {
     this.isPlaying = true;
   }
 
+  public playPreset(preset: AmbientSoundPreset, volume = 0.3) {
+    this.play(preset, volume);
+  }
+
   public setVolume(volume: number) {
     if (this.gainNode && this.ctx) {
       this.gainNode.gain.setValueAtTime(volume, this.ctx.currentTime);
