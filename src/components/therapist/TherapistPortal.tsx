@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { ShieldCheck, Lock, Eye, Download, Key, CheckCircle, FileText, Activity } from 'lucide-react';
+import { ShieldCheck, Lock, Eye, Key, CheckCircle, FileText, Activity } from 'lucide-react';
 
 export const TherapistPortal: React.FC = () => {
-  const { therapistPermission, toggleTherapistPermission, moodLogs, tasks, habits } = useApp();
+  const { therapistPermission, toggleTherapistPermission, userProfile, moodLogs, tasks, habits } = useApp();
 
   const totalStressRelieved = tasks.filter(t => t.status === 'COMPLETED').reduce((acc, curr) => acc + curr.stressPoints, 0);
 
@@ -21,14 +21,14 @@ export const TherapistPortal: React.FC = () => {
           <div>
             <h3 className="font-bold text-base text-slate-100">Therapist & Care Coach Access Portal</h3>
             <p className="text-xs text-slate-300">
-              Grant granular, read-only review access to designated clinical care providers (e.g. Dr. Evelyn Reed).
+              Grant granular, read-only review access to designated clinical care providers.
             </p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2 bg-indigo-500/10 px-3.5 py-2 rounded-xl border border-indigo-500/30 text-xs font-mono text-indigo-300 shrink-0">
           <Key className="w-4 h-4 text-amber-400" />
-          <span>Access Code: {therapistPermission.accessCode}</span>
+          <span>Access Code: {userProfile?.therapistAccessCode || 'BT-772-MIND'}</span>
         </div>
       </div>
 
@@ -45,104 +45,70 @@ export const TherapistPortal: React.FC = () => {
           </p>
 
           <div className="space-y-3">
-            
-            {/* Toggle Mood */}
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-zen-border-light dark:border-zen-border-dark flex items-center justify-between">
-              <div>
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-200 block">
-                  Allow Mood Logs Access
-                </span>
-                <span className="text-[10px] text-slate-400">Share 5-emoji daily check-in score trend</span>
-              </div>
-              <input
-                type="checkbox"
-                checked={therapistPermission.allowMoodView}
-                onChange={() => toggleTherapistPermission('allowMoodView')}
-                className="w-4 h-4 rounded text-indigo-600 border-slate-400 cursor-pointer"
-              />
-            </div>
-
-            {/* Toggle Stress */}
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-zen-border-light dark:border-zen-border-dark flex items-center justify-between">
-              <div>
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-200 block">
-                  Allow Stress Points Output Access
-                </span>
-                <span className="text-[10px] text-slate-400">Share task avoidance ratings & completed load</span>
-              </div>
-              <input
-                type="checkbox"
-                checked={therapistPermission.allowStressView}
-                onChange={() => toggleTherapistPermission('allowStressView')}
-                className="w-4 h-4 rounded text-indigo-600 border-slate-400 cursor-pointer"
-              />
-            </div>
-
-            {/* Toggle Personal Notes */}
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-zen-border-light dark:border-zen-border-dark flex items-center justify-between">
-              <div>
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-200 block">
-                  Allow Detailed Personal Notes
-                </span>
-                <span className="text-[10px] text-slate-400">Includes private reflection journal snippets</span>
-              </div>
-              <input
-                type="checkbox"
-                checked={therapistPermission.allowNotesView}
-                onChange={() => toggleTherapistPermission('allowNotesView')}
-                className="w-4 h-4 rounded text-indigo-600 border-slate-400 cursor-pointer"
-              />
-            </div>
-
-          </div>
-
-          <div className="pt-2">
-            <button className="w-full py-2.5 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white text-xs font-bold rounded-xl flex items-center justify-center space-x-2 transition-all">
-              <Download className="w-4 h-4" />
-              <span>Export PDF Clinical Summary Report</span>
-            </button>
+            {[
+              { id: 'allowMoodView', label: 'Share Mood & Energy Logs', desc: 'Allows clinician to track energy drop trends' },
+              { id: 'allowStressView', label: 'Share Stress Avoidance Metrics', desc: 'Allows clinician to view active task stress points' },
+              { id: 'allowNotesView', label: 'Share Journal & Reflection Notes', desc: 'Allows clinician to review private reflections' },
+            ].map((p) => {
+              const isEnabled = (therapistPermission as any)[p.id];
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => toggleTherapistPermission(p.id as any)}
+                  className={`w-full p-3.5 rounded-xl border text-left transition-all flex items-center justify-between ${
+                    isEnabled
+                      ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/40 shadow-sm'
+                      : 'bg-slate-50 dark:bg-slate-900/60 text-slate-400 border-zen-border-light dark:border-zen-border-dark'
+                  }`}
+                >
+                  <div>
+                    <div className="font-bold text-xs">{p.label}</div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">{p.desc}</div>
+                  </div>
+                  <CheckCircle className={`w-4 h-4 shrink-0 ${isEnabled ? 'text-emerald-400' : 'text-slate-600'}`} />
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Live Therapist View Preview */}
+        {/* Clinical Progress Preview */}
         <div className="lg:col-span-2 p-6 rounded-2xl bg-zen-surface-light dark:bg-zen-card-dark border border-zen-border-light dark:border-zen-border-dark space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-zen-border-light dark:border-zen-border-dark">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between">
+            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
               <Eye className="w-4 h-4 text-indigo-400" />
-              <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100">
-                Therapist Read-Only View Summary
-              </h4>
-            </div>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">
-              Authorized: {therapistPermission.therapistName}
+              Live Read-Only Clinical View Preview
+            </h4>
+            <span className="text-[10px] uppercase font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
+              HIPAA Compliant Structure
             </span>
           </div>
 
-          {/* Quick Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-zen-border-light dark:border-zen-border-dark/60 text-center">
-              <span className="text-[11px] text-slate-400 block font-semibold">Stress Points Relieved</span>
-              <span className="text-xl font-bold text-teal-400 mt-1 block">+{totalStressRelieved} pts</span>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-zen-border-light dark:border-zen-border-dark text-center">
+              <span className="text-[10px] text-slate-400 font-bold block uppercase">Stress Relieved</span>
+              <span className="text-lg font-bold text-teal-400 mt-1 block">+{totalStressRelieved} pts</span>
             </div>
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-zen-border-light dark:border-zen-border-dark/60 text-center">
-              <span className="text-[11px] text-slate-400 block font-semibold">Habit Streaks Maintained</span>
-              <span className="text-xl font-bold text-amber-400 mt-1 block">{habits.length} Habits</span>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-zen-border-light dark:border-zen-border-dark text-center">
+              <span className="text-[10px] text-slate-400 font-bold block uppercase">Habits Building</span>
+              <span className="text-lg font-bold text-indigo-400 mt-1 block">{habits.length} Active</span>
             </div>
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-zen-border-light dark:border-zen-border-dark/60 text-center">
-              <span className="text-[11px] text-slate-400 block font-semibold">7-Day Mood Average</span>
-              <span className="text-xl font-bold text-indigo-400 mt-1 block">3.8 / 5.0</span>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-zen-border-light dark:border-zen-border-dark text-center">
+              <span className="text-[10px] text-slate-400 font-bold block uppercase">Mood Logged</span>
+              <span className="text-lg font-bold text-emerald-400 mt-1 block">{moodLogs.length} Entries</span>
             </div>
           </div>
 
-          {/* Clinician Observations & Notes */}
-          <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30 space-y-2">
-            <h5 className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
-              <FileText className="w-4 h-4" />
-              Latest Session Note from {therapistPermission.therapistName}
-            </h5>
-            <p className="text-xs text-slate-300 leading-relaxed italic">
-              "Patient is making steady progress breaking high avoidance tasks (money & taxes) into 5-minute micro-steps. Recommend continuing body doubling sessions for administrative tasks."
-            </p>
+          <div className="p-4 rounded-xl bg-slate-900/80 border border-indigo-500/20 space-y-2">
+            <div className="flex items-center justify-between text-xs text-slate-300 font-bold">
+              <span className="flex items-center gap-1.5">
+                <FileText className="w-4 h-4 text-indigo-400" />
+                Session Sharing Link for Clinician
+              </span>
+            </div>
+            <code className="block p-2.5 rounded-lg bg-slate-950 text-teal-400 font-mono text-xs overflow-x-auto border border-slate-800">
+              https://braintether.vercel.app/therapist/review/{userProfile?.therapistAccessCode || 'BT-772-MIND'}
+            </code>
           </div>
         </div>
 
