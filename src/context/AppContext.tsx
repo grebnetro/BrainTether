@@ -38,7 +38,7 @@ interface AppContextType {
   setSearchQuery: (q: string) => void;
 
   // Actions
-  addTask: (task: Omit<Task, 'id' | 'createdAt' | 'userId'>) => void;
+  addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   moveTask: (taskId: string, newStatus: TaskStatus) => void;
@@ -121,7 +121,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     .filter(t => t.status === 'COMPLETED')
     .reduce((acc, curr) => acc + curr.stressPoints, 0);
 
-  const addTask = (newTaskData: Omit<Task, 'id' | 'createdAt' | 'userId'>) => {
+  const addTask = (newTaskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
     const newTask: Task = {
       ...newTaskData,
       id: `task-${Date.now()}`,
