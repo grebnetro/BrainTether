@@ -75,6 +75,8 @@ export interface MoodLog {
   moodTag: string; // e.g. "Focus", "Anxious", "Calm", "Burnout"
   notes?: string;
   createdAt: string;
+  score?: number;
+  energy?: number;
 }
 
 export interface BodyDoublingSession {
