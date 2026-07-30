@@ -9,14 +9,9 @@ import {
   Volume2, 
   VolumeX, 
   Sparkles, 
-  MessageSquare, 
-  Flame, 
-  Heart, 
-  CheckCircle2, 
-  ShieldCheck, 
-  Send
+  CheckCircle2
 } from 'lucide-react';
-import { audioEngine } from '../../lib/audioEngine';
+import { audioEngine, AmbientSoundPreset } from '../../lib/audioEngine';
 
 export const BodyDoubling: React.FC = () => {
   const { 
@@ -39,7 +34,11 @@ export const BodyDoubling: React.FC = () => {
       audioEngine.stop();
       setActiveSound('none');
     } else {
-      audioEngine.play(soundType, volume);
+      let preset: AmbientSoundPreset = 'RAIN';
+      if (soundType === 'brown') preset = 'BROWN_NOISE';
+      if (soundType === 'ocean') preset = 'OCEAN_WAVES';
+
+      audioEngine.play(preset, volume);
       setActiveSound(soundType);
     }
   };
