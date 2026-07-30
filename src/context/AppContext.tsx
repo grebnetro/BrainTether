@@ -174,14 +174,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setHabits(prev =>
       prev.map(h => {
         if (h.id !== habitId) return h;
-        if (h.completedDates.includes(today)) return h; // already completed today
-        const newDates = [...h.completedDates, today];
-        const newStreak = h.currentStreak + 1;
+        const completedList = h.completedDates || [];
+        if (completedList.includes(today)) return h; // already completed today
+        const newDates = [...completedList, today];
+        const newStreak = (h.currentStreak || 0) + 1;
         return {
           ...h,
           completedDates: newDates,
           currentStreak: newStreak,
-          streakCount: Math.max(h.streakCount, newStreak),
+          streakCount: Math.max(h.streakCount || 0, newStreak),
         };
       })
     );

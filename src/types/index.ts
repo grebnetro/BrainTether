@@ -25,7 +25,7 @@ export type StressLevelRange = 'ALL' | 'LOW' | 'MID' | 'HIGH'; // LOW (1-3), MID
 
 export interface Subtask {
   id: string;
-  taskId: string;
+  taskId?: string;
   title: string;
   completed: boolean;
 }
@@ -59,50 +59,36 @@ export interface Habit {
   id: string;
   title: string;
   description?: string;
-  frequency?: string;
-  targetDays: number; // ADHD 21-day streak milestone
-  currentStreak?: number;
-  streakCount?: number;
-  completedDates?: string[]; // ISO date strings
-  history?: string[];
-  category?: TaskCategory;
+  category: TaskCategory;
+  streakCount: number;
+  currentStreak: number;
+  completedDates: string[]; // YYYY-MM-DD
+  history: { date: string; completed: boolean }[];
 }
 
 export interface MoodLog {
   id: string;
-  energyLevel: number; // 1 (drained) to 5 (vibrant)
-  stressLevel: number; // 1 (calm) to 10 (overwhelmed)
-  moodTag: string; // e.g. "Focus", "Anxious", "Calm", "Burnout"
+  timestamp: string;
+  score: number; // 1 (overwhelmed) to 10 (radiant flow)
+  energy: number; // 1 (drained) to 10 (hyperfocus)
   notes?: string;
-  createdAt: string;
-  score?: number;
-  energy?: number;
-}
-
-export interface BodyDoublingSession {
-  id: string;
-  hostName?: string;
-  hostAvatar?: string;
-  partnerName: string;
-  partnerAvatar: string;
-  durationMinutes?: number;
-  elapsedSeconds?: number;
-  status: 'IDLE' | 'ACTIVE' | 'COMPLETED' | 'FINISHED';
-  myTaskSummary?: string;
-  partnerTaskSummary?: string;
-  sharedNote?: string;
-  soundscape: 'rain' | 'brown' | 'ocean' | 'none';
-  startedAt?: string;
 }
 
 export interface AccountabilityPartner {
   id: string;
   name: string;
-  avatar: string;
+  avatarUrl: string;
+  role: string;
   status: 'ONLINE' | 'IN_SESSION' | 'OFFLINE';
-  currentTask?: string;
-  bio?: string;
-  email?: string;
+  activeTask?: string;
+}
+
+export interface BodyDoublingSession {
+  active: boolean;
+  partner?: AccountabilityPartner;
+  startTime?: string;
+  durationMinutes: number;
+  taskSummary?: string;
 }
 
 export interface TherapistPermission {
@@ -115,7 +101,7 @@ export interface UserProfile {
   name: string;
   email: string;
   avatarUrl: string;
-  dailyStressCeiling: number; // threshold before warning (default: 30)
+  dailyStressCeiling: number;
   defaultSoundscape: string;
-  therapistAccessCode: string;
+  therapistAccessCode?: string;
 }
