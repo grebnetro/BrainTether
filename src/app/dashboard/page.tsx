@@ -1,21 +1,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useApp } from '../context/AppContext';
-import { Sidebar } from '../components/layout/Sidebar';
-import { Header } from '../components/layout/Header';
-import { KanbanBoard } from '../components/kanban/KanbanBoard';
-import { TaskModal } from '../components/kanban/TaskModal';
-import { CalendarView } from '../components/calendar/CalendarView';
-import { HabitsTracker } from '../components/habits/HabitsTracker';
-import { MoodAnalytics } from '../components/mood/MoodAnalytics';
-import { BodyDoubling } from '../components/accountability/BodyDoubling';
-import { TherapistPortal } from '../components/therapist/TherapistPortal';
-import { AboutView } from '../components/about/AboutView';
-import { OverwhelmModal } from '../components/focus/OverwhelmModal';
-import { OnboardingWizard } from '../components/onboarding/OnboardingWizard';
-import { AmbientPlayer } from '../components/audio/AmbientPlayer';
-import { TaskCategory } from '../types';
+import { useApp } from '../../context/AppContext';
+import { Sidebar } from '../../components/layout/Sidebar';
+import { Header } from '../../components/layout/Header';
+import { KanbanBoard } from '../../components/kanban/KanbanBoard';
+import { TaskModal } from '../../components/kanban/TaskModal';
+import { CalendarView } from '../../components/calendar/CalendarView';
+import { HabitsTracker } from '../../components/habits/HabitsTracker';
+import { MoodAnalytics } from '../../components/mood/MoodAnalytics';
+import { BodyDoubling } from '../../components/accountability/BodyDoubling';
+import { TherapistPortal } from '../../components/therapist/TherapistPortal';
+import { AboutView } from '../../components/about/AboutView';
+import { OverwhelmModal } from '../../components/focus/OverwhelmModal';
+import { OnboardingWizard } from '../../components/onboarding/OnboardingWizard';
+import { AmbientPlayer } from '../../components/audio/AmbientPlayer';
+import { TaskCategory } from '../../types';
 
 export default function DashboardPage() {
   const { activeView, addTask, updateUserProfile } = useApp();
