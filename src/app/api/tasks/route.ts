@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '../../../lib/prisma';
 
 export async function GET() {
   try {
     const tasks = await prisma.task.findMany({
       include: {
         goal: true,
-        subtasks: true,
       },
       orderBy: {
         createdAt: 'desc',
@@ -22,7 +21,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, status, priority, stressPoints, category, goalId, dueDate, assignedPartnerId, subtasks } = body;
+    const { title, description, status, priority, stressPoints, category, goalId, dueDate, assignedPartnerId } = body;
 
     const task = await prisma.task.create({
       data: {
@@ -36,16 +35,9 @@ export async function POST(request: Request) {
         goalId: goalId || undefined,
         dueDate: dueDate ? new Date(dueDate) : undefined,
         assignedPartnerId: assignedPartnerId || undefined,
-        subtasks: subtasks && subtasks.length > 0 ? {
-          create: subtasks.map((st: any) => ({
-            title: st.title,
-            completed: Boolean(st.completed),
-          })),
-        } : undefined,
       },
       include: {
         goal: true,
-        subtasks: true,
       },
     });
 
@@ -58,7 +50,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, ...updates } = body;
+    const { id, subtasks, ...updates } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Task ID is required for update' }, { status: 400 });
@@ -69,19 +61,6 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
 
-    // Handle subtasks updates if provided
-    if (updates.subtasks) {
-      await prisma.subtask.deleteMany({ where: { taskId: id } });
-      await prisma.subtask.createMany({
-        data: updates.subtasks.map((st: any) => ({
-          taskId: id,
-          title: st.title,
-          completed: Boolean(st.completed),
-        })),
-      });
-      delete updates.subtasks;
-    }
-
     const updatedTask = await prisma.task.update({
       where: { id },
       data: {
@@ -90,7 +69,6 @@ export async function PUT(request: Request) {
       },
       include: {
         goal: true,
-        subtasks: true,
       },
     });
 
