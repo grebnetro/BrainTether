@@ -23,6 +23,13 @@ export type ThemeMode = 'light' | 'dark';
 
 export type StressLevelRange = 'ALL' | 'LOW' | 'MID' | 'HIGH'; // LOW (1-3), MID (4-6), HIGH (7-10)
 
+export interface Subtask {
+  id: string;
+  taskId: string;
+  title: string;
+  completed: boolean;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -35,6 +42,7 @@ export interface Task {
   assignedPartnerId?: string;
   createdAt: string;
   updatedAt: string;
+  subtasks?: Subtask[];
 }
 
 export interface Goal {
@@ -66,11 +74,33 @@ export interface MoodLog {
 
 export interface BodyDoublingSession {
   id: string;
+  hostName?: string;
+  hostAvatar?: string;
   partnerName: string;
   partnerAvatar: string;
-  status: 'IDLE' | 'ACTIVE' | 'COMPLETED';
+  durationMinutes?: number;
+  elapsedSeconds?: number;
+  status: 'IDLE' | 'ACTIVE' | 'COMPLETED' | 'FINISHED';
+  myTaskSummary?: string;
+  partnerTaskSummary?: string;
+  sharedNote?: string;
   soundscape: 'rain' | 'brown' | 'ocean' | 'none';
   startedAt?: string;
+}
+
+export interface AccountabilityPartner {
+  id: string;
+  name: string;
+  avatar: string;
+  status: 'ONLINE' | 'IN_SESSION' | 'OFFLINE';
+  currentTask?: string;
+  bio?: string;
+}
+
+export interface TherapistPermission {
+  allowMoodView: boolean;
+  allowStressView: boolean;
+  allowNotesView: boolean;
 }
 
 export interface UserProfile {
