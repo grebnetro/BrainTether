@@ -63,7 +63,7 @@ export interface Habit {
   streakCount: number;
   currentStreak: number;
   completedDates: string[]; // YYYY-MM-DD
-  history: { date: string; completed: boolean }[];
+  history: (string | { date: string; completed: boolean })[];
   frequency?: string;
   targetDays?: number;
 }
