@@ -38,6 +38,7 @@ export interface Task {
   priority: TaskPriority;
   stressPoints: number; // 1 (low avoidance) to 10 (paralyzing avoidance)
   category: TaskCategory;
+  goalId?: string;
   dueDate?: string;
   assignedPartnerId?: string;
   createdAt: string;
