@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.4.6 | Clean unpopulated Kanban task board & Sync upper-right header avatar | Initialized Kanban task board as empty by default (no prepopulated demo tasks). Connected upper-right header profile button directly to userProfile.avatarUrl from AppContext so chosen avatar/custom photo displays globally across all pages. |
 | 2026-07-30 | 🧠v0.4.5 | Fix INITIAL_HABITS category property and enforce 100% clean Vercel TypeScript build | Fixed missing category property on INITIAL_HABITS array in initialData.ts. Updated Habit, MoodLog, and Subtask interfaces to provide complete build safety across all Vercel remote compilation workers. |
 | 2026-07-30 | 🧠v0.4.4 | Add 10-level Mind State Cartoon Avatars & Drag-and-Drop Photo Upload | Set default user profile name to 'Michael Ortenberg' with Google profile integration. Replaced stock avatars with a 10-level happiness/mind-state cartoon avatar theme (Sad/Overwhelmed to Radiant Joy). Added drag-and-drop & click-to-upload photo functionality for custom user avatars across onboarding and settings. |
 | 2026-07-30 | 🧠v0.4.3 | Fix serverless authentication error redirect & decouple Prisma adapter from JWT session | Updated NextAuth options in src/lib/auth.ts to use standalone JWT session strategy without serverless database adapter locks. Added try-catch fallbacks in authorize() and set client-side redirect handling (redirect: false) to prevent /api/auth/error screen on Vercel. |

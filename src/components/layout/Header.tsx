@@ -36,6 +36,7 @@ export const Header: React.FC<HeaderProps> = ({
     setStressFilter,
     categoryFilter,
     setCategoryFilter,
+    userProfile
   } = useApp();
 
   const [showFilters, setShowFilters] = useState(false);
@@ -242,11 +243,17 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center space-x-2 pl-2 border-l border-zen-border-light dark:border-zen-border-dark hover:opacity-80 transition-opacity"
             title="User Profile & Settings"
           >
-            <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
-              alt="User Avatar"
-              className="w-8 h-8 rounded-full border-2 border-teal-500/40 object-cover"
-            />
+            {userProfile?.avatarUrl ? (
+              <img
+                src={userProfile.avatarUrl}
+                alt={userProfile.name || 'User Avatar'}
+                className="w-8 h-8 rounded-full border-2 border-teal-500/40 object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full border-2 border-teal-500/40 bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-xs">
+                {(userProfile?.name || 'U').charAt(0)}
+              </div>
+            )}
           </Link>
         </div>
 
