@@ -5,7 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import versionData from '../../../../version.json';
-import { BrainCircuit, Lock, Mail, ArrowRight, Sparkles, LogIn } from 'lucide-react';
+import { BrainCircuit, Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -132,9 +132,17 @@ export default function SignInPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Password
-              </label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-xs font-semibold text-slate-300">
+                  Password
+                </label>
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-[11px] font-semibold text-teal-400 hover:underline"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
               <div className="relative">
                 <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                 <input
