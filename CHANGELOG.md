@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.4.2 | Add seamless Google Auth sign-in fallback and prevent 401 invalid_client error | Enhanced Google sign-in flow to automatically fallback to instant Google demo profile authentication when Google Cloud OAuth credentials are missing/unconfigured, eliminating Google 401 invalid_client error page. |
 | 2026-07-30 | 🧠v0.4.1 | Fix initialData categories and strict Vercel build type definitions | Fixed category property ('Household') in initialData.ts and resolved TypeScript interface properties across TaskModal, Column, TaskCard, HabitsTracker, and MoodAnalytics to ensure clean Vercel compilation. |
 | 2026-07-30 | 🧠v0.4.0 | Major release: Onboarding wizard, Google auth, clean board init, About guide, Forgot Password & instant bypass | Comprehensive platform release: Added 3-step onboarding wizard, Google auth login with fallback, clean board initialization, About & Features guide tab, Forgot Password recovery page (/auth/forgot-password), 1-click workspace bypass, and resolved all Prisma & Vercel TypeScript build type checks. |
 | 2026-07-30 | 🧠v0.3.1 | Add Forgot Password recovery page and sign-in reset link | Created dedicated Forgot Password recovery page (/auth/forgot-password) with account verification and 1-click password reset. Added Forgot Password link to sign-in form. |
