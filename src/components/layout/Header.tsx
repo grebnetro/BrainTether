@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import versionData from '../../../version.json';
+import Link from 'next/link';
 import { 
   Sun, 
   Moon, 
@@ -216,13 +217,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewTaskModal, onOpenOverwh
             <span>Add Task</span>
           </button>
 
-          <div className="flex items-center space-x-2 pl-2 border-l border-zen-border-light dark:border-zen-border-dark">
+          {/* User Profile Link */}
+          <Link
+            href="/profile"
+            className="flex items-center space-x-2 pl-2 border-l border-zen-border-light dark:border-zen-border-dark hover:opacity-80 transition-opacity"
+            title="User Profile & Settings"
+          >
             <img
               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
               alt="Alex Morgan"
               className="w-8 h-8 rounded-full border-2 border-teal-500/40 object-cover"
             />
-          </div>
+          </Link>
         </div>
 
       </div>

@@ -4,6 +4,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { ViewType } from '../../types';
 import versionData from '../../../version.json';
+import Link from 'next/link';
 import { 
   Kanban, 
   Calendar, 
@@ -15,7 +16,8 @@ import {
   Zap, 
   Flame, 
   Sparkles,
-  ChevronRight
+  ChevronRight,
+  User
 } from 'lucide-react';
 
 interface NavItem {
@@ -76,8 +78,8 @@ export const Sidebar: React.FC = () => {
       {/* Brand Header */}
       <div>
         <div className="p-5 flex items-center justify-between border-b border-zen-border-light dark:border-zen-border-dark">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform">
               <BrainCircuit className="w-6 h-6" />
             </div>
             <div>
@@ -91,7 +93,7 @@ export const Sidebar: React.FC = () => {
                 Calmer ADHD Workspace
               </p>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Daily Mental Load Card */}
@@ -179,10 +181,25 @@ export const Sidebar: React.FC = () => {
               </button>
             );
           })}
+
+          <Link
+            href="/profile"
+            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-200 transition-all text-left group"
+          >
+            <div className="flex items-center space-x-3 min-w-0">
+              <User className="w-5 h-5 shrink-0 text-slate-400 group-hover:text-teal-400 transition-colors" />
+              <div className="truncate">
+                <div className="text-sm truncate">User Profile & Settings</div>
+                <div className="text-[10px] text-slate-400 dark:text-slate-500 font-normal truncate">
+                  ADHD preferences & avatar
+                </div>
+              </div>
+            </div>
+          </Link>
         </nav>
       </div>
 
-      {/* Footer / Active Body Doubling Quick Status & Live Version Badge */}
+      {/* Footer / Active Body Doubling Status & Live Version Badge */}
       <div className="p-4 border-t border-zen-border-light dark:border-zen-border-dark space-y-2">
         {bodyDoublingSession.status === 'ACTIVE' ? (
           <div 
