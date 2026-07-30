@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Repeat, Trophy, Flame, CheckCircle2, Plus, Sparkles, Award } from 'lucide-react';
+import { Trophy, Flame, CheckCircle2, Plus, Award } from 'lucide-react';
 
 export const HabitsTracker: React.FC = () => {
   const { habits, logHabitCompletion, addHabit } = useApp();
@@ -50,8 +50,10 @@ export const HabitsTracker: React.FC = () => {
       {/* Grid of Habit Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {habits.map((habit) => {
-          const isDoneToday = habit.history.includes(todayStr);
-          const progressPercent = Math.min(100, (habit.streakCount / habit.targetDays) * 100);
+          const dates = habit.completedDates || habit.history || [];
+          const isDoneToday = dates.includes(todayStr);
+          const streak = habit.streakCount || habit.currentStreak || 0;
+          const progressPercent = Math.min(100, (streak / (habit.targetDays || 21)) * 100);
 
           return (
             <div 
@@ -64,13 +66,13 @@ export const HabitsTracker: React.FC = () => {
             >
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded bg-teal-500/10 text-teal-500 border border-teal-500/20">
-                  {habit.frequency}
+                  {habit.frequency || 'DAILY'}
                 </span>
 
                 {/* Streak Badge */}
                 <div className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/30 text-xs font-bold">
                   <Flame className="w-3.5 h-3.5 fill-current animate-pulse-subtle" />
-                  <span>{habit.streakCount} Day Streak</span>
+                  <span>{streak} Day Streak</span>
                 </div>
               </div>
 
@@ -86,7 +88,7 @@ export const HabitsTracker: React.FC = () => {
               {/* Progress to 21-day milestone */}
               <div className="mb-4">
                 <div className="flex justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
-                  <span>Target: {habit.targetDays} Days</span>
+                  <span>Target: {habit.targetDays || 21} Days</span>
                   <span>{Math.round(progressPercent)}%</span>
                 </div>
                 <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">

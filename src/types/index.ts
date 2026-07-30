@@ -57,10 +57,14 @@ export interface Goal {
 export interface Habit {
   id: string;
   title: string;
+  description?: string;
+  frequency?: string;
   targetDays: number; // ADHD 21-day streak milestone
   currentStreak: number;
+  streakCount?: number;
   completedDates: string[]; // ISO date strings
-  category: TaskCategory;
+  history?: string[];
+  category?: TaskCategory;
 }
 
 export interface MoodLog {
@@ -95,6 +99,7 @@ export interface AccountabilityPartner {
   status: 'ONLINE' | 'IN_SESSION' | 'OFFLINE';
   currentTask?: string;
   bio?: string;
+  email?: string;
 }
 
 export interface TherapistPermission {
