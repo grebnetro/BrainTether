@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.4.7 | Add Sign Out button across landing page, header, sidebar & profile settings | Added Sign Out buttons across landing page navigation header, app top header, sidebar navigation footer, and profile settings page. Enables 1-click logout redirecting users back to /auth/signin. |
 | 2026-07-30 | 🧠v0.4.6 | Clean unpopulated Kanban task board & Sync upper-right header avatar | Initialized Kanban task board as empty by default (no prepopulated demo tasks). Connected upper-right header profile button directly to userProfile.avatarUrl from AppContext so chosen avatar/custom photo displays globally across all pages. |
 | 2026-07-30 | 🧠v0.4.5 | Fix INITIAL_HABITS category property and enforce 100% clean Vercel TypeScript build | Fixed missing category property on INITIAL_HABITS array in initialData.ts. Updated Habit, MoodLog, and Subtask interfaces to provide complete build safety across all Vercel remote compilation workers. |
 | 2026-07-30 | 🧠v0.4.4 | Add 10-level Mind State Cartoon Avatars & Drag-and-Drop Photo Upload | Set default user profile name to 'Michael Ortenberg' with Google profile integration. Replaced stock avatars with a 10-level happiness/mind-state cartoon avatar theme (Sad/Overwhelmed to Radiant Joy). Added drag-and-drop & click-to-upload photo functionality for custom user avatars across onboarding and settings. |

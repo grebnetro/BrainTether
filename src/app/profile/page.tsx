@@ -6,6 +6,7 @@ import { Sidebar } from '../../components/layout/Sidebar';
 import { Header } from '../../components/layout/Header';
 import versionData from '../../../version.json';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 import { 
   User, 
   Flame, 
@@ -19,7 +20,8 @@ import {
   Sliders, 
   Copy,
   ExternalLink,
-  Upload
+  Upload,
+  LogOut
 } from 'lucide-react';
 import { MINDSTATE_AVATARS } from '../../components/onboarding/OnboardingWizard';
 
@@ -130,30 +132,39 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <button
-                type="submit"
-                className="flex items-center space-x-2 px-6 py-3 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-xl shadow-teal-500/20 active:scale-95 transition-all"
-              >
-                <Save className="w-4 h-4" />
-                <span>{savedSuccess ? 'Saved Preferences!' : 'Save Changes'}</span>
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="submit"
+                  className="flex items-center space-x-2 px-6 py-3 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-xl shadow-teal-500/20 active:scale-95 transition-all"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{savedSuccess ? 'Saved Preferences!' : 'Save Changes'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+                  className="flex items-center space-x-2 px-4 py-3 rounded-2xl text-xs font-bold text-slate-300 bg-slate-800 hover:bg-rose-950/50 hover:text-rose-400 border border-slate-700 hover:border-rose-500/40 transition-all shadow-md active:scale-95"
+                  title="Sign Out of BrainTether"
+                >
+                  <LogOut className="w-4 h-4 text-rose-400" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
             </div>
 
-            {/* Profile Info & Avatar Selector */}
+            {/* Personal Details & Avatar Selector */}
             <div className="p-6 rounded-3xl bg-zen-surface-dark border border-zen-border-dark shadow-xl space-y-6">
-              <h2 className="text-sm font-bold text-slate-200 flex items-center gap-2">
+              <h2 className="text-sm font-extrabold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
                 <User className="w-4 h-4 text-teal-400" />
-                Personal Details & Avatar Theme
+                <span>Personal Details & Avatar Theme</span>
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Display Name
-                  </label>
+                  <label className="text-xs font-semibold text-slate-400 mb-1 block">Display Name</label>
                   <input
                     type="text"
-                    required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-zen-border-dark text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
@@ -161,12 +172,9 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Email Address
-                  </label>
+                  <label className="text-xs font-semibold text-slate-400 mb-1 block">Email Address</label>
                   <input
                     type="email"
-                    required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-zen-border-dark text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
@@ -174,48 +182,49 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* 10 Levels of Mind State Cartoon Avatars */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
-                  <span>10 Levels of Mind State Avatars (Sad to Radiant Joy)</span>
-                  <span className="text-[10px] text-teal-400 font-mono">Theme: Fun Emoji Cartoon</span>
-                </label>
+              {/* 10-Level Mind-State Avatars Grid */}
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-slate-400">
+                    10 Levels of Mind State Avatars (Sad to Radiant Joy)
+                  </label>
+                  <span className="text-[10px] text-teal-400 font-mono">Theme: Fun Emoji Cartoons</span>
+                </div>
                 <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
-                  {MINDSTATE_AVATARS.map((item) => {
-                    const isSelected = selectedAvatar === item.url && !customAvatarUrl;
+                  {MINDSTATE_AVATARS.map((av) => {
+                    const isSelected = selectedAvatar === av.url && !customAvatarUrl;
                     return (
                       <button
+                        key={av.level}
                         type="button"
-                        key={item.level}
                         onClick={() => {
-                          setSelectedAvatar(item.url);
+                          setSelectedAvatar(av.url);
                           setCustomAvatarUrl('');
                         }}
-                        className={`relative p-2 rounded-xl border flex flex-col items-center justify-center transition-all ${
+                        className={`p-1.5 rounded-xl border flex flex-col items-center gap-1 transition-all ${
                           isSelected
-                            ? 'border-teal-400 bg-teal-500/10 ring-2 ring-teal-500/30 scale-105 shadow-md'
-                            : 'border-zen-border-dark bg-slate-900/60 opacity-80 hover:opacity-100 hover:border-slate-600'
+                            ? 'bg-teal-500/20 border-teal-400 scale-105 ring-2 ring-teal-500/40'
+                            : 'bg-slate-900 border-zen-border-dark hover:border-slate-600 opacity-70 hover:opacity-100'
                         }`}
+                        title={av.label}
                       >
-                        <img src={item.url} alt={item.label} className="w-8 h-8 object-contain" />
-                        <span className="text-[8px] font-bold text-slate-300 mt-1 text-center line-clamp-1">{item.label}</span>
-                        {isSelected && (
-                          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-teal-500 text-white flex items-center justify-center shadow">
-                            <Check className="w-2.5 h-2.5" />
-                          </div>
-                        )}
+                        <img src={av.url} alt={av.label} className="w-8 h-8 rounded-lg object-contain" />
+                        <span className="text-[9px] font-mono text-slate-300 truncate max-w-full">
+                          L{av.level}: {av.label.split(' ')[0]}
+                        </span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Drag and Drop Custom Photo Upload */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              {/* Drag & Drop Custom Photo Upload */}
+              <div className="space-y-2 pt-2">
+                <label className="text-xs font-semibold text-slate-400">
                   Or Upload Custom Photo (Drag & Drop or Click)
                 </label>
-                <div 
+                
+                <div
                   onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
                   onDragLeave={() => setDragging(false)}
                   onDrop={(e) => {
@@ -225,104 +234,102 @@ export default function ProfilePage() {
                       handleImageFile(e.dataTransfer.files[0]);
                     }
                   }}
-                  className={`p-4 rounded-2xl border-2 border-dashed text-center cursor-pointer transition-all ${
-                    dragging 
-                      ? 'border-teal-400 bg-teal-500/10' 
-                      : 'border-zen-border-dark bg-slate-900/60 hover:border-slate-600'
+                  className={`p-6 rounded-2xl border-2 border-dashed text-center transition-all cursor-pointer ${
+                    dragging
+                      ? 'border-teal-400 bg-teal-500/10'
+                      : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
                   }`}
+                  onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = (e: any) => {
+                      if (e.target.files && e.target.files[0]) {
+                        handleImageFile(e.target.files[0]);
+                      }
+                    };
+                    input.click();
+                  }}
                 >
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={(e) => e.target.files?.[0] && handleImageFile(e.target.files[0])}
-                    className="hidden" 
-                    id="profile-avatar-file"
-                  />
-                  <label htmlFor="profile-avatar-file" className="cursor-pointer space-y-1.5 block">
-                    <Upload className="w-5 h-5 text-teal-400 mx-auto" />
-                    <span className="text-xs font-bold text-slate-200 block">
-                      Drag & Drop your photo here, or click to browse
-                    </span>
-                    <span className="text-[10px] text-slate-400 block">
-                      Supports JPG, PNG, GIF, WebP (Converted automatically)
-                    </span>
-                  </label>
+                  <Upload className="w-6 h-6 mx-auto text-teal-400 mb-2" />
+                  <p className="text-xs font-bold text-slate-200">
+                    Drag & Drop your photo here, or click to browse
+                  </p>
+                  <p className="text-[10px] text-slate-500 mt-1">
+                    Supports JPG, PNG, GIF, WebP (Converted automatically)
+                  </p>
                 </div>
               </div>
-
             </div>
 
-            {/* Cognitive & ADHD Preferences */}
+            {/* Executive Function Threshold Settings */}
             <div className="p-6 rounded-3xl bg-zen-surface-dark border border-zen-border-dark shadow-xl space-y-6">
-              <h2 className="text-sm font-bold text-slate-200 flex items-center gap-2">
+              <h2 className="text-sm font-extrabold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
                 <Sliders className="w-4 h-4 text-amber-400" />
-                ADHD & Cognitive Threshold Preferences
+                <span>ADHD & Cognitive Threshold Preferences</span>
               </h2>
 
-              {/* Stress Ceiling Slider */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Flame className="w-4 h-4 text-amber-500" />
-                    Daily Stress Point Capacity Ceiling
-                  </label>
-                  <span className="text-xs font-bold font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                    {dailyStressCeiling} Pts Max
-                  </span>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-xs font-semibold text-slate-300">
+                      Daily Stress Point Capacity Ceiling
+                    </label>
+                    <span className="text-xs font-mono font-bold text-amber-400">{dailyStressCeiling} Pts Max</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="10"
+                    max="60"
+                    step="5"
+                    value={dailyStressCeiling}
+                    onChange={(e) => setDailyStressCeiling(parseInt(e.target.value))}
+                    className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-amber-400"
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    When your active task stress total exceeds this limit, BrainTether displays warm warnings to prompt micro-breaks.
+                  </p>
                 </div>
-                <p className="text-[11px] text-slate-400">
-                  When your active task stress total exceeds this limit, BrainTether displays warm warnings to prompt micro-breaks.
-                </p>
-                <input
-                  type="range"
-                  min="10"
-                  max="50"
-                  step="5"
-                  value={dailyStressCeiling}
-                  onChange={(e) => setDailyStressCeiling(parseInt(e.target.value))}
-                  className="w-full accent-teal-400 cursor-pointer h-2 bg-slate-900 rounded-lg"
-                />
-              </div>
 
-              {/* Default Ambient Soundscape */}
-              <div className="space-y-2 pt-2">
-                <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                  <Volume2 className="w-4 h-4 text-teal-400" />
-                  Default Focus Soundscape
-                </label>
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { id: 'rain', label: 'Soft Rain' },
-                    { id: 'brown', label: 'Brown Focus Noise' },
-                    { id: 'ocean', label: 'Ocean Waves' },
-                  ].map((s) => (
-                    <button
-                      type="button"
-                      key={s.id}
-                      onClick={() => setDefaultSoundscape(s.id)}
-                      className={`p-3 rounded-xl border text-xs font-bold text-center transition-all ${
-                        defaultSoundscape === s.id
-                          ? 'bg-teal-500/20 text-teal-300 border-teal-500/40 shadow-sm'
-                          : 'bg-slate-900 text-slate-400 border-zen-border-dark hover:text-slate-200'
-                      }`}
-                    >
-                      {s.label}
-                    </button>
-                  ))}
+                <div>
+                  <label className="text-xs font-semibold text-slate-300 mb-2 block">
+                    Default Focus Soundscape
+                  </label>
+                  <select
+                    value={defaultSoundscape}
+                    onChange={(e) => setDefaultSoundscape(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-zen-border-dark text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                  >
+                    <option value="rain">Gentle Rain & Soft Thunder</option>
+                    <option value="pink_noise">Warm Pink Noise (High-Focus Hz)</option>
+                    <option value="brown_noise">Deep Brown Noise (ADHD Quiet Mind)</option>
+                    <option value="forest">Pine Forest & Soft Wind</option>
+                  </select>
                 </div>
               </div>
             </div>
 
-            {/* Therapist & Coach Integration */}
+            {/* Therapist & Care Provider Access */}
             <div className="p-6 rounded-3xl bg-zen-surface-dark border border-zen-border-dark shadow-xl space-y-6">
               <div className="flex items-center justify-between">
+                <h2 className="text-sm font-extrabold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>Therapist & Coach Read-Only Sharing</span>
+                </h2>
+                <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider">
+                  HIPAA & Privacy Safe
+                </span>
+              </div>
+
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Generate a temporary 8-character access code for your therapist to review your stress trends without granting edit permissions.
+              </p>
+
+              <div className="p-4 rounded-2xl bg-slate-900 border border-zen-border-dark flex items-center justify-between">
                 <div>
-                  <h2 className="text-sm font-bold text-slate-200 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-indigo-400" />
-                    Therapist Access Portal
-                  </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Share read-only access codes with clinical providers for session reviews.
+                  <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Your Therapist Access Code</span>
+                  <p className="text-lg font-mono font-black text-teal-400 tracking-wider">
+                    {userProfile.therapistAccessCode || 'BT-772-MIND'}
                   </p>
                 </div>
 
@@ -330,67 +337,52 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={handleCopyAccessCode}
-                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold hover:bg-indigo-500/20 transition-all"
+                    className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/30 hover:bg-teal-500/20 text-xs font-semibold transition-all"
                   >
                     <Copy className="w-3.5 h-3.5" />
-                    <span>{copiedCode ? 'Copied!' : 'Copy Code'}</span>
+                    <span>{copiedCode ? 'Copied Code!' : 'Copy Code'}</span>
                   </button>
+
                   <Link
                     href={`/therapist/review/${userProfile.therapistAccessCode || 'BT-772-MIND'}`}
                     target="_blank"
-                    className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-slate-900 border border-zen-border-dark text-slate-300 text-xs font-semibold hover:text-white transition-all"
+                    className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition-all"
                   >
-                    <span>Preview</span>
-                    <ExternalLink className="w-3 h-3" />
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Preview Portal</span>
                   </Link>
                 </div>
               </div>
 
-              {/* Therapist Permissions Quick Controls */}
-              <div className="p-4 rounded-2xl bg-slate-900/60 border border-zen-border-dark space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-indigo-400" />
-                    Therapist Portal Review Permissions
-                  </label>
-                  <span className="text-xs font-mono font-bold text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/30">
-                    Code: {userProfile.therapistAccessCode || 'BT-772-MIND'}
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => toggleTherapistPermission('allowMoodView')}
-                    className={`p-2.5 rounded-xl border text-[11px] font-bold text-left transition-all ${
-                      therapistPermission.allowMoodView
-                        ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
-                        : 'bg-slate-800 text-slate-400 border-transparent'
-                    }`}
-                  >
-                    Mood Logs: {therapistPermission.allowMoodView ? 'Visible' : 'Hidden'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleTherapistPermission('allowStressView')}
-                    className={`p-2.5 rounded-xl border text-[11px] font-bold text-left transition-all ${
-                      therapistPermission.allowStressView
-                        ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
-                        : 'bg-slate-800 text-slate-400 border-transparent'
-                    }`}
-                  >
-                    Stress Metrics: {therapistPermission.allowStressView ? 'Visible' : 'Hidden'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleTherapistPermission('allowNotesView')}
-                    className={`p-2.5 rounded-xl border text-[11px] font-bold text-left transition-all ${
-                      therapistPermission.allowNotesView
-                        ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
-                        : 'bg-slate-800 text-slate-400 border-transparent'
-                    }`}
-                  >
-                    Journal Notes: {therapistPermission.allowNotesView ? 'Visible' : 'Hidden'}
-                  </button>
+              <div className="space-y-3 pt-2">
+                <label className="text-xs font-semibold text-slate-300">Granular Permissions</label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { key: 'allowMoodView', label: 'Allow Mood & Energy Log View' },
+                    { key: 'allowStressView', label: 'Allow Avoidance Stress Output View' },
+                    { key: 'allowNotesView', label: 'Allow Journal Notes View' },
+                  ].map((perm) => {
+                    const isChecked = therapistPermission[perm.key as keyof typeof therapistPermission];
+                    return (
+                      <button
+                        key={perm.key}
+                        type="button"
+                        onClick={() => toggleTherapistPermission(perm.key as any)}
+                        className={`p-3 rounded-xl border text-left flex items-start space-x-2.5 transition-all ${
+                          isChecked
+                            ? 'bg-teal-500/10 border-teal-500/40 text-slate-200'
+                            : 'bg-slate-900 border-zen-border-dark text-slate-500'
+                        }`}
+                      >
+                        <div className={`w-4 h-4 rounded mt-0.5 border flex items-center justify-center shrink-0 ${
+                          isChecked ? 'bg-teal-500 border-teal-400 text-white' : 'border-slate-700'
+                        }`}>
+                          {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                        </div>
+                        <span className="text-xs font-medium">{perm.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>

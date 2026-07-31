@@ -4,6 +4,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { ViewType } from '../../types';
 import versionData from '../../../version.json';
+import { signOut } from 'next-auth/react';
 import { 
   LayoutDashboard, 
   Calendar, 
@@ -15,7 +16,7 @@ import {
   Sparkles,
   Info,
   ChevronRight,
-  UserCheck
+  LogOut
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -116,7 +117,7 @@ export const Sidebar: React.FC = () => {
         </nav>
       </div>
 
-      {/* Live Co-Working Status Footer */}
+      {/* Footer Section */}
       <div className="space-y-3 pt-4 border-t border-zen-border-light dark:border-zen-border-dark">
         {isBodyDoublingLive ? (
           <div 
@@ -139,7 +140,20 @@ export const Sidebar: React.FC = () => {
           </div>
         ) : null}
 
-        <div className="flex items-center justify-between text-xs text-slate-400">
+        {/* Sidebar Sign Out Button */}
+        <button
+          onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+          className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all group"
+          title="Sign out of your BrainTether account"
+        >
+          <div className="flex items-center space-x-3">
+            <LogOut className="w-4 h-4 text-rose-400 group-hover:scale-110 transition-transform" />
+            <span>Sign Out</span>
+          </div>
+          <span className="text-[10px] text-rose-400/70 font-mono">Exit</span>
+        </button>
+
+        <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
           <span className="flex items-center gap-1 font-mono font-semibold text-teal-400">
             <Sparkles className="w-3.5 h-3.5 text-teal-400" />
             v{versionData.version}

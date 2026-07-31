@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import versionData from '../../../version.json';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 import { 
   Sun, 
   Moon, 
@@ -11,7 +12,8 @@ import {
   Plus, 
   Filter, 
   Heart,
-  BookOpen
+  BookOpen,
+  LogOut
 } from 'lucide-react';
 import { StressLevelRange, TaskCategory } from '../../types';
 
@@ -255,6 +257,16 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             )}
           </Link>
+
+          {/* Header Sign Out Button */}
+          <button
+            onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+            title="Sign Out of BrainTether"
+            className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold text-slate-400 hover:text-rose-400 bg-slate-100 dark:bg-slate-800/80 hover:bg-rose-500/10 border border-zen-border-light dark:border-zen-border-dark hover:border-rose-500/30 rounded-xl transition-all shadow-sm active:scale-95"
+          >
+            <LogOut className="w-3.5 h-3.5 text-rose-400" />
+            <span className="hidden sm:inline">Sign Out</span>
+          </button>
         </div>
 
       </div>

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import versionData from '../../version.json';
 import { 
   BrainCircuit, 
@@ -13,7 +13,8 @@ import {
   ShieldCheck, 
   ArrowRight, 
   Sparkles, 
-  Calendar
+  Calendar,
+  LogOut
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -51,27 +52,48 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             {session ? (
-              <span className="text-xs font-medium text-emerald-400 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5" /> Signed in as {session.user?.name || session.user?.email}
-              </span>
-            ) : (
-              <Link
-                href="/auth/signin"
-                className="text-xs font-semibold text-slate-300 hover:text-white transition-colors px-3 py-2"
-              >
-                Sign In
-              </Link>
-            )}
+              <>
+                <span className="text-xs font-medium text-emerald-400 flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5" /> Signed in as {session.user?.name || session.user?.email || 'Michael Ortenberg'}
+                </span>
 
-            <Link
-              href={targetDestination}
-              className="flex items-center space-x-1.5 px-4 py-2 text-xs font-bold text-white rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-lg shadow-teal-500/20 active:scale-95 transition-all"
-            >
-              <span>{session ? 'Go to Workspace' : 'Sign In to Access'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+                <Link
+                  href={targetDestination}
+                  className="flex items-center space-x-1.5 px-4 py-2 text-xs font-bold text-white rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-lg shadow-teal-500/20 active:scale-95 transition-all"
+                >
+                  <span>Go to Workspace</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+
+                <button
+                  onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+                  className="flex items-center space-x-1.5 px-3 py-2 text-xs font-bold text-slate-300 bg-slate-800/80 hover:bg-rose-950/50 hover:text-rose-300 border border-slate-700 hover:border-rose-500/40 rounded-xl transition-all shadow-sm active:scale-95"
+                  title="Sign Out of BrainTether"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth/signin"
+                  className="text-xs font-semibold text-slate-300 hover:text-white transition-colors px-3 py-2"
+                >
+                  Sign In
+                </Link>
+
+                <Link
+                  href={targetDestination}
+                  className="flex items-center space-x-1.5 px-4 py-2 text-xs font-bold text-white rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-lg shadow-teal-500/20 active:scale-95 transition-all"
+                >
+                  <span>Sign In to Access</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -98,94 +120,97 @@ export default function LandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link
               href={targetDestination}
-              className="px-8 py-4 text-sm font-bold text-white rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-xl shadow-teal-500/25 active:scale-95 transition-all flex items-center space-x-2"
+              className="flex items-center space-x-2 px-6 py-3.5 text-sm font-bold text-white rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-xl shadow-teal-500/25 active:scale-95 transition-all"
             >
-              <span>{session ? 'Enter Workspace' : 'Sign In / Register Free'}</span>
+              <span>Enter Workspace</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
 
-        {/* Interactive Stress Points Preview Widget */}
-        <div className="max-w-xl mx-auto mt-14 p-6 rounded-3xl bg-zen-surface-dark border border-teal-500/40 shadow-2xl text-left space-y-4">
+        {/* Interactive Stress Slider Demo */}
+        <div className="max-w-2xl mx-auto mt-16 p-6 rounded-3xl bg-zen-surface-dark border border-zen-border-dark shadow-2xl space-y-6 text-left">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-              <Flame className="w-4 h-4 text-amber-500" />
-              Live Interactive Stress Rating Slider
+            <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+              <Flame className="w-4 h-4" /> Live Interactive Stress Rating Slider
             </span>
-            <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${badge.bg}`}>
+            <span className={`text-xs px-2.5 py-1 rounded-full border font-bold uppercase tracking-wider ${badge.bg}`}>
               {demoStressPoints} / 10 Pts — {badge.label}
             </span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-900 border border-zen-border-dark space-y-2">
-            <div className="flex justify-between text-xs font-bold text-slate-200">
-              <span>Open pile of unopened tax mail</span>
-              <span className="text-amber-400 font-mono">{demoStressPoints} pts</span>
+            <div className="flex justify-between items-center">
+              <h4 className="font-bold text-slate-200 text-sm">Open pile of unopened tax mail</h4>
+              <span className="text-xs font-mono font-bold text-amber-400">{demoStressPoints} pts</span>
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-xs text-slate-400">
               Adjust the slider to see how higher stress ratings trigger warm heat borders & micro-step breakers:
             </p>
           </div>
 
-          <input
-            type="range"
-            min="1"
-            max="10"
-            value={demoStressPoints}
-            onChange={(e) => setDemoStressPoints(parseInt(e.target.value))}
-            className="w-full accent-teal-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
-          />
-
-          <div className="flex justify-between text-[10px] text-slate-400 font-semibold">
-            <span>1 - Low Avoidance</span>
-            <span>5 - Routine Task</span>
-            <span>10 - Dread / Blocked</span>
+          <div className="space-y-2">
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value={demoStressPoints}
+              onChange={(e) => setDemoStressPoints(parseInt(e.target.value))}
+              className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-teal-400"
+            />
+            <div className="flex justify-between text-[10px] font-mono text-slate-500">
+              <span>1 - Low Avoidance</span>
+              <span>5 - Routine Task</span>
+              <span>10 - Dread / Blocked</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Core Feature Grid */}
-      <section className="py-16 px-6 bg-zen-surface-dark/50 border-t border-zen-border-dark">
+      {/* Core Pillar Features */}
+      <section className="py-16 px-6 bg-slate-900/50 border-t border-zen-border-dark">
         <div className="max-w-6xl mx-auto space-y-12">
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-3">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-100">
               Built Specifically for ADHD & Executive Dysfunction
             </h2>
             <p className="text-xs md:text-sm text-slate-400 max-w-xl mx-auto">
-              Calmer visual scannability without visual noise or corporate agile pressure.
+              Every feature is engineered to lower cognitive barrier-to-entry and eliminate task paralysis guilt.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <div className="p-6 rounded-3xl bg-zen-surface-dark border border-zen-border-dark space-y-3">
-              <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center">
-                <Flame className="w-5 h-5" />
+            {/* Feature 1 */}
+            <div className="p-6 rounded-2xl bg-zen-surface-dark border border-zen-border-dark space-y-4 hover:border-teal-500/40 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/30 flex items-center justify-center">
+                <Flame className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-base text-slate-100">1–10 Stress Points</h3>
+              <h3 className="font-extrabold text-slate-200 text-base">Stress Capacity Engine</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Replaces traditional Agile story points. Rated on task avoidance or anxiety level so you can identify burnout risks at a glance.
+                Rate tasks 1–10 by emotional avoidance stress points instead of rigid time estimates. Know when your daily ceiling is reached before burnout strikes.
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl bg-zen-surface-dark border border-zen-border-dark space-y-3">
-              <div className="w-10 h-10 rounded-2xl bg-teal-500/20 text-teal-400 border border-teal-500/30 flex items-center justify-center">
-                <Heart className="w-5 h-5" />
+            {/* Feature 2 */}
+            <div className="p-6 rounded-2xl bg-zen-surface-dark border border-zen-border-dark space-y-4 hover:border-teal-500/40 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center">
+                <Heart className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-base text-slate-100">Overwhelm 2-Min Reset</h3>
+              <h3 className="font-extrabold text-slate-200 text-base">2-Minute Overwhelm Protocol</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                When paralysis hits, click "I'm Overwhelmed" to hide all task noise, isolate 1 micro-step, and launch a low-pressure 120-second timer.
+                When paralysis sets in, hit "I'm Overwhelmed" to launch guided 2-minute micro-break routines and automated subtask breakers.
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl bg-zen-surface-dark border border-zen-border-dark space-y-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
-                <Users className="w-5 h-5" />
+            {/* Feature 3 */}
+            <div className="p-6 rounded-2xl bg-zen-surface-dark border border-zen-border-dark space-y-4 hover:border-teal-500/40 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+                <Users className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-base text-slate-100">Virtual Body Doubling</h3>
+              <h3 className="font-extrabold text-slate-200 text-base">Parallel Focus Body Doubling</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Parallel focus mode with accountability partners, live micro-reactions, and built-in Web Audio ambient rain & brown noise.
+                Work alongside virtual focus partners in low-pressure body doubling sessions to mirror productivity without social anxiety.
               </p>
             </div>
 
@@ -194,12 +219,14 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-zen-border-dark text-center text-xs text-slate-400">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="font-mono text-teal-400">BrainTether v{versionData.version} • ADHD-Safe Architecture</span>
-          <Link href={targetDestination} className="text-slate-300 hover:text-white font-bold">
-            {session ? 'Enter Workspace →' : 'Sign In Required →'}
-          </Link>
+      <footer className="py-8 px-6 border-t border-zen-border-dark text-center text-xs text-slate-500">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-2">
+            <BrainCircuit className="w-4 h-4 text-teal-400" />
+            <span className="font-bold text-slate-300">BrainTether v{versionData.version}</span>
+            <span>— Calmer ADHD Executive Workspace</span>
+          </div>
+          <p>© 2026 BrainTether. Built with care for neurodivergent focus.</p>
         </div>
       </footer>
 
