@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.5.4 | Make Ambient Soundscape Synth panel collapsible with audio status badge | Added collapse/expand toggle controls (ChevronUp/ChevronDown) to the Ambient Soundscape Synth panel. Allows users to collapse preset/volume controls into a sleek compact header bar with live audio playback status indicators while soundscapes play in the background. |
 | 2026-07-30 | 🧠v0.5.3 | Profile Name Isolation: Default unauthenticated Demo mode to 'Demo User' | Replaced hardcoded default profile name ('Michael Ortenberg') with 'Demo User' (guest@braintether.app) in AppContext. User identity is dynamically loaded only when signed into a personal Google or Email session. |
 | 2026-07-30 | 🧠v0.5.2 | Fix Demo redirect: 1-click instant demo workspace launch bypassing login wall | Updated 'Demo' and 'Try Live Demo' buttons to immediately initialize a guest demo session in <100ms and navigate directly to /dashboard without hitting the sign-in form wall. |
 | 2026-07-30 | 🧠v0.5.1 | Clean Layout Polish: Top Header Demo button, Single Sign In/Sign Up CTA & Above-the-fold ADHD Features | Added top-header 'Demo' button, unified sign-in/sign-up into a single clear 'Sign In / Sign Up' action button, removed slider clutter from hero section, and promoted 'Built Specifically for ADHD & Executive Dysfunction' feature section directly above the fold. |
