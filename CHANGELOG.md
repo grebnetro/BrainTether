@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.5.0 | Major UX Redesign: Single Enter Workspace demo button & Interactive ADHD Stress Calculator | Simplified hero section to a single 'Enter Workspace (Instant Demo)' button taking users directly to /dashboard without login wall. Added interactive task preset buttons (Tax Mail, Clean Counters, Refill Water) to explain the ADHD Stress Point Engine. |
 | 2026-07-30 | 🧠v0.4.9 | Streamline landing page CTAs & add direct Continue with Google button | Removed duplicate top-right header sign-in links on landing page. Added direct 'Continue with Google' button alongside 'Enter Workspace' in hero CTA group. Prominently styled Google Auth on sign-in page (/auth/signin). |
 | 2026-07-30 | 🧠v0.4.8 | Port BrainTether to Netlify production hosting | Configured netlify.toml, installed @netlify/plugin-nextjs adapter, and linked BrainTether to Netlify site braintether-app (https://braintether-app.netlify.app). |
 | 2026-07-30 | 🧠v0.4.7 | Add Sign Out button across landing page, header, sidebar & profile settings | Added Sign Out buttons across landing page navigation header, app top header, sidebar navigation footer, and profile settings page. Enables 1-click logout redirecting users back to /auth/signin. |
