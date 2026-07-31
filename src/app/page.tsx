@@ -25,6 +25,9 @@ export default function LandingPage() {
   const handleDemoLaunch = async (e: React.MouseEvent) => {
     e.preventDefault();
     setLoadingDemo(true);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('braintether_onboarding_completed');
+    }
     const res = await signIn('credentials', {
       redirect: false,
       email: 'guest@braintether.app',

@@ -46,7 +46,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Step 1 State: Profile & Avatar
-  const [name, setName] = useState('Michael Ortenberg');
+  const [name, setName] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState(MINDSTATE_AVATARS[9].url);
   const [customAvatarUrl, setCustomAvatarUrl] = useState('');
   const [dragging, setDragging] = useState(false);
@@ -73,7 +73,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 
   const handleStep1Submit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSaveProfile({ name: name.trim() || 'Michael Ortenberg', avatarUrl: currentAvatar });
+    onSaveProfile({ name: name.trim() || 'Demo Guest', avatarUrl: currentAvatar });
     setStep(2);
   };
 

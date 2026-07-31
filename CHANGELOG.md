@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.5.6 | Floating Soundscapes Widget & Onboarding Name Prompt | Re-architected Ambient Soundscape Synth as a floating fixed bottom-right widget that collapses into a sleek compact pill, freeing 100% full height and width for the Kanban Task Board. Fixed demo workspace launch to trigger the Onboarding Wizard modal asking users for their display name. |
 | 2026-07-30 | 🧠v0.5.5 | Fix Sign Out redirect: Bulletproof client-side logout avoiding 'site can't be reached' host errors | Replaced server-side signOut({ callbackUrl }) redirects with client-side await signOut({ redirect: false }) followed by explicit window.location.href = '/auth/signin' across Header, Sidebar, Landing Page, and Profile Settings. |
 | 2026-07-30 | 🧠v0.5.4 | Make Ambient Soundscape Synth panel collapsible with audio status badge | Added collapse/expand toggle controls (ChevronUp/ChevronDown) to the Ambient Soundscape Synth panel. Allows users to collapse preset/volume controls into a sleek compact header bar with live audio playback status indicators while soundscapes play in the background. |
 | 2026-07-30 | 🧠v0.5.3 | Profile Name Isolation: Default unauthenticated Demo mode to 'Demo User' | Replaced hardcoded default profile name ('Michael Ortenberg') with 'Demo User' (guest@braintether.app) in AppContext. User identity is dynamically loaded only when signed into a personal Google or Email session. |
