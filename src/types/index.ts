@@ -108,6 +108,7 @@ export interface UserProfile {
   name: string;
   email: string;
   avatarUrl: string;
+  avatarTheme?: 'fun-emoji' | 'bottts' | 'adventurer' | 'lorelei' | 'pixel-art';
   dailyStressCeiling: number;
   defaultSoundscape: string;
   therapistAccessCode?: string;

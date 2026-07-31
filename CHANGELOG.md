@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.5.7 | 5 Avatar Themes & 10 Mind State Level Descriptions | Added 5 selectable avatar themes (Fun Emoji, Focus Bottts, Adventurer RPG, Zen Lorelei, Retro Pixel) and populated explicit mind state level descriptions (Level 1 Overwhelmed to Level 10 Radiant Joy) across Onboarding Wizard and Profile Settings. |
 | 2026-07-30 | 🧠v0.5.6 | Floating Soundscapes Widget & Onboarding Name Prompt | Re-architected Ambient Soundscape Synth as a floating fixed bottom-right widget that collapses into a sleek compact pill, freeing 100% full height and width for the Kanban Task Board. Fixed demo workspace launch to trigger the Onboarding Wizard modal asking users for their display name. |
 | 2026-07-30 | 🧠v0.5.5 | Fix Sign Out redirect: Bulletproof client-side logout avoiding 'site can't be reached' host errors | Replaced server-side signOut({ callbackUrl }) redirects with client-side await signOut({ redirect: false }) followed by explicit window.location.href = '/auth/signin' across Header, Sidebar, Landing Page, and Profile Settings. |
 | 2026-07-30 | 🧠v0.5.4 | Make Ambient Soundscape Synth panel collapsible with audio status badge | Added collapse/expand toggle controls (ChevronUp/ChevronDown) to the Ambient Soundscape Synth panel. Allows users to collapse preset/volume controls into a sleek compact header bar with live audio playback status indicators while soundscapes play in the background. |

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { Header } from '../../components/layout/Header';
+import { AVATAR_THEMES, MINDSTATE_LEVELS, getAvatarUrl } from '../../components/onboarding/OnboardingWizard';
 import versionData from '../../../version.json';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
@@ -23,7 +24,6 @@ import {
   Upload,
   LogOut
 } from 'lucide-react';
-import { MINDSTATE_AVATARS } from '../../components/onboarding/OnboardingWizard';
 
 export default function ProfilePage() {
   const { 
@@ -33,9 +33,11 @@ export default function ProfilePage() {
     toggleTherapistPermission 
   } = useApp();
 
-  const [name, setName] = useState(userProfile.name || 'Michael Ortenberg');
-  const [email, setEmail] = useState(userProfile.email || 'michael.ortenberg@gmail.com');
-  const [selectedAvatar, setSelectedAvatar] = useState(userProfile.avatarUrl || MINDSTATE_AVATARS[9].url);
+  const [name, setName] = useState(userProfile.name || 'Demo User');
+  const [email, setEmail] = useState(userProfile.email || 'guest@braintether.app');
+  const [selectedTheme, setSelectedTheme] = useState<'fun-emoji' | 'bottts' | 'adventurer' | 'lorelei' | 'pixel-art'>('fun-emoji');
+  const [selectedLevel, setSelectedLevel] = useState<number>(10);
+  const [selectedAvatar, setSelectedAvatar] = useState(userProfile.avatarUrl);
   const [customAvatarUrl, setCustomAvatarUrl] = useState('');
   const [dailyStressCeiling, setDailyStressCeiling] = useState(userProfile.dailyStressCeiling || 30);
   const [defaultSoundscape, setDefaultSoundscape] = useState(userProfile.defaultSoundscape || 'rain');
@@ -185,35 +187,80 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* 10-Level Mind-State Avatars Grid */}
+              {/* 10-Level Mind-State Avatars Grid with Themes */}
               <div className="space-y-3 pt-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-slate-400">
-                    10 Levels of Mind State Avatars (Sad to Radiant Joy)
+                  <label className="text-xs font-semibold text-slate-300">
+                    Avatar Theme & Mind State Level
                   </label>
-                  <span className="text-[10px] text-teal-400 font-mono">Theme: Fun Emoji Cartoons</span>
+                  <span className="text-[10px] text-teal-400 font-mono">5 Themes Available</span>
                 </div>
+
+                {/* Theme Switcher Pills */}
+                <div className="flex items-center space-x-2 overflow-x-auto pb-1">
+                  {AVATAR_THEMES.map((theme) => (
+                    <button
+                      key={theme.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTheme(theme.id as any);
+                        const lvlObj = MINDSTATE_LEVELS.find(l => l.level === selectedLevel) || MINDSTATE_LEVELS[9];
+                        setSelectedAvatar(getAvatarUrl(theme.id, lvlObj));
+                        setCustomAvatarUrl('');
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold border whitespace-nowrap transition-all ${
+                        selectedTheme === theme.id && !customAvatarUrl
+                          ? 'bg-teal-500/20 text-teal-300 border-teal-500/50 shadow-sm'
+                          : 'bg-slate-900/60 text-slate-400 border-zen-border-dark hover:bg-slate-800'
+                      }`}
+                    >
+                      {theme.name}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Active Level Description Banner */}
+                {(() => {
+                  const lvlObj = MINDSTATE_LEVELS.find(l => l.level === selectedLevel) || MINDSTATE_LEVELS[9];
+                  const currentGenUrl = getAvatarUrl(selectedTheme, lvlObj);
+                  return (
+                    <div className="p-3 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center space-x-3">
+                      <img src={currentGenUrl} alt={lvlObj.label} className="w-10 h-10 object-contain bg-slate-950 p-1 rounded-xl border border-teal-500/40" />
+                      <div>
+                        <h4 className="text-xs font-bold text-teal-300 flex items-center gap-1.5">
+                          <span>{lvlObj.label}</span>
+                          <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-300 font-mono">Level {lvlObj.level} / 10</span>
+                        </h4>
+                        <p className="text-[11px] text-slate-300 mt-0.5">{lvlObj.desc}</p>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* 10 Mind State Levels Grid */}
                 <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
-                  {MINDSTATE_AVATARS.map((av) => {
-                    const isSelected = selectedAvatar === av.url && !customAvatarUrl;
+                  {MINDSTATE_LEVELS.map((lvl) => {
+                    const avUrl = getAvatarUrl(selectedTheme, lvl);
+                    const isSelected = selectedLevel === lvl.level && !customAvatarUrl;
                     return (
                       <button
-                        key={av.level}
+                        key={lvl.level}
                         type="button"
                         onClick={() => {
-                          setSelectedAvatar(av.url);
+                          setSelectedLevel(lvl.level);
+                          setSelectedAvatar(avUrl);
                           setCustomAvatarUrl('');
                         }}
                         className={`p-1.5 rounded-xl border flex flex-col items-center gap-1 transition-all ${
                           isSelected
-                            ? 'bg-teal-500/20 border-teal-400 scale-105 ring-2 ring-teal-500/40'
+                            ? 'bg-teal-500/20 border-teal-400 scale-105 ring-2 ring-teal-500/40 font-bold'
                             : 'bg-slate-900 border-zen-border-dark hover:border-slate-600 opacity-70 hover:opacity-100'
                         }`}
-                        title={av.label}
+                        title={`${lvl.label}: ${lvl.desc}`}
                       >
-                        <img src={av.url} alt={av.label} className="w-8 h-8 rounded-lg object-contain" />
+                        <img src={avUrl} alt={lvl.label} className="w-8 h-8 rounded-lg object-contain" />
                         <span className="text-[9px] font-mono text-slate-300 truncate max-w-full">
-                          L{av.level}: {av.label.split(' ')[0]}
+                          L{lvl.level}
                         </span>
                       </button>
                     );

@@ -24,18 +24,94 @@ interface OnboardingWizardProps {
   onCreateFirstTask: (taskData: { title: string; stressPoints: number; category: TaskCategory }) => void;
 }
 
-export const MINDSTATE_AVATARS = [
-  { level: 1, label: 'L1: Overwhelmed', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level1-Sad' },
-  { level: 2, label: 'L2: High Stress', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level2-Stressed' },
-  { level: 3, label: 'L3: Drained', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level3-Drained' },
-  { level: 4, label: 'L4: Seeking Focus', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level4-Seeking' },
-  { level: 5, label: 'L5: Neutral Calm', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level5-Neutral' },
-  { level: 6, label: 'L6: Gentle Spark', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level6-Spark' },
-  { level: 7, label: 'L7: Active Flow', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level7-Focused' },
-  { level: 8, label: 'L8: High Energy', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level8-Stamina' },
-  { level: 9, label: 'L9: Deep Mastery', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level9-Flow' },
-  { level: 10, label: 'L10: Radiant Joy', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Level10-Joy' },
+export interface MindStateLevel {
+  level: number;
+  label: string;
+  desc: string;
+  seeds: Record<string, string>;
+}
+
+export const AVATAR_THEMES = [
+  { id: 'fun-emoji', name: '😄 Fun Emoji', style: 'fun-emoji' },
+  { id: 'bottts', name: '🤖 Focus Bottts', style: 'bottts' },
+  { id: 'adventurer', name: '🧙 Adventurer RPG', style: 'adventurer' },
+  { id: 'lorelei', name: '👤 Zen Lorelei', style: 'lorelei' },
+  { id: 'pixel-art', name: '🎨 Retro Pixel', style: 'pixel-art' },
 ];
+
+export const MINDSTATE_LEVELS: MindStateLevel[] = [
+  { 
+    level: 1, 
+    label: 'L1: Overwhelmed', 
+    desc: 'Melting under pressure, high sensory overload & paralysis',
+    seeds: { 'fun-emoji': 'SadCrying', bottts: 'Overheated', adventurer: 'Exhausted', lorelei: 'Tired', 'pixel-art': 'Sad8bit' }
+  },
+  { 
+    level: 2, 
+    label: 'L2: High Stress', 
+    desc: 'Heavy avoidance, anxious worry & executive hesitation',
+    seeds: { 'fun-emoji': 'AnxiousSweat', bottts: 'Glitchy', adventurer: 'Wounded', lorelei: 'Worried', 'pixel-art': 'Panic8bit' }
+  },
+  { 
+    level: 3, 
+    label: 'L3: Low Battery', 
+    desc: 'Drained, brain fogged & low physical stamina',
+    seeds: { 'fun-emoji': 'SleepyYawn', bottts: 'LowCharge', adventurer: 'Resting', lorelei: 'Sleepy', 'pixel-art': 'LowBat8bit' }
+  },
+  { 
+    level: 4, 
+    label: 'L4: Seeking Focus', 
+    desc: 'Gathering motivation, searching for a clear first step',
+    seeds: { 'fun-emoji': 'ThinkingCurious', bottts: 'Scanning', adventurer: 'MapReading', lorelei: 'Curious', 'pixel-art': 'Ponder8bit' }
+  },
+  { 
+    level: 5, 
+    label: 'L5: Neutral Ground', 
+    desc: 'Calm baseline, ready for structured 2-minute actions',
+    seeds: { 'fun-emoji': 'CalmNeutral', bottts: 'Standby', adventurer: 'ReadyReady', lorelei: 'Calm', 'pixel-art': 'Base8bit' }
+  },
+  { 
+    level: 6, 
+    label: 'L6: Gentle Spark', 
+    desc: 'First task momentum starting to build',
+    seeds: { 'fun-emoji': 'SlightSmile', bottts: 'Sparking', adventurer: 'Apprentice', lorelei: 'Smile', 'pixel-art': 'Spark8bit' }
+  },
+  { 
+    level: 7, 
+    label: 'L7: Active Flow', 
+    desc: 'Smooth focus, steady execution without friction',
+    seeds: { 'fun-emoji': 'FocusedCool', bottts: 'FlowMode', adventurer: 'Warrior', lorelei: 'Focused', 'pixel-art': 'Flow8bit' }
+  },
+  { 
+    level: 8, 
+    label: 'L8: High Energy', 
+    desc: 'Strong stamina, knocking out multiple stress tasks',
+    seeds: { 'fun-emoji': 'BigGrinSparkle', bottts: 'TurboCharge', adventurer: 'Knight', lorelei: 'Happy', 'pixel-art': 'Power8bit' }
+  },
+  { 
+    level: 9, 
+    label: 'L9: Deep Mastery', 
+    desc: 'Sustained hyperfocus & effortless clarity',
+    seeds: { 'fun-emoji': 'StarEyedMastery', bottts: 'QuantumMaster', adventurer: 'WizardMaster', lorelei: 'StarEyed', 'pixel-art': 'Master8bit' }
+  },
+  { 
+    level: 10, 
+    label: 'L10: Radiant Joy', 
+    desc: 'Peak accomplishment, euphoric satisfaction & zen state',
+    seeds: { 'fun-emoji': 'RadiantJoyCrown', bottts: 'GoldenZen', adventurer: 'LegendaryHero', lorelei: 'Radiant', 'pixel-art': 'Crown8bit' }
+  },
+];
+
+export const getAvatarUrl = (themeStyle: string, levelObj: MindStateLevel) => {
+  const seed = levelObj.seeds[themeStyle] || `Level${levelObj.level}`;
+  return `https://api.dicebear.com/7.x/${themeStyle}/svg?seed=${seed}`;
+};
+
+export const MINDSTATE_AVATARS = MINDSTATE_LEVELS.map(lvl => ({
+  level: lvl.level,
+  label: lvl.label,
+  url: getAvatarUrl('fun-emoji', lvl)
+}));
 
 export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   isOpen,
@@ -47,7 +123,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 
   // Step 1 State: Profile & Avatar
   const [name, setName] = useState('');
-  const [selectedAvatar, setSelectedAvatar] = useState(MINDSTATE_AVATARS[9].url);
+  const [selectedTheme, setSelectedTheme] = useState<'fun-emoji' | 'bottts' | 'adventurer' | 'lorelei' | 'pixel-art'>('fun-emoji');
+  const [selectedLevel, setSelectedLevel] = useState<number>(10);
   const [customAvatarUrl, setCustomAvatarUrl] = useState('');
   const [dragging, setDragging] = useState(false);
 
@@ -58,7 +135,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 
   if (!isOpen) return null;
 
-  const currentAvatar = customAvatarUrl || selectedAvatar;
+  const currentLevelObj = MINDSTATE_LEVELS.find(l => l.level === selectedLevel) || MINDSTATE_LEVELS[9];
+  const generatedAvatarUrl = getAvatarUrl(selectedTheme, currentLevelObj);
+  const currentAvatar = customAvatarUrl || generatedAvatarUrl;
 
   const handleImageFile = (file: File) => {
     if (!file.type.startsWith('image/')) return;
@@ -163,21 +242,59 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                   </div>
                 </div>
 
-                {/* 10 Levels of Mind State Cartoon Avatars */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
-                    <span>10 Levels of Mind State Avatars (Sad to Radiant Joy)</span>
-                    <span className="text-[10px] text-teal-400 font-mono">Theme: Fun Emoji Cartoon</span>
-                  </label>
-                  <div className="grid grid-cols-5 gap-2.5">
-                    {MINDSTATE_AVATARS.map((item) => {
-                      const isSelected = selectedAvatar === item.url && !customAvatarUrl;
+                {/* Avatar Theme Selection & 10 Mind State Levels */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-300">
+                      Choose Avatar Theme
+                    </label>
+                    <span className="text-[10px] text-teal-400 font-mono">5 Themes Available</span>
+                  </div>
+
+                  {/* Theme Switcher Pills */}
+                  <div className="flex items-center space-x-2 overflow-x-auto pb-1">
+                    {AVATAR_THEMES.map((theme) => (
+                      <button
+                        key={theme.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedTheme(theme.id as any);
+                          setCustomAvatarUrl('');
+                        }}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold border whitespace-nowrap transition-all ${
+                          selectedTheme === theme.id && !customAvatarUrl
+                            ? 'bg-teal-500/20 text-teal-300 border-teal-500/50 shadow-sm'
+                            : 'bg-slate-900/60 text-slate-400 border-zen-border-dark hover:bg-slate-800'
+                        }`}
+                      >
+                        {theme.name}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Active Level Description Banner */}
+                  <div className="p-3 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center space-x-3">
+                    <img src={generatedAvatarUrl} alt={currentLevelObj.label} className="w-10 h-10 object-contain bg-slate-950 p-1 rounded-xl border border-teal-500/40" />
+                    <div>
+                      <h4 className="text-xs font-bold text-teal-300 flex items-center gap-1.5">
+                        <span>{currentLevelObj.label}</span>
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-300 font-mono">Level {currentLevelObj.level} / 10</span>
+                      </h4>
+                      <p className="text-[11px] text-slate-300 mt-0.5">{currentLevelObj.desc}</p>
+                    </div>
+                  </div>
+
+                  {/* 10 Mind State Levels Grid */}
+                  <div className="grid grid-cols-5 gap-2">
+                    {MINDSTATE_LEVELS.map((item) => {
+                      const avatarUrl = getAvatarUrl(selectedTheme, item);
+                      const isSelected = selectedLevel === item.level && !customAvatarUrl;
                       return (
                         <button
                           type="button"
                           key={item.level}
                           onClick={() => {
-                            setSelectedAvatar(item.url);
+                            setSelectedLevel(item.level);
                             setCustomAvatarUrl('');
                           }}
                           className={`relative p-2 rounded-xl border flex flex-col items-center justify-center transition-all ${
@@ -186,7 +303,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                               : 'border-zen-border-dark bg-slate-900/60 opacity-80 hover:opacity-100 hover:border-slate-600'
                           }`}
                         >
-                          <img src={item.url} alt={item.label} className="w-9 h-9 object-contain" />
+                          <img src={avatarUrl} alt={item.label} className="w-8 h-8 object-contain" />
                           <span className="text-[9px] font-bold text-slate-300 mt-1 text-center line-clamp-1">{item.label}</span>
                           {isSelected && (
                             <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-teal-500 text-white flex items-center justify-center shadow">
