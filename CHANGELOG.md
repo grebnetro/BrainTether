@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.6.1 | 5 Calendar View Modes & Drag-and-Drop Task Rescheduling | Added 5 interactive Calendar view modes (Month, 7-Day Week, 5-Day Work Week, Daily 24h Agenda, Annual 12-Month Heatmap). Enabled HTML5 Drag-and-Drop to reschedule task cards between calendar days. Added visual date badges (🔴 Target Due Date vs 📅 Creation Date). |
 | 2026-07-30 | 🧠v0.6.0 | Task Detail Modal, AI Subtask Extraction & Standalone Card Extraction | Clicking any Kanban task card opens the Task Detail Modal to edit title, description, Target Due Date, and Estimated Duration (15m-120m). Upgraded AI Breakdown engine to extract intelligent domain steps (e.g., tire replacement, tax mail, health). Added 1-click '+ Card' button to extract subtasks into standalone bite-sized Kanban cards. |
 | 2026-07-30 | 🧠v0.5.9 | Fix CalendarView date math & month navigation | Replaced dummy index-modulo task mapping with exact YYYY-MM-DD date matching. Tasks now appear strictly on their single scheduled date without repeating weekly. Added real Month state, Today jump button, and working Prev/Next month navigation. |
 | 2026-07-30 | 🧠v0.5.8 | Visually Distinct Twemoji Mind-State Avatars | Replaced random DiceBear seed generation with explicit Twitter/Twemoji vector codepoints ensuring 100% crystal-clear, unmistakably distinct facial expressions for every mind state level from L1 Loud Crying (😭) up to L5 Neutral (😐) and L10 Partying Celebration (🥳). |
