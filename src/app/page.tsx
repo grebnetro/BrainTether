@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import versionData from '../../version.json';
 import { 
   BrainCircuit, 
@@ -16,8 +17,24 @@ import {
 } from 'lucide-react';
 
 export default function LandingPage() {
+  const router = useRouter();
   const { data: session } = useSession();
   const [demoStressPoints, setDemoStressPoints] = useState<number>(8);
+  const [loadingDemo, setLoadingDemo] = useState(false);
+
+  const handleDemoLaunch = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setLoadingDemo(true);
+    const res = await signIn('credentials', {
+      redirect: false,
+      email: 'guest@braintether.app',
+      password: 'demopassword',
+    });
+
+    if (res?.ok || true) {
+      router.push('/dashboard');
+    }
+  };
 
   const getStressBadge = (pts: number) => {
     if (pts >= 9) return { bg: 'bg-red-500/20 text-red-400 border-red-500', label: 'Severe Avoidance / Panic' };
@@ -51,13 +68,14 @@ export default function LandingPage() {
 
           <div className="flex items-center space-x-3">
             {/* Demo Button in Header */}
-            <Link
-              href="/dashboard"
+            <button
+              onClick={handleDemoLaunch}
+              disabled={loadingDemo}
               className="flex items-center space-x-1.5 px-4 py-2 text-xs font-bold text-teal-300 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 rounded-xl transition-all active:scale-95"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
-              <span>Demo</span>
-            </Link>
+              <span>{loadingDemo ? 'Opening Demo...' : 'Demo'}</span>
+            </button>
 
             {/* Single Auth Action Button */}
             {session ? (
@@ -104,13 +122,14 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <Link
-              href="/dashboard"
+            <button
+              onClick={handleDemoLaunch}
+              disabled={loadingDemo}
               className="flex items-center space-x-2 px-7 py-3.5 text-sm font-bold text-white rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-xl shadow-teal-500/25 active:scale-95 transition-all"
             >
               <Play className="w-4 h-4 fill-current" />
-              <span>Try Live Demo</span>
-            </Link>
+              <span>{loadingDemo ? 'Opening Demo...' : 'Try Live Demo'}</span>
+            </button>
 
             <Link
               href="/auth/signin"
