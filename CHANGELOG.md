@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.4.8 | Port BrainTether to Netlify production hosting | Configured netlify.toml, installed @netlify/plugin-nextjs adapter, and linked BrainTether to Netlify site braintether-app (https://braintether-app.netlify.app). |
 | 2026-07-30 | 🧠v0.4.7 | Add Sign Out button across landing page, header, sidebar & profile settings | Added Sign Out buttons across landing page navigation header, app top header, sidebar navigation footer, and profile settings page. Enables 1-click logout redirecting users back to /auth/signin. |
 | 2026-07-30 | 🧠v0.4.6 | Clean unpopulated Kanban task board & Sync upper-right header avatar | Initialized Kanban task board as empty by default (no prepopulated demo tasks). Connected upper-right header profile button directly to userProfile.avatarUrl from AppContext so chosen avatar/custom photo displays globally across all pages. |
 | 2026-07-30 | 🧠v0.4.5 | Fix INITIAL_HABITS category property and enforce 100% clean Vercel TypeScript build | Fixed missing category property on INITIAL_HABITS array in initialData.ts. Updated Habit, MoodLog, and Subtask interfaces to provide complete build safety across all Vercel remote compilation workers. |
