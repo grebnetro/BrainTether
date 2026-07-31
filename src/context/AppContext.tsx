@@ -68,8 +68,8 @@ interface AppContextType {
 }
 
 const INITIAL_USER_PROFILE: UserProfile = {
-  name: 'Michael Ortenberg',
-  email: 'michael.ortenberg@gmail.com',
+  name: 'Demo User',
+  email: 'guest@braintether.app',
   avatarUrl: MINDSTATE_AVATARS[9].url,
   dailyStressCeiling: 30,
   defaultSoundscape: 'rain',

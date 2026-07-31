@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.5.3 | Profile Name Isolation: Default unauthenticated Demo mode to 'Demo User' | Replaced hardcoded default profile name ('Michael Ortenberg') with 'Demo User' (guest@braintether.app) in AppContext. User identity is dynamically loaded only when signed into a personal Google or Email session. |
 | 2026-07-30 | 🧠v0.5.2 | Fix Demo redirect: 1-click instant demo workspace launch bypassing login wall | Updated 'Demo' and 'Try Live Demo' buttons to immediately initialize a guest demo session in <100ms and navigate directly to /dashboard without hitting the sign-in form wall. |
 | 2026-07-30 | 🧠v0.5.1 | Clean Layout Polish: Top Header Demo button, Single Sign In/Sign Up CTA & Above-the-fold ADHD Features | Added top-header 'Demo' button, unified sign-in/sign-up into a single clear 'Sign In / Sign Up' action button, removed slider clutter from hero section, and promoted 'Built Specifically for ADHD & Executive Dysfunction' feature section directly above the fold. |
 | 2026-07-30 | 🧠v0.5.0 | Major UX Redesign: Single Enter Workspace demo button & Interactive ADHD Stress Calculator | Simplified hero section to a single 'Enter Workspace (Instant Demo)' button taking users directly to /dashboard without login wall. Added interactive task preset buttons (Tax Mail, Clean Counters, Refill Water) to explain the ADHD Stress Point Engine. |

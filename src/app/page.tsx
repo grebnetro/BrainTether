@@ -197,9 +197,15 @@ export default function LandingPage() {
       <section className="py-16 px-6">
         <div className="max-w-2xl mx-auto p-6 rounded-3xl bg-zen-surface-dark border border-zen-border-dark shadow-2xl space-y-6 text-left">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-              <Flame className="w-4 h-4" /> Interactive ADHD Stress Point Engine
-            </span>
+            {session ? (
+                <span className="text-xs font-medium text-emerald-400 flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5" /> Signed in as {session.user?.name || session.user?.email || 'Demo User'}
+                </span>
+            ) : (
+                <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                  <Flame className="w-4 h-4" /> Interactive ADHD Stress Point Engine
+                </span>
+            )}
             <span className={`text-xs px-2.5 py-1 rounded-full border font-bold uppercase tracking-wider ${badge.bg}`}>
               {demoStressPoints} / 10 Pts — {badge.label}
             </span>
