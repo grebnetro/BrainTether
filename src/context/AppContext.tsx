@@ -221,15 +221,55 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTasks(prev =>
       prev.map(t => {
         if (t.id !== taskId) return t;
-        const generatedSubtasks = [
-          { id: `st-${Date.now()}-1`, taskId, title: `Clarify first 5-minute action step for "${t.title}"`, completed: false },
-          { id: `st-${Date.now()}-2`, taskId, title: 'Gather links, tabs & documents needed', completed: false },
-          { id: `st-${Date.now()}-3`, taskId, title: 'Draft initial outline or preliminary draft', completed: false },
-          { id: `st-${Date.now()}-4`, taskId, title: 'Review and mark task complete', completed: false },
-        ];
+        const q = t.title.toLowerCase();
+
+        let autoSteps: { title: string }[] = [];
+
+        if (q.includes('tire') || q.includes('car') || q.includes('auto')) {
+          autoSteps = [
+            { title: '🔍 Research tire size, speed rating & compare price deals (15m)' },
+            { title: '📞 Call 2 local tire shops to verify stock & schedule appointment (10m)' },
+            { title: '🚗 Drive car to service center & hand over keys (20m)' },
+            { title: '☕ Wait in lounge or body-double while installation completes (45m)' },
+          ];
+        } else if (q.includes('tax') || q.includes('mail') || q.includes('bill') || q.includes('paper')) {
+          autoSteps = [
+            { title: '✂️ Open mail envelope & sort into action vs archive pile (5m)' },
+            { title: '📄 Scan/photo document for digital records (5m)' },
+            { title: '💳 Pay online or schedule payment due date (10m)' },
+          ];
+        } else if (q.includes('clean') || q.includes('kitchen') || q.includes('counter') || q.includes('room')) {
+          autoSteps = [
+            { title: '🧽 Clear trash & empty dishes into sink (5m)' },
+            { title: '🧼 Wipe down main counter surface (5m)' },
+            { title: '🗑️ Take out trash bag & reset room (3m)' },
+          ];
+        } else if (q.includes('doctor') || q.includes('refill') || q.includes('med') || q.includes('health')) {
+          autoSteps = [
+            { title: '📞 Call clinic/pharmacy or open patient portal (5m)' },
+            { title: '📅 Confirm appointment slot or prescription pickup (5m)' },
+            { title: '💊 Set phone reminder for medication or appointment (2m)' },
+          ];
+        } else {
+          autoSteps = [
+            { title: `🔍 Clarify first 5-minute action step for "${t.title}" (5m)` },
+            { title: '🧰 Gather required tabs, links, tools or phone numbers (5m)' },
+            { title: '⚡ Execute initial 15-minute focus session without overthinking (15m)' },
+            { title: '🏁 Review result & mark task complete (5m)' },
+          ];
+        }
+
+        const generatedSubtasks = autoSteps.map((s, idx) => ({
+          id: `st-${Date.now()}-${idx + 1}`,
+          taskId,
+          title: s.title,
+          completed: false,
+        }));
+
         return {
           ...t,
           subtasks: [...(t.subtasks || []), ...generatedSubtasks],
+          stressPoints: Math.max(1, t.stressPoints - 2), // De-escalate stress points when broken down!
           updatedAt: new Date().toISOString(),
         };
       })

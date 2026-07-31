@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.6.0 | Task Detail Modal, AI Subtask Extraction & Standalone Card Extraction | Clicking any Kanban task card opens the Task Detail Modal to edit title, description, Target Due Date, and Estimated Duration (15m-120m). Upgraded AI Breakdown engine to extract intelligent domain steps (e.g., tire replacement, tax mail, health). Added 1-click '+ Card' button to extract subtasks into standalone bite-sized Kanban cards. |
 | 2026-07-30 | 🧠v0.5.9 | Fix CalendarView date math & month navigation | Replaced dummy index-modulo task mapping with exact YYYY-MM-DD date matching. Tasks now appear strictly on their single scheduled date without repeating weekly. Added real Month state, Today jump button, and working Prev/Next month navigation. |
 | 2026-07-30 | 🧠v0.5.8 | Visually Distinct Twemoji Mind-State Avatars | Replaced random DiceBear seed generation with explicit Twitter/Twemoji vector codepoints ensuring 100% crystal-clear, unmistakably distinct facial expressions for every mind state level from L1 Loud Crying (😭) up to L5 Neutral (😐) and L10 Partying Celebration (🥳). |
 | 2026-07-30 | 🧠v0.5.7 | 5 Avatar Themes & 10 Mind State Level Descriptions | Added 5 selectable avatar themes (Fun Emoji, Focus Bottts, Adventurer RPG, Zen Lorelei, Retro Pixel) and populated explicit mind state level descriptions (Level 1 Overwhelmed to Level 10 Radiant Joy) across Onboarding Wizard and Profile Settings. |

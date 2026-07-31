@@ -40,6 +40,7 @@ export interface Task {
   category: TaskCategory;
   goalId?: string;
   dueDate?: string;
+  estimatedMinutes?: number;
   assignedPartnerId?: string;
   createdAt: string;
   updatedAt: string;

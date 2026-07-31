@@ -56,7 +56,8 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) =
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`p-4 rounded-xl bg-zen-surface-light dark:bg-zen-card-dark border transition-all space-y-3 group ${
+          onClick={() => onEditTask && onEditTask(task)}
+          className={`p-4 rounded-xl bg-zen-surface-light dark:bg-zen-card-dark border transition-all space-y-3 group cursor-pointer ${
             snapshot.isDragging 
               ? 'shadow-2xl border-teal-500 ring-2 ring-teal-500/20 scale-105 z-50' 
               : 'border-zen-border-light dark:border-zen-border-dark/80 hover:border-teal-500/30'
@@ -115,14 +116,20 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) =
 
           {/* Footer Controls */}
           <div className="flex items-center justify-between pt-2 border-t border-zen-border-light dark:border-zen-border-dark/60 text-[10px] text-slate-400">
-            {task.dueDate ? (
-              <div className="flex items-center space-x-1">
-                <Calendar className="w-3 h-3 text-slate-500" />
-                <span>{new Date(task.dueDate).toLocaleDateString()}</span>
-              </div>
-            ) : (
-              <span></span>
-            )}
+            <div className="flex items-center space-x-2">
+              {task.dueDate && (
+                <div className="flex items-center space-x-1 text-slate-400">
+                  <Calendar className="w-3 h-3 text-slate-500" />
+                  <span>{new Date(task.dueDate).toLocaleDateString()}</span>
+                </div>
+              )}
+
+              {task.estimatedMinutes && (
+                <div className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono font-bold text-[9px] border border-slate-700">
+                  ⏱️ {task.estimatedMinutes}m
+                </div>
+              )}
+            </div>
 
             <div className="flex items-center space-x-2">
               {/* Quick AI Breakdown */}

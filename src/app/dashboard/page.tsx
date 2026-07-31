@@ -15,13 +15,26 @@ import { AboutView } from '../../components/about/AboutView';
 import { OverwhelmModal } from '../../components/focus/OverwhelmModal';
 import { OnboardingWizard } from '../../components/onboarding/OnboardingWizard';
 import { AmbientPlayer } from '../../components/audio/AmbientPlayer';
-import { TaskCategory } from '../../types';
+import { TaskCategory, Task, TaskStatus } from '../../types';
 
 export default function DashboardPage() {
   const { activeView, addTask, updateUserProfile } = useApp();
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
+  const [newTaskInitialStatus, setNewTaskInitialStatus] = useState<TaskStatus>('TODO');
   const [isOverwhelmModalOpen, setIsOverwhelmModalOpen] = useState(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+
+  const handleOpenNewTaskModal = (status: TaskStatus = 'TODO') => {
+    setTaskToEdit(null);
+    setNewTaskInitialStatus(status);
+    setIsNewTaskModalOpen(true);
+  };
+
+  const handleEditTask = (task: Task) => {
+    setTaskToEdit(task);
+    setIsNewTaskModalOpen(true);
+  };
 
   useEffect(() => {
     const hasSeenGuide = localStorage.getItem('braintether_onboarding_completed');
@@ -54,7 +67,13 @@ export default function DashboardPage() {
   const renderActiveView = () => {
     switch (activeView) {
       case 'kanban':
-        return <KanbanBoard onOpenNewTaskModal={() => setIsNewTaskModalOpen(true)} />;
+        return (
+          <KanbanBoard 
+            onOpenNewTaskModal={() => handleOpenNewTaskModal('TODO')} 
+            onOpenNewTaskModalWithStatus={(status) => handleOpenNewTaskModal(status)}
+            onEditTask={handleEditTask}
+          />
+        );
       case 'calendar':
         return <CalendarView />;
       case 'habits':
@@ -68,7 +87,13 @@ export default function DashboardPage() {
       case 'about':
         return <AboutView />;
       default:
-        return <KanbanBoard onOpenNewTaskModal={() => setIsNewTaskModalOpen(true)} />;
+        return (
+          <KanbanBoard 
+            onOpenNewTaskModal={() => handleOpenNewTaskModal('TODO')} 
+            onOpenNewTaskModalWithStatus={(status) => handleOpenNewTaskModal(status)}
+            onEditTask={handleEditTask}
+          />
+        );
     }
   };
 
@@ -81,7 +106,7 @@ export default function DashboardPage() {
       {/* Main Workspace Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         <Header 
-          onOpenNewTaskModal={() => setIsNewTaskModalOpen(true)}
+          onOpenNewTaskModal={() => handleOpenNewTaskModal('TODO')}
           onOpenOverwhelmModal={() => setIsOverwhelmModalOpen(true)}
           onOpenTutorial={() => setIsOnboardingOpen(true)}
         />
@@ -94,7 +119,12 @@ export default function DashboardPage() {
       {/* Modals & Audio Synth */}
       <TaskModal 
         isOpen={isNewTaskModalOpen} 
-        onClose={() => setIsNewTaskModalOpen(false)} 
+        onClose={() => {
+          setIsNewTaskModalOpen(false);
+          setTaskToEdit(null);
+        }} 
+        initialStatus={newTaskInitialStatus}
+        taskToEdit={taskToEdit}
       />
 
       <OverwhelmModal 
