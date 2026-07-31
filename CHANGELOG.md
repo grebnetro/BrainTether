@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.5.1 | Clean Layout Polish: Top Header Demo button, Single Sign In/Sign Up CTA & Above-the-fold ADHD Features | Added top-header 'Demo' button, unified sign-in/sign-up into a single clear 'Sign In / Sign Up' action button, removed slider clutter from hero section, and promoted 'Built Specifically for ADHD & Executive Dysfunction' feature section directly above the fold. |
 | 2026-07-30 | 🧠v0.5.0 | Major UX Redesign: Single Enter Workspace demo button & Interactive ADHD Stress Calculator | Simplified hero section to a single 'Enter Workspace (Instant Demo)' button taking users directly to /dashboard without login wall. Added interactive task preset buttons (Tax Mail, Clean Counters, Refill Water) to explain the ADHD Stress Point Engine. |
 | 2026-07-30 | 🧠v0.4.9 | Streamline landing page CTAs & add direct Continue with Google button | Removed duplicate top-right header sign-in links on landing page. Added direct 'Continue with Google' button alongside 'Enter Workspace' in hero CTA group. Prominently styled Google Auth on sign-in page (/auth/signin). |
 | 2026-07-30 | 🧠v0.4.8 | Port BrainTether to Netlify production hosting | Configured netlify.toml, installed @netlify/plugin-nextjs adapter, and linked BrainTether to Netlify site braintether-app (https://braintether-app.netlify.app). |
