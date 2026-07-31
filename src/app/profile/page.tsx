@@ -35,7 +35,7 @@ export default function ProfilePage() {
 
   const [name, setName] = useState(userProfile.name || 'Demo User');
   const [email, setEmail] = useState(userProfile.email || 'guest@braintether.app');
-  const [selectedTheme, setSelectedTheme] = useState<'fun-emoji' | 'bottts' | 'adventurer' | 'lorelei' | 'pixel-art'>('fun-emoji');
+  const [selectedTheme, setSelectedTheme] = useState<'twemoji' | 'bottts' | 'adventurer' | 'lorelei' | 'pixel-art'>('twemoji');
   const [selectedLevel, setSelectedLevel] = useState<number>(10);
   const [selectedAvatar, setSelectedAvatar] = useState(userProfile.avatarUrl);
   const [customAvatarUrl, setCustomAvatarUrl] = useState('');

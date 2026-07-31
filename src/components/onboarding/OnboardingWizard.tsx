@@ -28,11 +28,13 @@ export interface MindStateLevel {
   level: number;
   label: string;
   desc: string;
+  twemoji: string;
+  emojiChar: string;
   seeds: Record<string, string>;
 }
 
 export const AVATAR_THEMES = [
-  { id: 'fun-emoji', name: '😄 Fun Emoji', style: 'fun-emoji' },
+  { id: 'twemoji', name: '🌟 Expressive Emojis', style: 'twemoji' },
   { id: 'bottts', name: '🤖 Focus Bottts', style: 'bottts' },
   { id: 'adventurer', name: '🧙 Adventurer RPG', style: 'adventurer' },
   { id: 'lorelei', name: '👤 Zen Lorelei', style: 'lorelei' },
@@ -43,74 +45,97 @@ export const MINDSTATE_LEVELS: MindStateLevel[] = [
   { 
     level: 1, 
     label: 'L1: Overwhelmed', 
-    desc: 'Melting under pressure, high sensory overload & paralysis',
-    seeds: { 'fun-emoji': 'SadCrying', bottts: 'Overheated', adventurer: 'Exhausted', lorelei: 'Tired', 'pixel-art': 'Sad8bit' }
+    desc: 'Melting under pressure, loud crying, severe sensory overload & paralysis',
+    twemoji: '1f62d',
+    emojiChar: '😭',
+    seeds: { bottts: 'BotMeltLevel1', adventurer: 'CryingHero', lorelei: 'SadZen1', 'pixel-art': 'Sad8bit' }
   },
   { 
     level: 2, 
     label: 'L2: High Stress', 
-    desc: 'Heavy avoidance, anxious worry & executive hesitation',
-    seeds: { 'fun-emoji': 'AnxiousSweat', bottts: 'Glitchy', adventurer: 'Wounded', lorelei: 'Worried', 'pixel-art': 'Panic8bit' }
+    desc: 'Cold sweat, heavy task avoidance, knot in stomach & anxious hesitation',
+    twemoji: '1f630',
+    emojiChar: '😰',
+    seeds: { bottts: 'BotPanicLevel2', adventurer: 'AnxiousHero', lorelei: 'AnxiousZen2', 'pixel-art': 'Panic8bit' }
   },
   { 
     level: 3, 
     label: 'L3: Low Battery', 
-    desc: 'Drained, brain fogged & low physical stamina',
-    seeds: { 'fun-emoji': 'SleepyYawn', bottts: 'LowCharge', adventurer: 'Resting', lorelei: 'Sleepy', 'pixel-art': 'LowBat8bit' }
+    desc: 'Drained, brain fogged, sleepy bubble & low physical stamina',
+    twemoji: '1f62a',
+    emojiChar: '😪',
+    seeds: { bottts: 'BotDrainedLevel3', adventurer: 'SleepyHero', lorelei: 'SleepyZen3', 'pixel-art': 'LowBat8bit' }
   },
   { 
     level: 4, 
     label: 'L4: Seeking Focus', 
-    desc: 'Gathering motivation, searching for a clear first step',
-    seeds: { 'fun-emoji': 'ThinkingCurious', bottts: 'Scanning', adventurer: 'MapReading', lorelei: 'Curious', 'pixel-art': 'Ponder8bit' }
+    desc: 'Pondering chin, gathering motivation & searching for a clear first step',
+    twemoji: '1f914',
+    emojiChar: '🤔',
+    seeds: { bottts: 'BotScannerLevel4', adventurer: 'PonderHero', lorelei: 'CuriousZen4', 'pixel-art': 'Think8bit' }
   },
   { 
     level: 5, 
     label: 'L5: Neutral Ground', 
-    desc: 'Calm baseline, ready for structured 2-minute actions',
-    seeds: { 'fun-emoji': 'CalmNeutral', bottts: 'Standby', adventurer: 'ReadyReady', lorelei: 'Calm', 'pixel-art': 'Base8bit' }
+    desc: 'Calm baseline, straight neutral mouth, ready for structured 2-min actions',
+    twemoji: '1f610',
+    emojiChar: '😐',
+    seeds: { bottts: 'BotStandbyLevel5', adventurer: 'ReadyHero', lorelei: 'CalmZen5', 'pixel-art': 'Base8bit' }
   },
   { 
     level: 6, 
     label: 'L6: Gentle Spark', 
-    desc: 'First task momentum starting to build',
-    seeds: { 'fun-emoji': 'SlightSmile', bottts: 'Sparking', adventurer: 'Apprentice', lorelei: 'Smile', 'pixel-art': 'Spark8bit' }
+    desc: 'Warm gentle smile, initial task momentum starting to build',
+    twemoji: '1f642',
+    emojiChar: '🙂',
+    seeds: { bottts: 'BotSparkLevel6', adventurer: 'ApprenticeHero', lorelei: 'SmileZen6', 'pixel-art': 'Spark8bit' }
   },
   { 
     level: 7, 
     label: 'L7: Active Flow', 
-    desc: 'Smooth focus, steady execution without friction',
-    seeds: { 'fun-emoji': 'FocusedCool', bottts: 'FlowMode', adventurer: 'Warrior', lorelei: 'Focused', 'pixel-art': 'Flow8bit' }
+    desc: 'Cool sunglasses, smooth focus & steady execution without friction',
+    twemoji: '1f60e',
+    emojiChar: '😎',
+    seeds: { bottts: 'BotFlowLevel7', adventurer: 'WarriorHero', lorelei: 'CoolZen7', 'pixel-art': 'Flow8bit' }
   },
   { 
     level: 8, 
     label: 'L8: High Energy', 
-    desc: 'Strong stamina, knocking out multiple stress tasks',
-    seeds: { 'fun-emoji': 'BigGrinSparkle', bottts: 'TurboCharge', adventurer: 'Knight', lorelei: 'Happy', 'pixel-art': 'Power8bit' }
+    desc: 'Beaming grin, strong stamina, knocking out multiple stress points',
+    twemoji: '1f601',
+    emojiChar: '😁',
+    seeds: { bottts: 'BotTurboLevel8', adventurer: 'KnightHero', lorelei: 'HappyZen8', 'pixel-art': 'Power8bit' }
   },
   { 
     level: 9, 
     label: 'L9: Deep Mastery', 
-    desc: 'Sustained hyperfocus & effortless clarity',
-    seeds: { 'fun-emoji': 'StarEyedMastery', bottts: 'QuantumMaster', adventurer: 'WizardMaster', lorelei: 'StarEyed', 'pixel-art': 'Master8bit' }
+    desc: 'Starry-eyed hyperfocus, sustained flow state & effortless clarity',
+    twemoji: '1f929',
+    emojiChar: '🤩',
+    seeds: { bottts: 'BotQuantumLevel9', adventurer: 'WizardHero', lorelei: 'StarZen9', 'pixel-art': 'Master8bit' }
   },
   { 
     level: 10, 
     label: 'L10: Radiant Joy', 
-    desc: 'Peak accomplishment, euphoric satisfaction & zen state',
-    seeds: { 'fun-emoji': 'RadiantJoyCrown', bottts: 'GoldenZen', adventurer: 'LegendaryHero', lorelei: 'Radiant', 'pixel-art': 'Crown8bit' }
+    desc: 'Partying celebration, peak accomplishment, euphoric satisfaction & zen state',
+    twemoji: '1f973',
+    emojiChar: '🥳',
+    seeds: { bottts: 'BotGoldenLevel10', adventurer: 'CrownLegendHero', lorelei: 'RadiantZen10', 'pixel-art': 'Crown8bit' }
   },
 ];
 
 export const getAvatarUrl = (themeStyle: string, levelObj: MindStateLevel) => {
-  const seed = levelObj.seeds[themeStyle] || `Level${levelObj.level}`;
+  if (themeStyle === 'twemoji' || themeStyle === 'fun-emoji') {
+    return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${levelObj.twemoji}.svg`;
+  }
+  const seed = levelObj.seeds[themeStyle] || `MindStateLevel${levelObj.level}`;
   return `https://api.dicebear.com/7.x/${themeStyle}/svg?seed=${seed}`;
 };
 
 export const MINDSTATE_AVATARS = MINDSTATE_LEVELS.map(lvl => ({
   level: lvl.level,
   label: lvl.label,
-  url: getAvatarUrl('fun-emoji', lvl)
+  url: getAvatarUrl('twemoji', lvl)
 }));
 
 export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
