@@ -81,7 +81,10 @@ export default function LandingPage() {
             {session ? (
               <>
                 <button
-                  onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+                  onClick={async () => {
+                    await signOut({ redirect: false });
+                    window.location.href = '/auth/signin';
+                  }}
                   className="flex items-center space-x-1.5 px-3 py-2 text-xs font-bold text-slate-300 bg-slate-800/80 hover:bg-rose-950/50 hover:text-rose-300 border border-slate-700 hover:border-rose-500/40 rounded-xl transition-all shadow-sm active:scale-95"
                   title="Sign Out"
                 >

@@ -142,7 +142,10 @@ export const Sidebar: React.FC = () => {
 
         {/* Sidebar Sign Out Button */}
         <button
-          onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+          onClick={async () => {
+            await signOut({ redirect: false });
+            window.location.href = '/auth/signin';
+          }}
           className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all group"
           title="Sign out of your BrainTether account"
         >

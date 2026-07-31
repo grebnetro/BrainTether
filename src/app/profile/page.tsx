@@ -143,7 +143,10 @@ export default function ProfilePage() {
 
                 <button
                   type="button"
-                  onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+                  onClick={async () => {
+                    await signOut({ redirect: false });
+                    window.location.href = '/auth/signin';
+                  }}
                   className="flex items-center space-x-2 px-4 py-3 rounded-2xl text-xs font-bold text-slate-300 bg-slate-800 hover:bg-rose-950/50 hover:text-rose-400 border border-slate-700 hover:border-rose-500/40 transition-all shadow-md active:scale-95"
                   title="Sign Out of BrainTether"
                 >

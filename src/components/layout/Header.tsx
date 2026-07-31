@@ -260,7 +260,10 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Header Sign Out Button */}
           <button
-            onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+            onClick={async () => {
+              await signOut({ redirect: false });
+              window.location.href = '/auth/signin';
+            }}
             title="Sign Out of BrainTether"
             className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold text-slate-400 hover:text-rose-400 bg-slate-100 dark:bg-slate-800/80 hover:bg-rose-500/10 border border-zen-border-light dark:border-zen-border-dark hover:border-rose-500/30 rounded-xl transition-all shadow-sm active:scale-95"
           >
