@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-07-30 | 🧠v0.5.9 | Fix CalendarView date math & month navigation | Replaced dummy index-modulo task mapping with exact YYYY-MM-DD date matching. Tasks now appear strictly on their single scheduled date without repeating weekly. Added real Month state, Today jump button, and working Prev/Next month navigation. |
 | 2026-07-30 | 🧠v0.5.8 | Visually Distinct Twemoji Mind-State Avatars | Replaced random DiceBear seed generation with explicit Twitter/Twemoji vector codepoints ensuring 100% crystal-clear, unmistakably distinct facial expressions for every mind state level from L1 Loud Crying (😭) up to L5 Neutral (😐) and L10 Partying Celebration (🥳). |
 | 2026-07-30 | 🧠v0.5.7 | 5 Avatar Themes & 10 Mind State Level Descriptions | Added 5 selectable avatar themes (Fun Emoji, Focus Bottts, Adventurer RPG, Zen Lorelei, Retro Pixel) and populated explicit mind state level descriptions (Level 1 Overwhelmed to Level 10 Radiant Joy) across Onboarding Wizard and Profile Settings. |
 | 2026-07-30 | 🧠v0.5.6 | Floating Soundscapes Widget & Onboarding Name Prompt | Re-architected Ambient Soundscape Synth as a floating fixed bottom-right widget that collapses into a sleek compact pill, freeing 100% full height and width for the Kanban Task Board. Fixed demo workspace launch to trigger the Onboarding Wizard modal asking users for their display name. |
