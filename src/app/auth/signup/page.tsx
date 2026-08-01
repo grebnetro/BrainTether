@@ -11,7 +11,7 @@ import { useApp } from '../../../context/AppContext';
 
 export default function SignUpPage() {
   const router = useRouter();
-  const { setUserProfile, setOnboardingCompleted } = useApp();
+  const { updateUserProfile } = useApp();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -25,7 +25,7 @@ export default function SignUpPage() {
     const targetEmail = email.trim() || 'newuser@braintether.app';
     const targetName = name.trim() || targetEmail.split('@')[0];
 
-    setUserProfile({
+    updateUserProfile({
       name: targetName,
       email: targetEmail,
       avatarUrl: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f973.svg',
@@ -39,7 +39,6 @@ export default function SignUpPage() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('braintether_onboarding_completed');
     }
-    setOnboardingCompleted(false);
 
     router.push('/dashboard');
   };

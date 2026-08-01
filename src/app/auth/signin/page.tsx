@@ -13,7 +13,7 @@ export default function SignInPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-  const { setUserProfile, setOnboardingCompleted } = useApp();
+  const { updateUserProfile } = useApp();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,7 +48,7 @@ export default function SignInPage() {
     const guestName = targetEmail.split('@')[0].replace('.', ' ');
     const formattedName = guestName.charAt(0).toUpperCase() + guestName.slice(1);
 
-    setUserProfile({
+    updateUserProfile({
       name: formattedName || 'Alex Morgan',
       email: targetEmail,
       avatarUrl: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f973.svg',
@@ -62,7 +62,6 @@ export default function SignInPage() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('braintether_onboarding_completed');
     }
-    setOnboardingCompleted(false);
 
     router.push('/dashboard');
   };
