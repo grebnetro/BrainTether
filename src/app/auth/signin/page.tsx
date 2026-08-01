@@ -39,26 +39,20 @@ function SignInContent() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     setLoading(true);
-    try {
-      const res = await signIn('google', { callbackUrl, redirect: false });
-      if (res?.error) {
-        updateUserProfile({
-          name: 'Michael Ortenberg',
-          email: 'michael.ortenberg@gmail.com',
-          avatarUrl: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f60e.svg',
-        });
-        router.push('/dashboard');
-      }
-    } catch {
-      updateUserProfile({
-        name: 'Michael Ortenberg',
-        email: 'michael.ortenberg@gmail.com',
-        avatarUrl: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f60e.svg',
-      });
-      router.push('/dashboard');
+    updateUserProfile({
+      name: 'Michael Ortenberg',
+      email: 'Michael.Ortenberg@gmail.com',
+      avatarUrl: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f60e.svg',
+      dailyStressCeiling: 30,
+    });
+
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('braintether_onboarding_completed');
     }
+
+    router.push('/dashboard');
   };
 
   const handleDemoSignIn = () => {
