@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import versionData from '../../../../version.json';
-import { BrainCircuit, Mail, ArrowRight, CheckCircle2, KeyRound, Sparkles } from 'lucide-react';
+import { BrandLogo } from '../../../components/common/BrandLogo';
+import { Mail, ArrowRight, CheckCircle2, KeyRound, Sparkles } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
