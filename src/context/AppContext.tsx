@@ -100,13 +100,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const savedProfile = localStorage.getItem('braintether_profile');
       if (savedProfile) {
         try {
-          setUserProfile(JSON.parse(savedProfile));
+          const parsed = JSON.parse(savedProfile);
+          setUserProfile(parsed);
+
+          if (parsed.email && parsed.email !== 'guest@braintether.app') {
+            const savedTasks = localStorage.getItem(`braintether_tasks_${parsed.email}`);
+            if (savedTasks) {
+              setTasks(JSON.parse(savedTasks));
+            } else {
+              setTasks([]); // Fresh clean workspace for new personal accounts!
+            }
+          }
         } catch (e) {
           console.error('Failed to parse saved profile', e);
         }
       }
     }
   }, []);
+
+  const saveTasks = (newTasks: Task[], email?: string) => {
+    const targetEmail = email || userProfile.email;
+    if (typeof window !== 'undefined' && targetEmail && targetEmail !== 'guest@braintether.app') {
+      localStorage.setItem(`braintether_tasks_${targetEmail}`, JSON.stringify(newTasks));
+    }
+  };
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -129,6 +146,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updated = { ...prev, ...updates };
       if (typeof window !== 'undefined') {
         localStorage.setItem('braintether_profile', JSON.stringify(updated));
+        if (updated.email && updated.email !== 'guest@braintether.app') {
+          const saved = localStorage.getItem(`braintether_tasks_${updated.email}`);
+          if (!saved) {
+            setTasks([]);
+            localStorage.setItem(`braintether_tasks_${updated.email}`, JSON.stringify([]));
+          } else {
+            try {
+              setTasks(JSON.parse(saved));
+            } catch {
+              setTasks([]);
+            }
+          }
+        }
       }
       return updated;
     });
@@ -141,27 +171,39 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    setTasks(prev => [newTask, ...prev]);
+    setTasks(prev => {
+      const updated = [newTask, ...prev];
+      saveTasks(updated);
+      return updated;
+    });
   };
 
   const updateTask = (id: string, updates: Partial<Task>) => {
-    setTasks(prev =>
-      prev.map(t => (t.id === id ? { ...t, ...updates, updatedAt: new Date().toISOString() } : t))
-    );
+    setTasks(prev => {
+      const updated = prev.map(t => (t.id === id ? { ...t, ...updates, updatedAt: new Date().toISOString() } : t));
+      saveTasks(updated);
+      return updated;
+    });
   };
 
   const deleteTask = (id: string) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
+    setTasks(prev => {
+      const updated = prev.filter(t => t.id !== id);
+      saveTasks(updated);
+      return updated;
+    });
   };
 
   const moveTask = (taskId: string, newStatus: TaskStatus) => {
-    setTasks(prev =>
-      prev.map(t =>
+    setTasks(prev => {
+      const updated = prev.map(t =>
         t.id === taskId
           ? { ...t, status: newStatus, updatedAt: new Date().toISOString() }
           : t
-      )
-    );
+      );
+      saveTasks(updated);
+      return updated;
+    });
   };
 
   const toggleSubtask = (taskId: string, subtaskId: string) => {

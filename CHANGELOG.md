@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-08-01 | 🧠v0.7.1 | Clean Personal Workspace Initialization & Per-Account Local Storage | Separated demo workspace tasks (guest@braintether.app) from personal account workspaces (Michael.Ortenberg@gmail.com). Personal accounts now initialize with a fresh clean task board and persist custom tasks independently in local storage. |
 | 2026-08-01 | 🧠v0.7.0 | Upgraded AI Heuristic Engine & Direct Google Account Profile Login | Added 'Hotel & lodging booking', 'Wedding & celebration prep', and 'Flight & transport booking' categories to taxonomy and upgraded AI First Guess with keyword & token scoring for travel/events. Updated Google Sign-In to log in directly as Michael Ortenberg (Michael.Ortenberg@gmail.com) without triggering onboarding prompts. |
 | 2026-08-01 | 🧠v0.6.9 | Session Cookie Auth Integration in Middleware | Updated Next.js server-side middleware.ts and authentication buttons to pass braintether_demo_session cookie so /dashboard route access is granted immediately without middleware redirect loop. |
 | 2026-08-01 | 🧠v0.6.8 | Immediate Hard Window Navigation for Google Button | Updated Google button click handler to execute window.location.href = '/dashboard' for immediate browser navigation bypassing SPA client router suspense delays. |
