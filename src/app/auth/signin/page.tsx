@@ -2,66 +2,69 @@
 
 import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import versionData from '../../../../version.json';
-import { BrainCircuit, Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
+import { BrandLogo } from '../../../components/common/BrandLogo';
+import { useApp } from '../../../context/AppContext';
+import { Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+  const { setUserProfile, setOnboardingCompleted } = useApp();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleCredentialsSubmit = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
+    const res = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    });
+
+    if (res?.error) {
+      setError('Invalid email or password');
+      setLoading(false);
+    } else {
+      router.push(callbackUrl);
+    }
+  };
+
+  const handleGoogleSignIn = () => {
+    signIn('google', { callbackUrl });
+  };
+
+  const handleDemoSignIn = () => {
     const targetEmail = email.trim() || 'alex@braintether.app';
-    const res = await signIn('credentials', {
-      redirect: false,
+    const guestName = targetEmail.split('@')[0].replace('.', ' ');
+    const formattedName = guestName.charAt(0).toUpperCase() + guestName.slice(1);
+
+    setUserProfile({
+      name: formattedName || 'Alex Morgan',
       email: targetEmail,
-      password: password || 'password',
+      avatarUrl: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f973.svg',
+      adhdPreferences: {
+        soundscapesEnabled: true,
+        overwhelmTimer: 2,
+        dailyStressCeiling: 25,
+      },
     });
 
-    if (res?.ok) {
-      router.push('/dashboard');
-    } else {
-      router.push('/dashboard');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('braintether_onboarding_completed');
     }
-  };
+    setOnboardingCompleted(false);
 
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    // Instant seamless Google authentication for demo & production safety without serverless redirects
-    const res = await signIn('credentials', {
-      redirect: false,
-      email: 'michael.ortenberg@gmail.com',
-      password: 'googleauthpassword',
-    });
-
-    if (res?.ok) {
-      router.push('/dashboard');
-    } else {
-      router.push('/dashboard');
-    }
-  };
-
-  const handleInstantBypass = async () => {
-    setLoading(true);
-    const res = await signIn('credentials', {
-      redirect: false,
-      email: 'alex@braintether.app',
-      password: 'demopassword',
-    });
-
-    if (res?.ok) {
-      router.push('/dashboard');
-    } else {
-      router.push('/dashboard');
-    }
+    router.push('/dashboard');
   };
 
   return (
@@ -71,8 +74,8 @@ export default function SignInPage() {
         {/* Brand Logo & Header */}
         <div className="text-center space-y-3">
           <Link href="/" className="inline-flex items-center space-x-3 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-xl shadow-teal-500/20 group-hover:scale-105 transition-transform">
-              <BrainCircuit className="w-7 h-7" />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-xl shadow-teal-500/20 group-hover:scale-105 transition-transform p-2">
+              <BrandLogo className="w-7 h-7 text-white" />
             </div>
           </Link>
 

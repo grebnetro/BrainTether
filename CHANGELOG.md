@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-08-01 | 🧠v0.6.5 | New Primary Computer Arms SVG Icon & Logo Integration | Replaced default brain icon with custom computer_arms SVG vector illustration as the primary brand logo across Sidebar header, Landing Page, Onboarding Wizard, Auth forms, and About guide. |
 | 2026-08-01 | 🧠v0.6.4 | AI First Guess Auto-Categorize & Inline Custom Category Editing | Added '✨ AI First Guess' button directly beside Task Title field to auto-detect Environment, Main Category, Subcategory, and Specific Item from task title keywords. Added '✏️ Other (Custom...)' options with inline text inputs across all 4 category levels. |
 | 2026-08-01 | 🧠v0.6.3 | Streamlined Onboarding Step 1 Layout & Eliminated Scrolling | Re-architected Step 1 profile setup in OnboardingWizard to display Display Name input and Drag-and-Drop Photo Upload side-by-side. Positioned 'Continue to Instruction Sheet' action button directly below avatar grid eliminating vertical scrolling. |
 | 2026-08-01 | 🧠v0.6.2 | 4-Tier Cascading Category Taxonomy from CSV & Integration Across Modals | Integrated 4-tier cascading category selector (Environment ➔ Main Category ➔ Subcategory ➔ Specific Task Item) parsed from Categories.csv into TaskModal, OnboardingWizard, Header, TaskCard, and KanbanBoard. |

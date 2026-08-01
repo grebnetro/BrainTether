@@ -5,31 +5,43 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import versionData from '../../../../version.json';
-import { BrainCircuit, Lock, Mail, User, ArrowRight } from 'lucide-react';
+import { BrandLogo } from '../../../components/common/BrandLogo';
+import { Lock, Mail, User, ArrowRight } from 'lucide-react';
+import { useApp } from '../../../context/AppContext';
 
 export default function SignUpPage() {
   const router = useRouter();
+  const { setUserProfile, setOnboardingCompleted } = useApp();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const handleSignUpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     const targetEmail = email.trim() || 'newuser@braintether.app';
-    const res = await signIn('credentials', {
-      redirect: false,
+    const targetName = name.trim() || targetEmail.split('@')[0];
+
+    setUserProfile({
+      name: targetName,
       email: targetEmail,
-      password: password || 'password',
+      avatarUrl: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f973.svg',
+      adhdPreferences: {
+        soundscapesEnabled: true,
+        overwhelmTimer: 2,
+        dailyStressCeiling: 25,
+      },
     });
 
-    if (res?.ok) {
-      router.push('/dashboard');
-    } else {
-      router.push('/dashboard');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('braintether_onboarding_completed');
     }
+    setOnboardingCompleted(false);
+
+    router.push('/dashboard');
   };
 
   const handleGoogleSignUp = async () => {
@@ -54,8 +66,8 @@ export default function SignUpPage() {
         {/* Brand Header */}
         <div className="text-center space-y-3">
           <Link href="/" className="inline-flex items-center space-x-3 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-xl shadow-teal-500/20 group-hover:scale-105 transition-transform">
-              <BrainCircuit className="w-7 h-7" />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-xl shadow-teal-500/20 group-hover:scale-105 transition-transform p-2">
+              <BrandLogo className="w-7 h-7 text-white" />
             </div>
           </Link>
 

@@ -147,8 +147,8 @@ export const AboutView: React.FC = () => {
       <div className="p-8 rounded-3xl bg-zen-surface-dark border border-teal-500/40 shadow-2xl relative overflow-hidden space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-xl shadow-teal-500/20">
-              <BrainCircuit className="w-8 h-8" />
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-xl shadow-teal-500/20 p-2.5">
+              <BrandLogo className="w-8 h-8 text-white" />
             </div>
             <div>
               <h2 className="text-2xl font-black text-slate-100 tracking-tight flex items-center gap-3">

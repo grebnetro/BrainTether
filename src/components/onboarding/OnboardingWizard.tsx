@@ -287,8 +287,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         {/* Header Progress Bar */}
         <div className="px-6 pt-6 pb-4 border-b border-zen-border-dark flex items-center justify-between bg-slate-900/60">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-md shadow-teal-500/20">
-              <BrainCircuit className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-md shadow-teal-500/20 p-1.5">
+              <BrandLogo className="w-5 h-5 text-white" />
             </div>
             <div>
               <h2 className="font-bold text-slate-100 text-base">Welcome to BrainTether</h2>

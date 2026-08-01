@@ -56,7 +56,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
-              <BrainCircuit className="w-6 h-6" />
+              <BrandLogo className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="font-bold text-lg text-slate-100 tracking-tight flex items-center gap-2">
@@ -284,7 +284,7 @@ export default function LandingPage() {
       <footer className="py-8 px-6 border-t border-zen-border-dark text-center text-xs text-slate-500">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
-            <BrainCircuit className="w-4 h-4 text-teal-400" />
+            <BrandLogo className="w-4 h-4 text-teal-400" />
             <span className="font-bold text-slate-300">BrainTether v{versionData.version}</span>
             <span>— Calmer ADHD Executive Workspace</span>
           </div>

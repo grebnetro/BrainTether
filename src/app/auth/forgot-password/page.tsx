@@ -41,8 +41,8 @@ export default function ForgotPasswordPage() {
         {/* Brand Header */}
         <div className="text-center space-y-3">
           <Link href="/" className="inline-flex items-center space-x-3 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-xl shadow-teal-500/20 group-hover:scale-105 transition-transform">
-              <BrainCircuit className="w-7 h-7" />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-xl shadow-teal-500/20 group-hover:scale-105 transition-transform p-2">
+              <BrandLogo className="w-7 h-7 text-white" />
             </div>
           </Link>
 
