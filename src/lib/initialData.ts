@@ -1,6 +1,85 @@
 import { Task, Goal, Habit, MoodLog, AccountabilityPartner, BodyDoublingSession, TherapistPermission } from '../types';
 
-export const INITIAL_TASKS: Task[] = [];
+export const INITIAL_TASKS: Task[] = [
+  {
+    id: 'task-1',
+    title: 'Grocery shopping for weekly meal prep',
+    description: 'Buy fresh produce, protein, and pantry essentials for healthy lunches.',
+    status: 'TODO',
+    priority: 'HIGH',
+    stressPoints: 7,
+    category: 'Grocery shopping',
+    dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    subtasks: [
+      { id: 'st-1', title: 'Make grocery list in notes app', completed: true },
+      { id: 'st-2', title: 'Drive to grocery store', completed: false },
+    ],
+  },
+  {
+    id: 'task-2',
+    title: 'Schedule oil change & vehicle inspection',
+    description: 'Call service shop to schedule oil change and check tire pressure.',
+    status: 'TODO',
+    priority: 'MEDIUM',
+    stressPoints: 5,
+    category: 'Oil change',
+    dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'task-3',
+    title: 'Review quarterly expense reporting & tax prep',
+    description: 'Export receipts and match invoices for digital archiving.',
+    status: 'IN_PROGRESS',
+    priority: 'CRITICAL',
+    stressPoints: 9,
+    category: 'Expense reporting',
+    dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    subtasks: [
+      { id: 'st-3', title: 'Download bank CSV statement', completed: true },
+      { id: 'st-4', title: 'Categorize software subscriptions', completed: false },
+    ],
+  },
+  {
+    id: 'task-4',
+    title: 'Refactor core modules & bug fixing',
+    description: 'Resolve state sync bug and update API error handling.',
+    status: 'IN_PROGRESS',
+    priority: 'HIGH',
+    stressPoints: 6,
+    category: 'Bug fixing',
+    dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'task-5',
+    title: 'Prescription pickups at local pharmacy',
+    description: 'Pick up monthly refill before weekend trip.',
+    status: 'WAITING',
+    priority: 'MEDIUM',
+    stressPoints: 4,
+    category: 'Prescription pickups',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'task-6',
+    title: 'Deep cleaning oven scrub & kitchen reset',
+    description: 'Use eco cleaner and wipe down all kitchen counter surfaces.',
+    status: 'COMPLETED',
+    priority: 'LOW',
+    stressPoints: 3,
+    category: 'Oven scrub',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
 
 export const INITIAL_HABITS: Habit[] = [
   {

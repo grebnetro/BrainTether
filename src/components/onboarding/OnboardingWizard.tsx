@@ -16,6 +16,13 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import { TaskCategory } from '../../types';
+import { 
+  findCategoryRow,
+  getMainCategoriesForEnv,
+  getSubcategoriesForMainCategory,
+  getSubSubcategoriesForSubcategory,
+  LEGACY_CATEGORIES 
+} from '../../lib/categoriesData';
 
 interface OnboardingWizardProps {
   isOpen: boolean;
@@ -156,7 +163,63 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   // Step 3 State: First Task Starter
   const [taskTitle, setTaskTitle] = useState('');
   const [taskStressPoints, setTaskStressPoints] = useState<number>(6);
-  const [taskCategory, setTaskCategory] = useState<TaskCategory>('Household');
+  const [taskCategory, setTaskCategory] = useState<TaskCategory>('Grocery shopping');
+  const [onboardingEnv, setOnboardingEnv] = useState<'Home' | 'Work' | 'General'>('Home');
+  const [onboardingMainCat, setOnboardingMainCat] = useState<string>('Errands & Shopping');
+  const [onboardingSubCat, setOnboardingSubCat] = useState<string>('Supplies');
+  const [onboardingSubSubCat, setOnboardingSubSubCat] = useState<string>('Grocery shopping');
+
+  const handleOnboardingEnvChange = (env: 'Home' | 'Work' | 'General') => {
+    setOnboardingEnv(env);
+    if (env === 'General') {
+      setTaskCategory('General');
+      return;
+    }
+    const mainCats = getMainCategoriesForEnv(env);
+    const firstMain = mainCats[0] || '';
+    setOnboardingMainCat(firstMain);
+
+    const subCats = getSubcategoriesForMainCategory(env, firstMain);
+    const firstSub = subCats[0] || '';
+    setOnboardingSubCat(firstSub);
+
+    const subSubCats = getSubSubcategoriesForSubcategory(env, firstMain, firstSub);
+    const firstSubSub = subSubCats[0] || '';
+    setOnboardingSubSubCat(firstSubSub);
+
+    setTaskCategory(firstSubSub || firstSub || firstMain || env);
+  };
+
+  const handleOnboardingMainCatChange = (mainCat: string) => {
+    if (onboardingEnv === 'General') return;
+    setOnboardingMainCat(mainCat);
+
+    const subCats = getSubcategoriesForMainCategory(onboardingEnv as 'Home' | 'Work', mainCat);
+    const firstSub = subCats[0] || '';
+    setOnboardingSubCat(firstSub);
+
+    const subSubCats = getSubSubcategoriesForSubcategory(onboardingEnv as 'Home' | 'Work', mainCat, firstSub);
+    const firstSubSub = subSubCats[0] || '';
+    setOnboardingSubSubCat(firstSubSub);
+
+    setTaskCategory(firstSubSub || firstSub || mainCat);
+  };
+
+  const handleOnboardingSubCatChange = (subCat: string) => {
+    if (onboardingEnv === 'General') return;
+    setOnboardingSubCat(subCat);
+
+    const subSubCats = getSubSubcategoriesForSubcategory(onboardingEnv as 'Home' | 'Work', onboardingMainCat, subCat);
+    const firstSubSub = subSubCats[0] || '';
+    setOnboardingSubSubCat(firstSubSub);
+
+    setTaskCategory(firstSubSub || subCat);
+  };
+
+  const handleOnboardingSubSubCatChange = (subSubCat: string) => {
+    setOnboardingSubSubCat(subSubCat);
+    setTaskCategory(subSubCat);
+  };
 
   if (!isOpen) return null;
 
@@ -534,20 +597,96 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                   </div>
                 </div>
 
-                {/* Category Selector */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Category
-                  </label>
-                  <select
-                    value={taskCategory}
-                    onChange={(e) => setTaskCategory(e.target.value as TaskCategory)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-zen-border-dark text-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
-                  >
-                    {['Household', 'Money', 'Self-Care', 'Work', 'Health', 'General'].map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
+                {/* Cascading Category Selector */}
+                <div className="p-3 rounded-xl bg-slate-900/80 border border-zen-border-dark space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-semibold text-slate-300">
+                      Category (Environment ➔ Task Item)
+                    </label>
+                    <span className="text-[10px] text-teal-400 font-mono">
+                      {onboardingEnv === 'General' ? taskCategory : `${onboardingEnv} › ${onboardingMainCat} › ${onboardingSubCat} › ${onboardingSubSubCat}`}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] text-slate-400 mb-0.5">Environment</label>
+                      <select
+                        value={onboardingEnv}
+                        onChange={(e) => handleOnboardingEnvChange(e.target.value as 'Home' | 'Work' | 'General')}
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-zen-border-dark text-slate-200 text-xs focus:outline-none"
+                      >
+                        <option value="Home">Home</option>
+                        <option value="Work">Work</option>
+                        <option value="General">General</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] text-slate-400 mb-0.5">Main Category</label>
+                      {onboardingEnv === 'General' ? (
+                        <select
+                          value={taskCategory}
+                          onChange={(e) => setTaskCategory(e.target.value as TaskCategory)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-zen-border-dark text-slate-200 text-xs focus:outline-none"
+                        >
+                          {LEGACY_CATEGORIES.map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <select
+                          value={onboardingMainCat}
+                          onChange={(e) => handleOnboardingMainCatChange(e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-zen-border-dark text-slate-200 text-xs focus:outline-none"
+                        >
+                          {getMainCategoriesForEnv(onboardingEnv).map((mainCat) => (
+                            <option key={mainCat} value={mainCat}>
+                              {mainCat}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] text-slate-400 mb-0.5">Subcategory</label>
+                      <select
+                        disabled={onboardingEnv === 'General'}
+                        value={onboardingSubCat}
+                        onChange={(e) => handleOnboardingSubCatChange(e.target.value)}
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-zen-border-dark text-slate-200 text-xs focus:outline-none disabled:opacity-40"
+                      >
+                        {onboardingEnv !== 'General' &&
+                          getSubcategoriesForMainCategory(onboardingEnv, onboardingMainCat).map((subCat) => (
+                            <option key={subCat} value={subCat}>
+                              {subCat}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] text-slate-400 mb-0.5">Specific Task Item</label>
+                      <select
+                        disabled={onboardingEnv === 'General'}
+                        value={onboardingSubSubCat}
+                        onChange={(e) => handleOnboardingSubSubCatChange(e.target.value)}
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-zen-border-dark text-teal-300 text-xs font-semibold focus:outline-none disabled:opacity-40"
+                      >
+                        {onboardingEnv !== 'General' &&
+                          getSubSubcategoriesForSubcategory(onboardingEnv, onboardingMainCat, onboardingSubCat).map(
+                            (subSubCat) => (
+                              <option key={subSubCat} value={subSubCat}>
+                                {subSubCat}
+                              </option>
+                            )
+                          )}
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
 

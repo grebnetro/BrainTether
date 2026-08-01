@@ -6,6 +6,7 @@ import { useApp } from '../../context/AppContext';
 import { TaskStatus, Task } from '../../types';
 import { Column } from './Column';
 import { Sparkles, Flame, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { matchesCategoryFilter } from '../../lib/categoriesData';
 
 interface KanbanBoardProps {
   onOpenNewTaskModal?: () => void;
@@ -60,7 +61,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
       if (!matchTitle && !matchDesc) return false;
     }
 
-    if (categoryFilter !== 'ALL' && t.category !== categoryFilter) {
+    if (categoryFilter !== 'ALL' && !matchesCategoryFilter(t.category, categoryFilter)) {
       return false;
     }
 

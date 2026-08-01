@@ -57,7 +57,7 @@ async function main() {
       status: 'TODO',
       priority: 'HIGH',
       stressPoints: 9, // Severe Avoidance
-      category: 'Money',
+      category: 'Tax preparation',
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     },
   });
@@ -72,8 +72,23 @@ async function main() {
       status: 'TODO',
       priority: 'MEDIUM',
       stressPoints: 6,
-      category: 'Household',
+      category: 'Washing clothes',
       dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  await prisma.task.create({
+    data: {
+      id: 'task-3',
+      userId: user.id,
+      goalId: goal2.id,
+      title: 'Schedule oil change & vehicle inspection',
+      description: 'Call service shop to schedule oil change and check tire pressure.',
+      status: 'IN_PROGRESS',
+      priority: 'MEDIUM',
+      stressPoints: 5,
+      category: 'Oil change',
+      dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
     },
   });
 

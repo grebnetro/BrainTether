@@ -17,8 +17,19 @@ import {
   Heart,
   Briefcase,
   Activity,
-  Layers
+  Layers,
+  ShoppingBag,
+  Pill,
+  Car,
+  Wrench,
+  Laptop,
+  Code,
+  FileText,
+  Mail,
+  Utensils,
+  Folder
 } from 'lucide-react';
+import { findCategoryRow } from '../../lib/categoriesData';
 
 interface TaskCardProps {
   task: Task;
@@ -30,14 +41,51 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) =
   const { deleteTask, toggleSubtask, breakDownTaskWithAI } = useApp();
 
   const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'Household': return <Home className="w-3 h-3 text-emerald-400" />;
-      case 'Money': return <DollarSign className="w-3 h-3 text-amber-400" />;
-      case 'Self-Care': return <Heart className="w-3 h-3 text-rose-400" />;
-      case 'Work': return <Briefcase className="w-3 h-3 text-teal-400" />;
-      case 'Health': return <Activity className="w-3 h-3 text-indigo-400" />;
-      default: return <Layers className="w-3 h-3 text-slate-400" />;
+    // Check direct legacy matches first
+    if (category === 'Household') return <Home className="w-3 h-3 text-emerald-400" />;
+    if (category === 'Money') return <DollarSign className="w-3 h-3 text-amber-400" />;
+    if (category === 'Self-Care') return <Heart className="w-3 h-3 text-rose-400" />;
+    if (category === 'Work') return <Briefcase className="w-3 h-3 text-teal-400" />;
+    if (category === 'Health') return <Activity className="w-3 h-3 text-indigo-400" />;
+
+    const row = findCategoryRow(category);
+    if (row) {
+      if (row.subcategory === 'Supplies' || row.mainCategory === 'Errands & Shopping') {
+        return <ShoppingBag className="w-3 h-3 text-emerald-400" />;
+      }
+      if (row.subcategory === 'Medical & Pharmacy' || row.subcategory === 'Personal Health & Fitness') {
+        return <Pill className="w-3 h-3 text-indigo-400" />;
+      }
+      if (row.subcategory === 'Meal Management') {
+        return <Utensils className="w-3 h-3 text-amber-400" />;
+      }
+      if (row.subcategory === 'Money Management' || row.subcategory === 'Financial Admin') {
+        return <DollarSign className="w-3 h-3 text-emerald-400" />;
+      }
+      if (row.subcategory === 'Automobile') {
+        return <Car className="w-3 h-3 text-cyan-400" />;
+      }
+      if (row.mainCategory === 'Maintenance & Repairs') {
+        return <Wrench className="w-3 h-3 text-amber-500" />;
+      }
+      if (row.mainCategory === 'Administrative' || row.subcategory === 'Data & Systems') {
+        return <Laptop className="w-3 h-3 text-purple-400" />;
+      }
+      if (row.subcategory === 'Production & Design' || row.subSubcategory.includes('Coding')) {
+        return <Code className="w-3 h-3 text-teal-400" />;
+      }
+      if (row.mainCategory === 'Communication') {
+        return <Mail className="w-3 h-3 text-sky-400" />;
+      }
+      if (row.environment === 'Home') {
+        return <Home className="w-3 h-3 text-emerald-400" />;
+      }
+      if (row.environment === 'Work') {
+        return <Briefcase className="w-3 h-3 text-teal-400" />;
+      }
     }
+
+    return <Layers className="w-3 h-3 text-slate-400" />;
   };
 
   const getStressBadgeColor = (points: number) => {
@@ -64,11 +112,22 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) =
           }`}
         >
           {/* Card Header & Badges */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-300 border border-zen-border-light dark:border-zen-border-dark">
-              {getCategoryIcon(task.category)}
-              <span>{task.category}</span>
-            </div>
+          <div className="flex items-center justify-between gap-2">
+            {(() => {
+              const row = findCategoryRow(task.category);
+              const badgeText = row
+                ? `${row.environment} › ${row.subcategory} › ${task.category}`
+                : task.category;
+              return (
+                <div 
+                  className="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-300 border border-zen-border-light dark:border-zen-border-dark truncate max-w-[70%]"
+                  title={badgeText}
+                >
+                  {getCategoryIcon(task.category)}
+                  <span className="truncate">{badgeText}</span>
+                </div>
+              );
+            })()}
 
             {/* Stress Points Badge */}
             <div className={`flex items-center space-x-1 px-2 py-0.5 rounded-full border text-[10px] font-bold shadow-sm ${getStressBadgeColor(task.stressPoints)}`}>

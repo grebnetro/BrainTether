@@ -16,6 +16,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { StressLevelRange, TaskCategory } from '../../types';
+import { ALL_MAIN_CATEGORIES, ALL_ENVIRONMENTS, LEGACY_CATEGORIES, getGroupedCategoryOptions } from '../../lib/categoriesData';
 
 interface HeaderProps {
   onOpenNewTaskModal: () => void;
@@ -194,13 +195,15 @@ export const Header: React.FC<HeaderProps> = ({
 
                   <div>
                     <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5 block">
-                      Category
+                      Category & Environment Filter
                     </label>
-                    <div className="flex flex-wrap gap-1">
-                      {categories.map((cat) => (
+
+                    {/* Quick Environment & High-level Pills */}
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {['ALL', ...ALL_ENVIRONMENTS, 'Household', 'Work', 'Self-Care', 'Money'].map((cat) => (
                         <button
                           key={cat}
-                          onClick={() => setCategoryFilter(cat)}
+                          onClick={() => setCategoryFilter(cat as TaskCategory | 'ALL')}
                           className={`px-2 py-1 text-[10px] rounded-md border font-medium transition-all ${
                             categoryFilter === cat
                               ? 'bg-teal-500/20 text-teal-600 dark:text-teal-400 border-teal-500/40 font-bold'
@@ -211,6 +214,31 @@ export const Header: React.FC<HeaderProps> = ({
                         </button>
                       ))}
                     </div>
+
+                    {/* Detailed Sub-subcategory Selector */}
+                    <select
+                      value={categoryFilter}
+                      onChange={(e) => setCategoryFilter(e.target.value as TaskCategory | 'ALL')}
+                      className="w-full px-2 py-1.5 text-[11px] rounded-lg bg-slate-100 dark:bg-slate-800 border border-zen-border-light dark:border-zen-border-dark text-slate-700 dark:text-slate-200 focus:outline-none"
+                    >
+                      <option value="ALL">All Specific Subcategories...</option>
+                      <optgroup label="Main Categories">
+                        {ALL_MAIN_CATEGORIES.map((mainCat) => (
+                          <option key={mainCat} value={mainCat}>
+                            {mainCat}
+                          </option>
+                        ))}
+                      </optgroup>
+                      {getGroupedCategoryOptions().map((group) => (
+                        <optgroup key={group.groupName} label={group.groupName}>
+                          {group.items.map((item) => (
+                            <option key={item} value={item}>
+                              {item}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
                   </div>
                 </div>
               )}

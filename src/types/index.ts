@@ -8,7 +8,8 @@ export type TaskCategory =
   | 'Self-Care' 
   | 'Work' 
   | 'Health' 
-  | 'General';
+  | 'General'
+  | (string & {});
 
 export type ViewType = 
   | 'kanban' 

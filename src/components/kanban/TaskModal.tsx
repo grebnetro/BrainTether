@@ -4,6 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Task, TaskStatus, TaskCategory, TaskPriority, Subtask } from '../../types';
 import { 
+  findCategoryRow,
+  getMainCategoriesForEnv,
+  getSubcategoriesForMainCategory,
+  getSubSubcategoriesForSubcategory,
+  LEGACY_CATEGORIES 
+} from '../../lib/categoriesData';
+import { 
   X, 
   Flame, 
   Calendar, 
@@ -36,7 +43,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   const [status, setStatus] = useState<TaskStatus>(initialStatus);
   const [priority, setPriority] = useState<TaskPriority>('MEDIUM');
   const [stressPoints, setStressPoints] = useState<number>(3);
-  const [category, setCategory] = useState<TaskCategory>('General');
+  const [category, setCategory] = useState<TaskCategory>('Grocery shopping');
+  const [selectedEnv, setSelectedEnv] = useState<'Home' | 'Work' | 'General'>('Home');
+  const [selectedMainCat, setSelectedMainCat] = useState<string>('Errands & Shopping');
+  const [selectedSubCat, setSelectedSubCat] = useState<string>('Supplies');
+  const [selectedSubSubCat, setSelectedSubSubCat] = useState<string>('Grocery shopping');
   const [goalId, setGoalId] = useState<string>('');
   const [dueDate, setDueDate] = useState<string>('');
   const [assignedPartnerId, setAssignedPartnerId] = useState<string>('');
@@ -57,22 +68,86 @@ export const TaskModal: React.FC<TaskModalProps> = ({
       setEstimatedMinutes(taskToEdit.estimatedMinutes || 30);
       setAssignedPartnerId(taskToEdit.assignedPartnerId || '');
       setSubtasks(taskToEdit.subtasks || []);
+
+      const row = findCategoryRow(taskToEdit.category);
+      if (row) {
+        setSelectedEnv(row.environment);
+        setSelectedMainCat(row.mainCategory);
+        setSelectedSubCat(row.subcategory);
+        setSelectedSubSubCat(row.subSubcategory);
+      } else {
+        setSelectedEnv('General');
+      }
     } else {
       setTitle('');
       setDescription('');
       setStatus(initialStatus);
       setPriority('MEDIUM');
       setStressPoints(3);
-      setCategory('General');
+      setCategory('Grocery shopping');
+      setSelectedEnv('Home');
+      setSelectedMainCat('Errands & Shopping');
+      setSelectedSubCat('Supplies');
+      setSelectedSubSubCat('Grocery shopping');
       setGoalId('');
       setDueDate('');
       setEstimatedMinutes(30);
       setAssignedPartnerId('');
       setSubtasks([]);
     }
-  }, [taskToEdit, initialStatus, isOpen]);
+  }, [taskToEdit, isOpen, initialStatus]);
 
-  if (!isOpen) return null;
+  const handleEnvChange = (env: 'Home' | 'Work' | 'General') => {
+    setSelectedEnv(env);
+    if (env === 'General') {
+      setCategory('General');
+      return;
+    }
+    const mainCats = getMainCategoriesForEnv(env);
+    const firstMain = mainCats[0] || '';
+    setSelectedMainCat(firstMain);
+
+    const subCats = getSubcategoriesForMainCategory(env, firstMain);
+    const firstSub = subCats[0] || '';
+    setSelectedSubCat(firstSub);
+
+    const subSubCats = getSubSubcategoriesForSubcategory(env, firstMain, firstSub);
+    const firstSubSub = subSubCats[0] || '';
+    setSelectedSubSubCat(firstSubSub);
+
+    setCategory(firstSubSub || firstSub || firstMain || env);
+  };
+
+  const handleMainCatChange = (mainCat: string) => {
+    if (selectedEnv === 'General') return;
+    setSelectedMainCat(mainCat);
+
+    const subCats = getSubcategoriesForMainCategory(selectedEnv as 'Home' | 'Work', mainCat);
+    const firstSub = subCats[0] || '';
+    setSelectedSubCat(firstSub);
+
+    const subSubCats = getSubSubcategoriesForSubcategory(selectedEnv as 'Home' | 'Work', mainCat, firstSub);
+    const firstSubSub = subSubCats[0] || '';
+    setSelectedSubSubCat(firstSubSub);
+
+    setCategory(firstSubSub || firstSub || mainCat);
+  };
+
+  const handleSubCatChange = (subCat: string) => {
+    if (selectedEnv === 'General') return;
+    setSelectedSubCat(subCat);
+
+    const subSubCats = getSubSubcategoriesForSubcategory(selectedEnv as 'Home' | 'Work', selectedMainCat, subCat);
+    const firstSubSub = subSubCats[0] || '';
+    setSelectedSubSubCat(firstSubSub);
+
+    setCategory(firstSubSub || subCat);
+  };
+
+  const handleSubSubCatChange = (subSubCat: string) => {
+    setSelectedSubSubCat(subSubCat);
+    setCategory(subSubCat);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,6 +266,8 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     setStressPoints((prev) => Math.max(1, prev - 2));
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="w-full max-w-lg bg-zen-surface-light dark:bg-zen-surface-dark border border-zen-border-light dark:border-zen-border-dark rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -265,25 +342,109 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             />
           </div>
 
-          {/* Category & Status Grid */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">
-                Category
+          {/* Cascading Category Selector */}
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-zen-border-light dark:border-zen-border-dark space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                Category Taxonomy (Cascading)
               </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value as TaskCategory)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-900 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 text-xs focus:outline-none"
-              >
-                <option value="Household">Household</option>
-                <option value="Money">Money</option>
-                <option value="Self-Care">Self-Care</option>
-                <option value="Work">Work</option>
-                <option value="Health">Health</option>
-                <option value="General">General</option>
-              </select>
+              <div className="text-[11px] font-medium text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-md border border-teal-500/20">
+                {selectedEnv === 'General' ? category : `${selectedEnv} › ${selectedMainCat} › ${selectedSubCat} › ${selectedSubSubCat}`}
+              </div>
             </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
+              {/* Tier 1: Environment */}
+              <div>
+                <label className="block text-[10px] font-semibold text-slate-400 mb-1">
+                  1. Environment
+                </label>
+                <select
+                  value={selectedEnv}
+                  onChange={(e) => handleEnvChange(e.target.value as 'Home' | 'Work' | 'General')}
+                  className="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 text-xs focus:outline-none"
+                >
+                  <option value="Home">Home</option>
+                  <option value="Work">Work</option>
+                  <option value="General">General / Other</option>
+                </select>
+              </div>
+
+              {/* Tier 2: Main Category */}
+              <div>
+                <label className="block text-[10px] font-semibold text-slate-400 mb-1">
+                  2. Main Category
+                </label>
+                {selectedEnv === 'General' ? (
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value as TaskCategory)}
+                    className="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 text-xs focus:outline-none"
+                  >
+                    {LEGACY_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <select
+                    value={selectedMainCat}
+                    onChange={(e) => handleMainCatChange(e.target.value)}
+                    className="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 text-xs focus:outline-none"
+                  >
+                    {getMainCategoriesForEnv(selectedEnv).map((mainCat) => (
+                      <option key={mainCat} value={mainCat}>
+                        {mainCat}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              {/* Tier 3: Subcategory */}
+              <div>
+                <label className="block text-[10px] font-semibold text-slate-400 mb-1">
+                  3. Subcategory
+                </label>
+                <select
+                  disabled={selectedEnv === 'General'}
+                  value={selectedSubCat}
+                  onChange={(e) => handleSubCatChange(e.target.value)}
+                  className="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 text-xs focus:outline-none disabled:opacity-50"
+                >
+                  {selectedEnv !== 'General' &&
+                    getSubcategoriesForMainCategory(selectedEnv, selectedMainCat).map((subCat) => (
+                      <option key={subCat} value={subCat}>
+                        {subCat}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* Tier 4: Specific Task (Sub-Subcategory) */}
+              <div>
+                <label className="block text-[10px] font-semibold text-slate-400 mb-1">
+                  4. Specific Item
+                </label>
+                <select
+                  disabled={selectedEnv === 'General'}
+                  value={selectedSubSubCat}
+                  onChange={(e) => handleSubSubCatChange(e.target.value)}
+                  className="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 text-xs font-semibold text-teal-600 dark:text-teal-400 focus:outline-none disabled:opacity-50"
+                >
+                  {selectedEnv !== 'General' &&
+                    getSubSubcategoriesForSubcategory(selectedEnv, selectedMainCat, selectedSubCat).map(
+                      (subSubCat) => (
+                        <option key={subSubCat} value={subSubCat}>
+                          {subSubCat}
+                        </option>
+                      )
+                    )}
+                </select>
+              </div>
+            </div>
+          </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-400 mb-1">
@@ -300,7 +461,6 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 <option value="COMPLETED">Completed</option>
               </select>
             </div>
-          </div>
 
           {/* Priority, Due Date & Estimated Duration */}
           <div className="grid grid-cols-3 gap-3">
