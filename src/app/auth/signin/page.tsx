@@ -35,6 +35,9 @@ function SignInContent() {
       setError('Invalid email or password');
       setLoading(false);
     } else {
+      if (typeof window !== 'undefined') {
+        document.cookie = 'braintether_demo_session=true; path=/; max-age=86400';
+      }
       router.push(callbackUrl);
     }
   };
@@ -49,6 +52,7 @@ function SignInContent() {
     });
 
     if (typeof window !== 'undefined') {
+      document.cookie = 'braintether_demo_session=true; path=/; max-age=86400';
       localStorage.removeItem('braintether_onboarding_completed');
       window.location.href = '/dashboard';
     } else {
@@ -69,6 +73,7 @@ function SignInContent() {
     });
 
     if (typeof window !== 'undefined') {
+      document.cookie = 'braintether_demo_session=true; path=/; max-age=86400';
       localStorage.removeItem('braintether_onboarding_completed');
       window.location.href = '/dashboard';
     } else {

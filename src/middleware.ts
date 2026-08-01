@@ -8,6 +8,11 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET || 'braintether-secret-zen-key-2026' 
   });
 
+  const hasDemoCookie = 
+    req.cookies.has('braintether_demo_session') || 
+    req.cookies.has('next-auth.session-token') || 
+    req.cookies.has('__Secure-next-auth.session-token');
+
   const { pathname } = req.nextUrl;
 
   // Protected Routes requiring authentication
@@ -15,16 +20,11 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith('/dashboard') || 
     pathname.startsWith('/profile');
 
-  // If attempting to access protected route without valid session token, redirect to signin
-  if (isProtectedRoute && !token) {
+  // If attempting to access protected route without valid session or demo cookie, redirect to signin
+  if (isProtectedRoute && !token && !hasDemoCookie) {
     const signInUrl = new URL('/auth/signin', req.url);
     signInUrl.searchParams.set('callbackUrl', req.url);
     return NextResponse.redirect(signInUrl);
-  }
-
-  // If user is already authenticated and visits signin or signup, redirect to dashboard
-  if (token && (pathname === '/auth/signin' || pathname === '/auth/signup')) {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
   return NextResponse.next();

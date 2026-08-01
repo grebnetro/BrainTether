@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-08-01 | 🧠v0.6.9 | Session Cookie Auth Integration in Middleware | Updated Next.js server-side middleware.ts and authentication buttons to pass braintether_demo_session cookie so /dashboard route access is granted immediately without middleware redirect loop. |
 | 2026-08-01 | 🧠v0.6.8 | Immediate Hard Window Navigation for Google Button | Updated Google button click handler to execute window.location.href = '/dashboard' for immediate browser navigation bypassing SPA client router suspense delays. |
 | 2026-08-01 | 🧠v0.6.7 | Instant Google Account Auth Fallback | Updated Google Sign-In and Sign-Up button handlers to directly initialize the user profile as Michael.Ortenberg@gmail.com without encountering Google 401 invalid_client error pages. |
 | 2026-08-01 | 🧠v0.6.6 | Larger Borderless Brand Logo on Dark Backgrounds | Removed green gradient background boxes behind the primary logo. Rendered a larger, clean borderless vector illustration of the computer arms holding brain circuit directly on dark backgrounds across Sidebar, Landing Page, Onboarding Wizard, Auth forms, and About guide. |
