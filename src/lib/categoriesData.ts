@@ -276,3 +276,53 @@ export function getSubSubcategoriesForSubcategory(
   ).map((r) => r.subSubcategory);
 }
 
+/**
+ * AI Heuristic helper to guess environment, mainCategory, subcategory & specific task item from title
+ */
+export function guessCategoryFromTitle(title: string): CategoryRow {
+  const lower = title.toLowerCase().trim();
+  if (!lower) {
+    return CATEGORY_ROWS[0];
+  }
+
+  // 1. Check exact subSubcategory match or inclusion
+  for (const row of CATEGORY_ROWS) {
+    const subSubLower = row.subSubcategory.toLowerCase();
+    if (lower.includes(subSubLower) || subSubLower.includes(lower)) {
+      return row;
+    }
+  }
+
+  // 2. Keyword heuristic mapping
+  const keywordMappings: { keywords: string[]; rowMatch: (r: CategoryRow) => boolean }[] = [
+    { keywords: ['grocery', 'groceries', 'milk', 'food', 'market', 'store', 'fruit', 'snack', 'vegetable'], rowMatch: r => r.subSubcategory === 'Grocery shopping' },
+    { keywords: ['bill', 'pay', 'electric', 'water', 'utility', 'rent', 'mortgage', 'due', 'bank', 'credit', 'invoice'], rowMatch: r => r.subSubcategory === 'Bill payments' },
+    { keywords: ['tax', 'irs', 'w2', 'deduction', 'accounting', 'audit'], rowMatch: r => r.subSubcategory === 'Tax preparation' },
+    { keywords: ['oil', 'tire', 'car', 'auto', 'gas', 'vehicle', 'inspection', 'mechanic', 'windshield', 'brake'], rowMatch: r => r.mainCategory === 'Maintenance & Repairs' && r.subcategory === 'Automobile' },
+    { keywords: ['clean', 'dust', 'vacuum', 'mop', 'wipe', 'tidy', 'sweep', 'dish', 'trash', 'laundry', 'oven', 'fridge', 'scrub'], rowMatch: r => r.mainCategory === 'Household Chores' },
+    { keywords: ['doctor', 'pharmacy', 'rx', 'prescription', 'med', 'health', 'appointment', 'vet', 'dentist', 'physician'], rowMatch: r => r.subcategory === 'Medical & Pharmacy' || r.subcategory === 'Personal Health & Fitness' || r.subSubcategory === 'Vet visits' },
+    { keywords: ['meeting', 'slack', 'teams', 'email', 'client', 'call', 'presentation', 'zoom', 'inbox'], rowMatch: r => r.environment === 'Work' && r.mainCategory === 'Communication' },
+    { keywords: ['code', 'dev', 'bug', 'github', 'design', 'content', 'script', 'feature', 'api', 'deploy'], rowMatch: r => r.environment === 'Work' && r.mainCategory === 'Core Operations' },
+    { keywords: ['sprint', 'roadmap', 'project', 'plan', 'okr', 'jira', 'trello', 'kanban'], rowMatch: r => r.environment === 'Work' && r.mainCategory === 'Project Management' },
+    { keywords: ['expense', 'invoicing', 'budget', 'travel', 'calendar', 'booking', 'flight'], rowMatch: r => r.environment === 'Work' && r.mainCategory === 'Administrative' },
+  ];
+
+  for (const mapping of keywordMappings) {
+    if (mapping.keywords.some(k => lower.includes(k))) {
+      const match = CATEGORY_ROWS.find(mapping.rowMatch);
+      if (match) return match;
+    }
+  }
+
+  // 3. Check subcategory or main category inclusion
+  for (const row of CATEGORY_ROWS) {
+    if (lower.includes(row.subcategory.toLowerCase()) || lower.includes(row.mainCategory.toLowerCase())) {
+      return row;
+    }
+  }
+
+  // Fallback to first row
+  return CATEGORY_ROWS[0];
+}
+
+

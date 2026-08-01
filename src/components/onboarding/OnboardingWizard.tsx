@@ -21,6 +21,7 @@ import {
   getMainCategoriesForEnv,
   getSubcategoriesForMainCategory,
   getSubSubcategoriesForSubcategory,
+  guessCategoryFromTitle,
   LEGACY_CATEGORIES 
 } from '../../lib/categoriesData';
 
@@ -168,6 +169,29 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   const [onboardingMainCat, setOnboardingMainCat] = useState<string>('Errands & Shopping');
   const [onboardingSubCat, setOnboardingSubCat] = useState<string>('Supplies');
   const [onboardingSubSubCat, setOnboardingSubSubCat] = useState<string>('Grocery shopping');
+
+  const [isOnboardingCustomMain, setIsOnboardingCustomMain] = useState(false);
+  const [onboardingCustomMain, setOnboardingCustomMain] = useState('');
+  const [isOnboardingCustomSub, setIsOnboardingCustomSub] = useState(false);
+  const [onboardingCustomSub, setOnboardingCustomSub] = useState('');
+  const [isOnboardingCustomSubSub, setIsOnboardingCustomSubSub] = useState(false);
+  const [onboardingCustomSubSub, setOnboardingCustomSubSub] = useState('');
+
+  const [onboardingAiMsg, setOnboardingAiMsg] = useState('');
+
+  const handleOnboardingAiAutoCategorize = () => {
+    if (!taskTitle.trim()) return;
+    const row = guessCategoryFromTitle(taskTitle);
+    setOnboardingEnv(row.environment);
+    setOnboardingMainCat(row.mainCategory);
+    setOnboardingSubCat(row.subcategory);
+    setOnboardingSubSubCat(row.subSubcategory);
+    setTaskCategory(row.subSubcategory);
+    setIsOnboardingCustomMain(false);
+    setIsOnboardingCustomSub(false);
+    setIsOnboardingCustomSubSub(false);
+    setOnboardingAiMsg(`✨ AI Matched: ${row.environment} › ${row.mainCategory} › ${row.subcategory} › ${row.subSubcategory}`);
+  };
 
   const handleOnboardingEnvChange = (env: 'Home' | 'Work' | 'General') => {
     setOnboardingEnv(env);
@@ -556,11 +580,22 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
               </div>
 
               <div className="space-y-4 max-w-lg mx-auto p-5 rounded-2xl bg-slate-900 border border-zen-border-dark">
-                {/* Task Title */}
+                {/* Task Title + AI First Guess */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Task Title
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-slate-300">
+                      Task Title
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleOnboardingAiAutoCategorize}
+                      disabled={!taskTitle.trim()}
+                      className="flex items-center space-x-1 px-2.5 py-0.5 rounded-lg bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 border border-teal-500/40 text-[10px] font-bold transition-all active:scale-95 disabled:opacity-40"
+                    >
+                      <Sparkles className="w-3 h-3 text-teal-300 animate-pulse" />
+                      <span>✨ AI First Guess</span>
+                    </button>
+                  </div>
                   <input
                     type="text"
                     required
@@ -569,6 +604,11 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                     placeholder="e.g. Schedule dentist appointment, File taxes..."
                     className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-zen-border-dark text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                   />
+                  {onboardingAiMsg && (
+                    <div className="mt-1 px-2.5 py-0.5 rounded bg-teal-500/10 border border-teal-500/30 text-teal-300 text-[10px]">
+                      {onboardingAiMsg}
+                    </div>
+                  )}
                 </div>
 
                 {/* Avoidance Stress Points Slider */}
@@ -637,17 +677,42 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                           ))}
                         </select>
                       ) : (
-                        <select
-                          value={onboardingMainCat}
-                          onChange={(e) => handleOnboardingMainCatChange(e.target.value)}
-                          className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-zen-border-dark text-slate-200 text-xs focus:outline-none"
-                        >
-                          {getMainCategoriesForEnv(onboardingEnv).map((mainCat) => (
-                            <option key={mainCat} value={mainCat}>
-                              {mainCat}
-                            </option>
-                          ))}
-                        </select>
+                        <>
+                          <select
+                            value={isOnboardingCustomMain ? 'OTHER' : onboardingMainCat}
+                            onChange={(e) => {
+                              if (e.target.value === 'OTHER') {
+                                setIsOnboardingCustomMain(true);
+                                setOnboardingMainCat('Other');
+                                setTaskCategory(onboardingCustomMain || 'Other');
+                              } else {
+                                setIsOnboardingCustomMain(false);
+                                handleOnboardingMainCatChange(e.target.value);
+                              }
+                            }}
+                            className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-zen-border-dark text-slate-200 text-xs focus:outline-none"
+                          >
+                            {getMainCategoriesForEnv(onboardingEnv).map((mainCat) => (
+                              <option key={mainCat} value={mainCat}>
+                                {mainCat}
+                              </option>
+                            ))}
+                            <option value="OTHER">✏️ Other (Custom Main Cat...)</option>
+                          </select>
+
+                          {isOnboardingCustomMain && (
+                            <input
+                              type="text"
+                              value={onboardingCustomMain}
+                              onChange={(e) => {
+                                setOnboardingCustomMain(e.target.value);
+                                setTaskCategory(e.target.value || 'Custom Main Cat');
+                              }}
+                              placeholder="Type custom main cat..."
+                              className="mt-1 w-full px-2 py-1 rounded bg-slate-950 border border-teal-500/40 text-teal-300 text-xs focus:outline-none"
+                            />
+                          )}
+                        </>
                       )}
                     </div>
 
@@ -655,8 +720,17 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                       <label className="block text-[10px] text-slate-400 mb-0.5">Subcategory</label>
                       <select
                         disabled={onboardingEnv === 'General'}
-                        value={onboardingSubCat}
-                        onChange={(e) => handleOnboardingSubCatChange(e.target.value)}
+                        value={isOnboardingCustomSub ? 'OTHER' : onboardingSubCat}
+                        onChange={(e) => {
+                          if (e.target.value === 'OTHER') {
+                            setIsOnboardingCustomSub(true);
+                            setOnboardingSubCat('Other');
+                            setTaskCategory(onboardingCustomSub || 'Other');
+                          } else {
+                            setIsOnboardingCustomSub(false);
+                            handleOnboardingSubCatChange(e.target.value);
+                          }
+                        }}
                         className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-zen-border-dark text-slate-200 text-xs focus:outline-none disabled:opacity-40"
                       >
                         {onboardingEnv !== 'General' &&
@@ -665,15 +739,38 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                               {subCat}
                             </option>
                           ))}
+                        <option value="OTHER">✏️ Other (Custom Subcat...)</option>
                       </select>
+
+                      {isOnboardingCustomSub && (
+                        <input
+                          type="text"
+                          value={onboardingCustomSub}
+                          onChange={(e) => {
+                            setOnboardingCustomSub(e.target.value);
+                            setTaskCategory(e.target.value || 'Custom Subcat');
+                          }}
+                          placeholder="Type custom subcategory..."
+                          className="mt-1 w-full px-2 py-1 rounded bg-slate-950 border border-teal-500/40 text-teal-300 text-xs focus:outline-none"
+                        />
+                      )}
                     </div>
 
                     <div>
                       <label className="block text-[10px] text-slate-400 mb-0.5">Specific Task Item</label>
                       <select
                         disabled={onboardingEnv === 'General'}
-                        value={onboardingSubSubCat}
-                        onChange={(e) => handleOnboardingSubSubCatChange(e.target.value)}
+                        value={isOnboardingCustomSubSub ? 'OTHER' : onboardingSubSubCat}
+                        onChange={(e) => {
+                          if (e.target.value === 'OTHER') {
+                            setIsOnboardingCustomSubSub(true);
+                            setOnboardingSubSubCat('Other');
+                            setTaskCategory(onboardingCustomSubSub || 'Other');
+                          } else {
+                            setIsOnboardingCustomSubSub(false);
+                            handleOnboardingSubSubCatChange(e.target.value);
+                          }
+                        }}
                         className="w-full px-2.5 py-1.5 rounded-lg bg-slate-800 border border-zen-border-dark text-teal-300 text-xs font-semibold focus:outline-none disabled:opacity-40"
                       >
                         {onboardingEnv !== 'General' &&
@@ -684,7 +781,21 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                               </option>
                             )
                           )}
+                        <option value="OTHER">✏️ Other (Custom Task Item...)</option>
                       </select>
+
+                      {isOnboardingCustomSubSub && (
+                        <input
+                          type="text"
+                          value={onboardingCustomSubSub}
+                          onChange={(e) => {
+                            setOnboardingCustomSubSub(e.target.value);
+                            setTaskCategory(e.target.value || 'Custom Task Item');
+                          }}
+                          placeholder="Type custom task item..."
+                          className="mt-1 w-full px-2 py-1 rounded bg-slate-950 border border-teal-500/40 text-teal-300 text-xs font-semibold focus:outline-none"
+                        />
+                      )}
                     </div>
                   </div>
                 </div>

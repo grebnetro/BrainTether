@@ -8,6 +8,7 @@ import {
   getMainCategoriesForEnv,
   getSubcategoriesForMainCategory,
   getSubSubcategoriesForSubcategory,
+  guessCategoryFromTitle,
   LEGACY_CATEGORIES 
 } from '../../lib/categoriesData';
 import { 
@@ -48,6 +49,16 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   const [selectedMainCat, setSelectedMainCat] = useState<string>('Errands & Shopping');
   const [selectedSubCat, setSelectedSubCat] = useState<string>('Supplies');
   const [selectedSubSubCat, setSelectedSubSubCat] = useState<string>('Grocery shopping');
+
+  const [isCustomMainCat, setIsCustomMainCat] = useState(false);
+  const [customMainCat, setCustomMainCat] = useState('');
+  const [isCustomSubCat, setIsCustomSubCat] = useState(false);
+  const [customSubCat, setCustomSubCat] = useState('');
+  const [isCustomSubSubCat, setIsCustomSubSubCat] = useState(false);
+  const [customSubSubCat, setCustomSubSubCat] = useState('');
+
+  const [aiMatchedMessage, setAiMatchedMessage] = useState<string>('');
+
   const [goalId, setGoalId] = useState<string>('');
   const [dueDate, setDueDate] = useState<string>('');
   const [assignedPartnerId, setAssignedPartnerId] = useState<string>('');
@@ -89,6 +100,13 @@ export const TaskModal: React.FC<TaskModalProps> = ({
       setSelectedMainCat('Errands & Shopping');
       setSelectedSubCat('Supplies');
       setSelectedSubSubCat('Grocery shopping');
+      setIsCustomMainCat(false);
+      setCustomMainCat('');
+      setIsCustomSubCat(false);
+      setCustomSubCat('');
+      setIsCustomSubSubCat(false);
+      setCustomSubSubCat('');
+      setAiMatchedMessage('');
       setGoalId('');
       setDueDate('');
       setEstimatedMinutes(30);
@@ -96,6 +114,21 @@ export const TaskModal: React.FC<TaskModalProps> = ({
       setSubtasks([]);
     }
   }, [taskToEdit, isOpen, initialStatus]);
+
+  const handleAiAutoCategorize = () => {
+    if (!title.trim()) return;
+    const row = guessCategoryFromTitle(title);
+    setSelectedEnv(row.environment);
+    setSelectedMainCat(row.mainCategory);
+    setSelectedSubCat(row.subcategory);
+    setSelectedSubSubCat(row.subSubcategory);
+    setCategory(row.subSubcategory);
+    setIsCustomMainCat(false);
+    setIsCustomSubCat(false);
+    setIsCustomSubSubCat(false);
+
+    setAiMatchedMessage(`✨ AI Matched: ${row.environment} › ${row.mainCategory} › ${row.subcategory} › ${row.subSubcategory}`);
+  };
 
   const handleEnvChange = (env: 'Home' | 'Work' | 'General') => {
     setSelectedEnv(env);
@@ -289,11 +322,23 @@ export const TaskModal: React.FC<TaskModalProps> = ({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5 flex-1">
           
-          {/* Title */}
+          {/* Title + AI First Guess Button */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">
-              Task Title (Name the thing you are avoiding)
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-slate-400">
+                Task Title (Name the thing you are avoiding) <span className="text-red-400">*</span>
+              </label>
+              <button
+                type="button"
+                onClick={handleAiAutoCategorize}
+                disabled={!title.trim()}
+                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-gradient-to-r from-teal-500/20 to-emerald-500/20 hover:from-teal-500/30 hover:to-emerald-500/30 text-teal-300 border border-teal-500/40 text-[11px] font-bold transition-all active:scale-95 disabled:opacity-40 shadow-sm"
+                title="Click to have AI guess the Environment, Main Category, Subcategory & Specific Item based on task title"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-teal-300 animate-pulse" />
+                <span>✨ AI First Guess</span>
+              </button>
+            </div>
             <input
               type="text"
               required
@@ -302,6 +347,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               placeholder="e.g. Unpack unopened tax documents on desk..."
               className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 placeholder-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
             />
+            {aiMatchedMessage && (
+              <div className="mt-1.5 px-3 py-1 rounded-lg bg-teal-500/10 border border-teal-500/30 text-teal-300 text-[11px] font-medium animate-in fade-in">
+                {aiMatchedMessage}
+              </div>
+            )}
           </div>
 
           {/* Description */}
@@ -388,17 +438,42 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                     ))}
                   </select>
                 ) : (
-                  <select
-                    value={selectedMainCat}
-                    onChange={(e) => handleMainCatChange(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 text-xs focus:outline-none"
-                  >
-                    {getMainCategoriesForEnv(selectedEnv).map((mainCat) => (
-                      <option key={mainCat} value={mainCat}>
-                        {mainCat}
-                      </option>
-                    ))}
-                  </select>
+                  <>
+                    <select
+                      value={isCustomMainCat ? 'OTHER' : selectedMainCat}
+                      onChange={(e) => {
+                        if (e.target.value === 'OTHER') {
+                          setIsCustomMainCat(true);
+                          setSelectedMainCat('Other');
+                          setCategory(customMainCat || 'Other');
+                        } else {
+                          setIsCustomMainCat(false);
+                          handleMainCatChange(e.target.value);
+                        }
+                      }}
+                      className="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 text-xs focus:outline-none"
+                    >
+                      {getMainCategoriesForEnv(selectedEnv).map((mainCat) => (
+                        <option key={mainCat} value={mainCat}>
+                          {mainCat}
+                        </option>
+                      ))}
+                      <option value="OTHER">✏️ Other (Custom Main Cat...)</option>
+                    </select>
+
+                    {isCustomMainCat && (
+                      <input
+                        type="text"
+                        value={customMainCat}
+                        onChange={(e) => {
+                          setCustomMainCat(e.target.value);
+                          setCategory(e.target.value || 'Custom Main Cat');
+                        }}
+                        placeholder="Type custom main cat..."
+                        className="mt-1.5 w-full px-2.5 py-1 rounded-lg bg-slate-900 border border-teal-500/40 text-teal-300 text-xs focus:outline-none"
+                      />
+                    )}
+                  </>
                 )}
               </div>
 
@@ -409,8 +484,17 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 </label>
                 <select
                   disabled={selectedEnv === 'General'}
-                  value={selectedSubCat}
-                  onChange={(e) => handleSubCatChange(e.target.value)}
+                  value={isCustomSubCat ? 'OTHER' : selectedSubCat}
+                  onChange={(e) => {
+                    if (e.target.value === 'OTHER') {
+                      setIsCustomSubCat(true);
+                      setSelectedSubCat('Other');
+                      setCategory(customSubCat || 'Other');
+                    } else {
+                      setIsCustomSubCat(false);
+                      handleSubCatChange(e.target.value);
+                    }
+                  }}
                   className="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 text-xs focus:outline-none disabled:opacity-50"
                 >
                   {selectedEnv !== 'General' &&
@@ -419,7 +503,21 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                         {subCat}
                       </option>
                     ))}
+                  <option value="OTHER">✏️ Other (Custom Subcat...)</option>
                 </select>
+
+                {isCustomSubCat && (
+                  <input
+                    type="text"
+                    value={customSubCat}
+                    onChange={(e) => {
+                      setCustomSubCat(e.target.value);
+                      setCategory(e.target.value || 'Custom Subcat');
+                    }}
+                    placeholder="Type custom subcategory..."
+                    className="mt-1.5 w-full px-2.5 py-1 rounded-lg bg-slate-900 border border-teal-500/40 text-teal-300 text-xs focus:outline-none"
+                  />
+                )}
               </div>
 
               {/* Tier 4: Specific Task (Sub-Subcategory) */}
@@ -429,8 +527,17 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 </label>
                 <select
                   disabled={selectedEnv === 'General'}
-                  value={selectedSubSubCat}
-                  onChange={(e) => handleSubSubCatChange(e.target.value)}
+                  value={isCustomSubSubCat ? 'OTHER' : selectedSubSubCat}
+                  onChange={(e) => {
+                    if (e.target.value === 'OTHER') {
+                      setIsCustomSubSubCat(true);
+                      setSelectedSubSubCat('Other');
+                      setCategory(customSubSubCat || 'Other');
+                    } else {
+                      setIsCustomSubSubCat(false);
+                      handleSubSubCatChange(e.target.value);
+                    }
+                  }}
                   className="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-100 text-xs font-semibold text-teal-600 dark:text-teal-400 focus:outline-none disabled:opacity-50"
                 >
                   {selectedEnv !== 'General' &&
@@ -441,7 +548,21 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                         </option>
                       )
                     )}
+                  <option value="OTHER">✏️ Other (Custom Task Item...)</option>
                 </select>
+
+                {isCustomSubSubCat && (
+                  <input
+                    type="text"
+                    value={customSubSubCat}
+                    onChange={(e) => {
+                      setCustomSubSubCat(e.target.value);
+                      setCategory(e.target.value || 'Custom Task Item');
+                    }}
+                    placeholder="Type custom task item..."
+                    className="mt-1.5 w-full px-2.5 py-1 rounded-lg bg-slate-900 border border-teal-500/40 text-teal-300 text-xs font-semibold focus:outline-none"
+                  />
+                )}
               </div>
             </div>
           </div>
