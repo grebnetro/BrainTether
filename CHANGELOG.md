@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-08-01 | 🧠v0.6.7 | Instant Google Account Auth Fallback | Updated Google Sign-In and Sign-Up button handlers to directly initialize the user profile as Michael.Ortenberg@gmail.com without encountering Google 401 invalid_client error pages. |
 | 2026-08-01 | 🧠v0.6.6 | Larger Borderless Brand Logo on Dark Backgrounds | Removed green gradient background boxes behind the primary logo. Rendered a larger, clean borderless vector illustration of the computer arms holding brain circuit directly on dark backgrounds across Sidebar, Landing Page, Onboarding Wizard, Auth forms, and About guide. |
 | 2026-08-01 | 🧠v0.6.5 | New Primary Computer Arms SVG Icon & Logo Integration | Replaced default brain icon with custom computer_arms SVG vector illustration as the primary brand logo across Sidebar header, Landing Page, Onboarding Wizard, Auth forms, and About guide. |
 | 2026-08-01 | 🧠v0.6.4 | AI First Guess Auto-Categorize & Inline Custom Category Editing | Added '✨ AI First Guess' button directly beside Task Title field to auto-detect Environment, Main Category, Subcategory, and Specific Item from task title keywords. Added '✏️ Other (Custom...)' options with inline text inputs across all 4 category levels. |
