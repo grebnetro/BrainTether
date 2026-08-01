@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-08-01 | 🧠v0.6.6 | Larger Borderless Brand Logo on Dark Backgrounds | Removed green gradient background boxes behind the primary logo. Rendered a larger, clean borderless vector illustration of the computer arms holding brain circuit directly on dark backgrounds across Sidebar, Landing Page, Onboarding Wizard, Auth forms, and About guide. |
 | 2026-08-01 | 🧠v0.6.5 | New Primary Computer Arms SVG Icon & Logo Integration | Replaced default brain icon with custom computer_arms SVG vector illustration as the primary brand logo across Sidebar header, Landing Page, Onboarding Wizard, Auth forms, and About guide. |
 | 2026-08-01 | 🧠v0.6.4 | AI First Guess Auto-Categorize & Inline Custom Category Editing | Added '✨ AI First Guess' button directly beside Task Title field to auto-detect Environment, Main Category, Subcategory, and Specific Item from task title keywords. Added '✏️ Other (Custom...)' options with inline text inputs across all 4 category levels. |
 | 2026-08-01 | 🧠v0.6.3 | Streamlined Onboarding Step 1 Layout & Eliminated Scrolling | Re-architected Step 1 profile setup in OnboardingWizard to display Display Name input and Drag-and-Drop Photo Upload side-by-side. Positioned 'Continue to Instruction Sheet' action button directly below avatar grid eliminating vertical scrolling. |

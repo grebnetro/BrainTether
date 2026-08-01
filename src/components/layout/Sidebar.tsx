@@ -47,9 +47,7 @@ export const Sidebar: React.FC = () => {
       {/* Brand Header */}
       <div className="space-y-6">
         <div className="flex items-center space-x-3 px-2">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20 p-2">
-            <BrandLogo className="w-6 h-6 text-white" />
-          </div>
+          <BrandLogo className="w-11 h-11 text-teal-400 shrink-0" />
           <div>
             <h1 className="font-black text-slate-900 dark:text-slate-100 text-base tracking-tight leading-none">
               BrainTether

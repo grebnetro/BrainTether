@@ -56,9 +56,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-30 bg-zen-surface-dark/80 backdrop-blur-md border-b border-zen-border-dark px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
-              <BrandLogo className="w-6 h-6 text-white" />
-            </div>
+            <BrandLogo className="w-12 h-12 text-teal-400 shrink-0" />
             <div>
               <h1 className="font-bold text-lg text-slate-100 tracking-tight flex items-center gap-2">
                 BrainTether
