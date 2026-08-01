@@ -89,6 +89,12 @@ export const CATEGORY_ROWS: CategoryRow[] = [
   { environment: 'Home', mainCategory: 'Maintenance & Repairs', subcategory: 'Home Structure & Appliances', subSubcategory: 'Painting' },
   { environment: 'Home', mainCategory: 'Maintenance & Repairs', subcategory: 'Home Structure & Appliances', subSubcategory: 'Lightbulb replacement' },
 
+  // Home -> Travel & Events
+  { environment: 'Home', mainCategory: 'Travel & Events', subcategory: 'Lodging & Travel', subSubcategory: 'Hotel & lodging booking' },
+  { environment: 'Home', mainCategory: 'Travel & Events', subcategory: 'Lodging & Travel', subSubcategory: 'Flight & transport booking' },
+  { environment: 'Home', mainCategory: 'Travel & Events', subcategory: 'Special Occasions', subSubcategory: 'Wedding & celebration prep' },
+  { environment: 'Home', mainCategory: 'Travel & Events', subcategory: 'Special Occasions', subSubcategory: 'Party & event planning' },
+
   // Work -> Administrative
   { environment: 'Work', mainCategory: 'Administrative', subcategory: 'Financial Admin', subSubcategory: 'Expense reporting' },
   { environment: 'Work', mainCategory: 'Administrative', subcategory: 'Financial Admin', subSubcategory: 'Invoicing' },
@@ -295,6 +301,9 @@ export function guessCategoryFromTitle(title: string): CategoryRow {
 
   // 2. Keyword heuristic mapping
   const keywordMappings: { keywords: string[]; rowMatch: (r: CategoryRow) => boolean }[] = [
+    { keywords: ['hotel', 'motel', 'airbnb', 'lodging', 'resort', 'inn', 'stay', 'accommodation', 'hostel'], rowMatch: r => r.subSubcategory === 'Hotel & lodging booking' || r.subSubcategory === 'Travel booking' },
+    { keywords: ['wedding', 'reception', 'ceremony', 'groom', 'bride', 'anniversary', 'party'], rowMatch: r => r.subSubcategory === 'Wedding & celebration prep' || r.subSubcategory === 'Event planning' },
+    { keywords: ['trip', 'vacation', 'flight', 'airline', 'airport', 'travel', 'itinerary', 'tour'], rowMatch: r => r.subSubcategory === 'Flight & transport booking' || r.subSubcategory === 'Travel booking' },
     { keywords: ['grocery', 'groceries', 'milk', 'food', 'market', 'store', 'fruit', 'snack', 'vegetable'], rowMatch: r => r.subSubcategory === 'Grocery shopping' },
     { keywords: ['bill', 'pay', 'electric', 'water', 'utility', 'rent', 'mortgage', 'due', 'bank', 'credit', 'invoice'], rowMatch: r => r.subSubcategory === 'Bill payments' },
     { keywords: ['tax', 'irs', 'w2', 'deduction', 'accounting', 'audit'], rowMatch: r => r.subSubcategory === 'Tax preparation' },
@@ -304,7 +313,7 @@ export function guessCategoryFromTitle(title: string): CategoryRow {
     { keywords: ['meeting', 'slack', 'teams', 'email', 'client', 'call', 'presentation', 'zoom', 'inbox'], rowMatch: r => r.environment === 'Work' && r.mainCategory === 'Communication' },
     { keywords: ['code', 'dev', 'bug', 'github', 'design', 'content', 'script', 'feature', 'api', 'deploy'], rowMatch: r => r.environment === 'Work' && r.mainCategory === 'Core Operations' },
     { keywords: ['sprint', 'roadmap', 'project', 'plan', 'okr', 'jira', 'trello', 'kanban'], rowMatch: r => r.environment === 'Work' && r.mainCategory === 'Project Management' },
-    { keywords: ['expense', 'invoicing', 'budget', 'travel', 'calendar', 'booking', 'flight'], rowMatch: r => r.environment === 'Work' && r.mainCategory === 'Administrative' },
+    { keywords: ['expense', 'invoicing', 'budget', 'calendar'], rowMatch: r => r.environment === 'Work' && r.mainCategory === 'Administrative' },
   ];
 
   for (const mapping of keywordMappings) {
@@ -321,8 +330,24 @@ export function guessCategoryFromTitle(title: string): CategoryRow {
     }
   }
 
-  // Fallback to first row
-  return CATEGORY_ROWS[0];
+  // 4. Token match scoring fallback
+  const words = lower.split(/\s+/).filter(w => w.length > 2);
+  let bestRow = CATEGORY_ROWS[0];
+  let maxScore = 0;
+
+  for (const row of CATEGORY_ROWS) {
+    let score = 0;
+    const combined = `${row.environment} ${row.mainCategory} ${row.subcategory} ${row.subSubcategory}`.toLowerCase();
+    for (const word of words) {
+      if (combined.includes(word)) score += 2;
+    }
+    if (score > maxScore) {
+      maxScore = score;
+      bestRow = row;
+    }
+  }
+
+  return bestRow;
 }
 
 

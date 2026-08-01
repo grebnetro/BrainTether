@@ -53,7 +53,7 @@ function SignInContent() {
 
     if (typeof window !== 'undefined') {
       document.cookie = 'braintether_demo_session=true; path=/; max-age=86400';
-      localStorage.removeItem('braintether_onboarding_completed');
+      localStorage.setItem('braintether_onboarding_completed', 'true');
       window.location.href = '/dashboard';
     } else {
       router.push('/dashboard');
