@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import versionData from '../../version.json';
+import { BrandLogo } from '../components/common/BrandLogo';
 import { 
   BrainCircuit, 
   Flame, 

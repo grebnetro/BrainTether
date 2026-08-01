@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { BrandLogo } from '../common/BrandLogo';
 import { 
   BrainCircuit, 
   User, 

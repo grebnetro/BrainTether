@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -9,7 +9,7 @@ import { BrandLogo } from '../../../components/common/BrandLogo';
 import { useApp } from '../../../context/AppContext';
 import { Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
 
-export default function SignInPage() {
+function SignInContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
@@ -52,11 +52,7 @@ export default function SignInPage() {
       name: formattedName || 'Alex Morgan',
       email: targetEmail,
       avatarUrl: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f973.svg',
-      adhdPreferences: {
-        soundscapesEnabled: true,
-        overwhelmTimer: 2,
-        dailyStressCeiling: 25,
-      },
+      dailyStressCeiling: 25,
     });
 
     if (typeof window !== 'undefined') {
@@ -97,12 +93,12 @@ export default function SignInPage() {
           {/* Prominent Instant Access / Bypass Button */}
           <button
             type="button"
-            onClick={handleInstantBypass}
+            onClick={handleDemoSignIn}
             disabled={loading}
             className="w-full flex items-center justify-center space-x-2 py-3.5 px-4 rounded-2xl text-xs font-black text-slate-950 bg-gradient-to-r from-amber-400 via-teal-300 to-emerald-400 hover:from-amber-300 hover:to-emerald-300 shadow-xl shadow-teal-500/20 active:scale-95 transition-all"
           >
             <Sparkles className="w-4 h-4 fill-current" />
-            <span>⚡ Instant 1-Click Workspace Access (Bypass)</span>
+            <span>⚡ Instant 1-Click Workspace Access (Demo)</span>
           </button>
 
           <div className="relative flex items-center justify-center">
@@ -138,7 +134,7 @@ export default function SignInPage() {
             <span>Continue with Google</span>
           </button>
 
-          <form onSubmit={handleCredentialsSubmit} className="space-y-4">
+          <form onSubmit={handleSignIn} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Email Address
@@ -200,5 +196,13 @@ export default function SignInPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-zen-bg-dark flex items-center justify-center text-slate-400 text-xs">Loading sign in...</div>}>
+      <SignInContent />
+    </Suspense>
   );
 }

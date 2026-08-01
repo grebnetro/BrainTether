@@ -2,6 +2,7 @@
 
 import React from 'react';
 import versionData from '../../../version.json';
+import { BrandLogo } from '../common/BrandLogo';
 import { 
   BrainCircuit, 
   Flame, 

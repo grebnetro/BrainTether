@@ -29,11 +29,7 @@ export default function SignUpPage() {
       name: targetName,
       email: targetEmail,
       avatarUrl: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f973.svg',
-      adhdPreferences: {
-        soundscapesEnabled: true,
-        overwhelmTimer: 2,
-        dailyStressCeiling: 25,
-      },
+      dailyStressCeiling: 25,
     });
 
     if (typeof window !== 'undefined') {
@@ -43,19 +39,8 @@ export default function SignUpPage() {
     router.push('/dashboard');
   };
 
-  const handleGoogleSignUp = async () => {
-    setLoading(true);
-    const res = await signIn('credentials', {
-      redirect: false,
-      email: 'michael.ortenberg@gmail.com',
-      password: 'googleauthpassword',
-    });
-
-    if (res?.ok) {
-      router.push('/dashboard');
-    } else {
-      router.push('/dashboard');
-    }
+  const handleGoogleSignUp = () => {
+    signIn('google', { callbackUrl: '/dashboard' });
   };
 
   return (
@@ -119,7 +104,7 @@ export default function SignUpPage() {
             <span className="bg-zen-surface-dark px-3 text-[10px] uppercase font-bold text-slate-500">Or Email Registration</span>
           </div>
 
-          <form onSubmit={handleSignUp} className="space-y-4">
+          <form onSubmit={handleSignUpSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Your Full Name
