@@ -2,6 +2,7 @@
 
 | Date | Version | Summary | Details |
 | :--- | :--- | :--- | :--- |
+| 2026-08-01 | 🧠v0.6.3 | Streamlined Onboarding Step 1 Layout & Eliminated Scrolling | Re-architected Step 1 profile setup in OnboardingWizard to display Display Name input and Drag-and-Drop Photo Upload side-by-side. Positioned 'Continue to Instruction Sheet' action button directly below avatar grid eliminating vertical scrolling. |
 | 2026-08-01 | 🧠v0.6.2 | 4-Tier Cascading Category Taxonomy from CSV & Integration Across Modals | Integrated 4-tier cascading category selector (Environment ➔ Main Category ➔ Subcategory ➔ Specific Task Item) parsed from Categories.csv into TaskModal, OnboardingWizard, Header, TaskCard, and KanbanBoard. |
 | 2026-07-30 | 🧠v0.6.1 | 5 Calendar View Modes & Drag-and-Drop Task Rescheduling | Added 5 interactive Calendar view modes (Month, 7-Day Week, 5-Day Work Week, Daily 24h Agenda, Annual 12-Month Heatmap). Enabled HTML5 Drag-and-Drop to reschedule task cards between calendar days. Added visual date badges (🔴 Target Due Date vs 📅 Creation Date). |
 | 2026-07-30 | 🧠v0.6.0 | Task Detail Modal, AI Subtask Extraction & Standalone Card Extraction | Clicking any Kanban task card opens the Task Detail Modal to edit title, description, Target Due Date, and Estimated Duration (15m-120m). Upgraded AI Breakdown engine to extract intelligent domain steps (e.g., tire replacement, tax mail, health). Added 1-click '+ Card' button to extract subtasks into standalone bite-sized Kanban cards. |

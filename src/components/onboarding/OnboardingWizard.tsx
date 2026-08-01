@@ -293,30 +293,31 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
           
           {/* STEP 1: Profile & Avatar Selection Prompt */}
           {step === 1 && (
-            <form onSubmit={handleStep1Submit} className="space-y-6 animate-in fade-in">
-              <div className="text-center space-y-2">
-                <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30 text-xs font-semibold">
+            <form onSubmit={handleStep1Submit} className="space-y-4 animate-in fade-in">
+              <div className="text-center space-y-1">
+                <span className="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30 text-xs font-semibold">
                   <User className="w-3.5 h-3.5" />
                   <span>Step 1: Set Up Your Profile</span>
                 </span>
-                <h3 className="text-xl font-extrabold text-slate-100">
+                <h3 className="text-lg font-extrabold text-slate-100">
                   Who is using this BrainTether workspace?
                 </h3>
                 <p className="text-xs text-slate-400 max-w-md mx-auto">
-                  Customize your display name and choose a 10-level Mind State avatar or drag & drop a photo.
+                  Set your display name, choose a Mind State avatar, or upload a custom photo.
                 </p>
               </div>
 
-              <div className="space-y-5 max-w-lg mx-auto">
-                {/* Active Avatar Preview + Name Input */}
-                <div className="flex items-center space-x-4 p-4 rounded-2xl bg-slate-900 border border-zen-border-dark">
+              {/* Side-by-Side: Display Name & Custom Photo Upload */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Left: Active Avatar Preview + Name Input */}
+                <div className="flex items-center space-x-3 p-3 rounded-2xl bg-slate-900 border border-zen-border-dark">
                   <img
                     src={currentAvatar}
                     alt={name}
-                    className="w-16 h-16 rounded-2xl border-2 border-teal-400 object-cover bg-slate-950 p-1 shrink-0"
+                    className="w-12 h-12 rounded-xl border-2 border-teal-400 object-cover bg-slate-950 p-1 shrink-0"
                   />
-                  <div className="flex-1">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <div className="flex-1 min-w-0">
+                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">
                       Display Name
                     </label>
                     <input
@@ -325,131 +326,130 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Enter your name..."
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-zen-border-dark text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                      className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-zen-border-dark text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                     />
                   </div>
                 </div>
 
-                {/* Avatar Theme Selection & 10 Mind State Levels */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold text-slate-300">
-                      Choose Avatar Theme
-                    </label>
-                    <span className="text-[10px] text-teal-400 font-mono">5 Themes Available</span>
-                  </div>
-
-                  {/* Theme Switcher Pills */}
-                  <div className="flex items-center space-x-2 overflow-x-auto pb-1">
-                    {AVATAR_THEMES.map((theme) => (
-                      <button
-                        key={theme.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedTheme(theme.id as any);
-                          setCustomAvatarUrl('');
-                        }}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold border whitespace-nowrap transition-all ${
-                          selectedTheme === theme.id && !customAvatarUrl
-                            ? 'bg-teal-500/20 text-teal-300 border-teal-500/50 shadow-sm'
-                            : 'bg-slate-900/60 text-slate-400 border-zen-border-dark hover:bg-slate-800'
-                        }`}
-                      >
-                        {theme.name}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Active Level Description Banner */}
-                  <div className="p-3 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center space-x-3">
-                    <img src={generatedAvatarUrl} alt={currentLevelObj.label} className="w-10 h-10 object-contain bg-slate-950 p-1 rounded-xl border border-teal-500/40" />
-                    <div>
-                      <h4 className="text-xs font-bold text-teal-300 flex items-center gap-1.5">
-                        <span>{currentLevelObj.label}</span>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-300 font-mono">Level {currentLevelObj.level} / 10</span>
-                      </h4>
-                      <p className="text-[11px] text-slate-300 mt-0.5">{currentLevelObj.desc}</p>
+                {/* Right: Drag & Drop Custom Photo Upload */}
+                <div 
+                  onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragging(false);
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                      handleImageFile(e.dataTransfer.files[0]);
+                    }
+                  }}
+                  className={`p-2.5 rounded-2xl border-2 border-dashed flex items-center justify-center cursor-pointer transition-all ${
+                    dragging 
+                      ? 'border-teal-400 bg-teal-500/10' 
+                      : 'border-zen-border-dark bg-slate-900/60 hover:border-slate-600'
+                  }`}
+                >
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={(e) => e.target.files?.[0] && handleImageFile(e.target.files[0])}
+                    className="hidden" 
+                    id="onboarding-avatar-file"
+                  />
+                  <label htmlFor="onboarding-avatar-file" className="cursor-pointer flex items-center space-x-2.5 text-left w-full px-1">
+                    <div className="w-8 h-8 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center shrink-0">
+                      <Upload className="w-4 h-4 text-teal-400" />
                     </div>
-                  </div>
-
-                  {/* 10 Mind State Levels Grid */}
-                  <div className="grid grid-cols-5 gap-2">
-                    {MINDSTATE_LEVELS.map((item) => {
-                      const avatarUrl = getAvatarUrl(selectedTheme, item);
-                      const isSelected = selectedLevel === item.level && !customAvatarUrl;
-                      return (
-                        <button
-                          type="button"
-                          key={item.level}
-                          onClick={() => {
-                            setSelectedLevel(item.level);
-                            setCustomAvatarUrl('');
-                          }}
-                          className={`relative p-2 rounded-xl border flex flex-col items-center justify-center transition-all ${
-                            isSelected
-                              ? 'border-teal-400 bg-teal-500/10 ring-2 ring-teal-500/30 scale-105 shadow-md'
-                              : 'border-zen-border-dark bg-slate-900/60 opacity-80 hover:opacity-100 hover:border-slate-600'
-                          }`}
-                        >
-                          <img src={avatarUrl} alt={item.label} className="w-8 h-8 object-contain" />
-                          <span className="text-[9px] font-bold text-slate-300 mt-1 text-center line-clamp-1">{item.label}</span>
-                          {isSelected && (
-                            <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-teal-500 text-white flex items-center justify-center shadow">
-                              <Check className="w-3 h-3" />
-                            </div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Drag and Drop Custom Photo Upload */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    Or Upload Custom Photo (Drag & Drop or Click)
+                    <div className="flex-1 min-w-0">
+                      <span className="text-xs font-bold text-slate-200 block truncate">
+                        {customAvatarUrl ? 'Photo Uploaded (Click to change)' : 'Upload Custom Photo'}
+                      </span>
+                      <span className="text-[10px] text-slate-400 block truncate">
+                        Drag & drop or click to browse
+                      </span>
+                    </div>
                   </label>
-                  <div 
-                    onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-                    onDragLeave={() => setDragging(false)}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      setDragging(false);
-                      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                        handleImageFile(e.dataTransfer.files[0]);
-                      }
-                    }}
-                    className={`p-4 rounded-2xl border-2 border-dashed text-center cursor-pointer transition-all ${
-                      dragging 
-                        ? 'border-teal-400 bg-teal-500/10' 
-                        : 'border-zen-border-dark bg-slate-900/60 hover:border-slate-600'
-                    }`}
-                  >
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={(e) => e.target.files?.[0] && handleImageFile(e.target.files[0])}
-                      className="hidden" 
-                      id="onboarding-avatar-file"
-                    />
-                    <label htmlFor="onboarding-avatar-file" className="cursor-pointer space-y-1.5 block">
-                      <Upload className="w-5 h-5 text-teal-400 mx-auto" />
-                      <span className="text-xs font-bold text-slate-200 block">
-                        Drag & Drop your photo here, or click to browse
-                      </span>
-                      <span className="text-[10px] text-slate-400 block">
-                        Supports JPG, PNG, GIF, WebP (Converted automatically)
-                      </span>
-                    </label>
-                  </div>
                 </div>
-
               </div>
 
-              <div className="pt-4 flex justify-end">
+              {/* Avatar Theme Selection & 10 Mind State Levels */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-slate-300">
+                    Or Choose Avatar Theme & Mind State Level
+                  </label>
+                  <span className="text-[10px] text-teal-400 font-mono">5 Themes Available</span>
+                </div>
+
+                {/* Theme Switcher Pills */}
+                <div className="flex items-center space-x-1.5 overflow-x-auto pb-0.5">
+                  {AVATAR_THEMES.map((theme) => (
+                    <button
+                      key={theme.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTheme(theme.id as any);
+                        setCustomAvatarUrl('');
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold border whitespace-nowrap transition-all ${
+                        selectedTheme === theme.id && !customAvatarUrl
+                          ? 'bg-teal-500/20 text-teal-300 border-teal-500/50 shadow-sm'
+                          : 'bg-slate-900/60 text-slate-400 border-zen-border-dark hover:bg-slate-800'
+                      }`}
+                    >
+                      {theme.name}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Active Level Description Banner */}
+                <div className="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center space-x-3">
+                  <img src={generatedAvatarUrl} alt={currentLevelObj.label} className="w-8 h-8 object-contain bg-slate-950 p-1 rounded-lg border border-teal-500/40 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs font-bold text-teal-300 flex items-center gap-1.5">
+                      <span>{currentLevelObj.label}</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-300 font-mono">Level {currentLevelObj.level} / 10</span>
+                    </h4>
+                    <p className="text-[11px] text-slate-300 mt-0.5 line-clamp-1">{currentLevelObj.desc}</p>
+                  </div>
+                </div>
+
+                {/* 10 Mind State Levels Grid */}
+                <div className="grid grid-cols-5 gap-1.5">
+                  {MINDSTATE_LEVELS.map((item) => {
+                    const avatarUrl = getAvatarUrl(selectedTheme, item);
+                    const isSelected = selectedLevel === item.level && !customAvatarUrl;
+                    return (
+                      <button
+                        type="button"
+                        key={item.level}
+                        onClick={() => {
+                          setSelectedLevel(item.level);
+                          setCustomAvatarUrl('');
+                        }}
+                        className={`relative p-1.5 rounded-xl border flex flex-col items-center justify-center transition-all ${
+                          isSelected
+                            ? 'border-teal-400 bg-teal-500/10 ring-2 ring-teal-500/30 scale-105 shadow-md'
+                            : 'border-zen-border-dark bg-slate-900/60 opacity-80 hover:opacity-100 hover:border-slate-600'
+                        }`}
+                      >
+                        <img src={avatarUrl} alt={item.label} className="w-7 h-7 object-contain" />
+                        <span className="text-[9px] font-bold text-slate-300 mt-0.5 text-center line-clamp-1">{item.label}</span>
+                        {isSelected && (
+                          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-teal-500 text-white flex items-center justify-center shadow">
+                            <Check className="w-2.5 h-2.5" />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Continue Button directly below avatars */}
+              <div className="pt-2 flex justify-end">
                 <button
                   type="submit"
-                  className="flex items-center space-x-2 px-6 py-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-lg shadow-teal-500/20 active:scale-95 transition-all"
+                  className="flex items-center space-x-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-lg shadow-teal-500/20 active:scale-95 transition-all"
                 >
                   <span>Continue to Instruction Sheet</span>
                   <ArrowRight className="w-4 h-4" />
