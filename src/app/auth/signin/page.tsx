@@ -50,9 +50,10 @@ function SignInContent() {
 
     if (typeof window !== 'undefined') {
       localStorage.removeItem('braintether_onboarding_completed');
+      window.location.href = '/dashboard';
+    } else {
+      router.push('/dashboard');
     }
-
-    router.push('/dashboard');
   };
 
   const handleDemoSignIn = () => {
@@ -69,9 +70,10 @@ function SignInContent() {
 
     if (typeof window !== 'undefined') {
       localStorage.removeItem('braintether_onboarding_completed');
+      window.location.href = '/dashboard';
+    } else {
+      router.push('/dashboard');
     }
-
-    router.push('/dashboard');
   };
 
   return (
