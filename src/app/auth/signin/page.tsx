@@ -46,13 +46,10 @@ function SignInContent() {
   const [googleEmailInput, setGoogleEmailInput] = useState('');
 
   const handleGoogleSignIn = () => {
-    // If real Google OAuth Client ID is provided in environment, trigger NextAuth Google provider redirect
     if (process.env.NEXT_PUBLIC_ENABLE_REAL_GOOGLE === 'true') {
       signIn('google', { callbackUrl: '/dashboard' });
       return;
     }
-
-    // Otherwise, open dynamic Google email entry modal
     setShowGoogleModal(true);
   };
 

@@ -1,6 +1,7 @@
 # Changelog
 
 | Date | Version | Summary | Details |
+| 2026-08-03 | 🧠v0.7.3 | Fix Sign-In Page Google Email Modal State & Build Type Errors | Added missing showGoogleModal and googleEmailInput state declarations and submitGoogleProfile handlers to SignInContent in signin page, ensuring zero Next.js production build type errors. |
 | :--- | :--- | :--- | :--- |
 | 2026-08-01 | 🧠v0.7.2 | Dynamic Google Email Entry Modal Fallback | Replaced hardcoded email fallback with a dynamic Google Email Prompt modal when Google Cloud OAuth environment keys are missing, allowing any user in incognito to enter their own email address. |
 | 2026-08-01 | 🧠v0.7.1 | Clean Personal Workspace Initialization & Per-Account Local Storage | Separated demo workspace tasks (guest@braintether.app) from personal account workspaces (Michael.Ortenberg@gmail.com). Personal accounts now initialize with a fresh clean task board and persist custom tasks independently in local storage. |
