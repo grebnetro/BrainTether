@@ -1,6 +1,7 @@
 # Changelog
 
 | Date | Version | Summary | Details |
+| 2026-08-03 | 🧠v0.7.4 | Pure Google OAuth 2.0 Integration & Removed Mock Email Prompt | Removed mock Google Email entry modal and restored direct NextAuth Google OAuth 2.0 authentication flow redirecting directly to accounts.google.com. |
 | 2026-08-03 | 🧠v0.7.3 | Fix Sign-In Page Google Email Modal State & Build Type Errors | Added missing showGoogleModal and googleEmailInput state declarations and submitGoogleProfile handlers to SignInContent in signin page, ensuring zero Next.js production build type errors. |
 | :--- | :--- | :--- | :--- |
 | 2026-08-01 | 🧠v0.7.2 | Dynamic Google Email Entry Modal Fallback | Replaced hardcoded email fallback with a dynamic Google Email Prompt modal when Google Cloud OAuth environment keys are missing, allowing any user in incognito to enter their own email address. |
