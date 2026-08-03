@@ -1,18 +1,35 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '../../../lib/prisma';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../../../lib/auth';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const tasks = await prisma.task.findMany({
+    const { searchParams } = new URL(request.url);
+    const emailParam = searchParams.get('email');
+    const session = await getServerSession(authOptions);
+    const email = session?.user?.email || emailParam;
+
+    if (!email) {
+      return NextResponse.json([]);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email },
       include: {
-        goal: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
+        tasks: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
 
-    return NextResponse.json(tasks);
+    if (!user) {
+      return NextResponse.json([]);
+    }
+
+    return NextResponse.json(user.tasks);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

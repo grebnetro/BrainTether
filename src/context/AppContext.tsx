@@ -98,6 +98,55 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const { data: session } = useSession();
 
+  const saveTasks = async (newTasks: Task[], email?: string) => {
+    const targetEmail = email || userProfile.email;
+    if (targetEmail && targetEmail !== 'guest@braintether.app') {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`braintether_tasks_${targetEmail}`, JSON.stringify(newTasks));
+      }
+      try {
+        await fetch('/api/tasks/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: targetEmail, tasks: newTasks }),
+        });
+      } catch (err) {
+        console.warn('Cross-device task sync notice:', err);
+      }
+    }
+  };
+
+  const loadUserTasks = async (targetEmail: string) => {
+    try {
+      const res = await fetch(`/api/tasks?email=${encodeURIComponent(targetEmail)}`);
+      if (res.ok) {
+        const remoteTasks = await res.json();
+        if (Array.isArray(remoteTasks) && remoteTasks.length > 0) {
+          setTasks(remoteTasks);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(`braintether_tasks_${targetEmail}`, JSON.stringify(remoteTasks));
+          }
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Fallback to local task cache:', e);
+    }
+
+    if (typeof window !== 'undefined') {
+      const savedTasks = localStorage.getItem(`braintether_tasks_${targetEmail}`);
+      if (savedTasks) {
+        try {
+          setTasks(JSON.parse(savedTasks));
+        } catch {
+          setTasks([]);
+        }
+      } else {
+        setTasks([]);
+      }
+    }
+  };
+
   useEffect(() => {
     if (session?.user?.email) {
       const realName = session.user.name || session.user.email.split('@')[0] || 'User';
@@ -117,18 +166,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('braintether_profile', JSON.stringify(syncedProfile));
-
-        const savedTasks = localStorage.getItem(`braintether_tasks_${realEmail}`);
-        if (savedTasks) {
-          try {
-            setTasks(JSON.parse(savedTasks));
-          } catch {
-            setTasks([]);
-          }
-        } else {
-          setTasks([]);
-        }
       }
+
+      loadUserTasks(realEmail);
     }
   }, [session]);
 
@@ -141,12 +181,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setUserProfile(parsed);
 
           if (parsed.email && parsed.email !== 'guest@braintether.app') {
-            const savedTasks = localStorage.getItem(`braintether_tasks_${parsed.email}`);
-            if (savedTasks) {
-              setTasks(JSON.parse(savedTasks));
-            } else {
-              setTasks([]); // Fresh clean workspace for new personal accounts!
-            }
+            loadUserTasks(parsed.email);
           }
         } catch (e) {
           console.error('Failed to parse saved profile', e);
@@ -154,13 +189,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     }
   }, []);
-
-  const saveTasks = (newTasks: Task[], email?: string) => {
-    const targetEmail = email || userProfile.email;
-    if (typeof window !== 'undefined' && targetEmail && targetEmail !== 'guest@braintether.app') {
-      localStorage.setItem(`braintether_tasks_${targetEmail}`, JSON.stringify(newTasks));
-    }
-  };
 
   useEffect(() => {
     if (theme === 'dark') {
