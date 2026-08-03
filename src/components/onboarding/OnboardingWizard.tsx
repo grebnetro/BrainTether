@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrandLogo } from '../common/BrandLogo';
+import { useApp } from '../../context/AppContext';
 import { 
   BrainCircuit, 
   User, 
@@ -153,10 +154,17 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   onSaveProfile,
   onCreateFirstTask,
 }) => {
+  const { userProfile } = useApp();
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Step 1 State: Profile & Avatar
   const [name, setName] = useState('');
+
+  useEffect(() => {
+    if (userProfile?.name && userProfile.name !== 'Demo User' && userProfile.name !== 'Demo Guest') {
+      setName(userProfile.name);
+    }
+  }, [userProfile?.name]);
   const [selectedTheme, setSelectedTheme] = useState<'fun-emoji' | 'bottts' | 'adventurer' | 'lorelei' | 'pixel-art'>('fun-emoji');
   const [selectedLevel, setSelectedLevel] = useState<number>(10);
   const [customAvatarUrl, setCustomAvatarUrl] = useState('');
@@ -265,7 +273,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 
   const handleStep1Submit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSaveProfile({ name: name.trim() || 'Demo Guest', avatarUrl: currentAvatar });
+    onSaveProfile({ name: name.trim() || userProfile.name || 'Demo Guest', avatarUrl: currentAvatar });
     setStep(2);
   };
 
