@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { Header } from '../../components/layout/Header';
@@ -33,8 +33,8 @@ export default function ProfilePage() {
     toggleTherapistPermission 
   } = useApp();
 
-  const [name, setName] = useState(userProfile.name || 'Demo User');
-  const [email, setEmail] = useState(userProfile.email || 'guest@braintether.app');
+  const [name, setName] = useState(userProfile.name || '');
+  const [email, setEmail] = useState(userProfile.email || '');
   const [selectedTheme, setSelectedTheme] = useState<'twemoji' | 'bottts' | 'adventurer' | 'lorelei' | 'pixel-art'>('twemoji');
   const [selectedLevel, setSelectedLevel] = useState<number>(10);
   const [selectedAvatar, setSelectedAvatar] = useState(userProfile.avatarUrl);
@@ -44,6 +44,14 @@ export default function ProfilePage() {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [dragging, setDragging] = useState(false);
+
+  useEffect(() => {
+    if (userProfile.name) setName(userProfile.name);
+    if (userProfile.email) setEmail(userProfile.email);
+    if (userProfile.avatarUrl) setSelectedAvatar(userProfile.avatarUrl);
+    if (userProfile.dailyStressCeiling) setDailyStressCeiling(userProfile.dailyStressCeiling);
+    if (userProfile.defaultSoundscape) setDefaultSoundscape(userProfile.defaultSoundscape);
+  }, [userProfile]);
 
   const currentAvatar = customAvatarUrl || selectedAvatar;
 

@@ -1,6 +1,7 @@
 # Changelog
 
 | Date | Version | Summary | Details |
+| 2026-08-03 | 🧠v0.7.7 | Eliminate Demo Profile Flashing & Dynamic Settings State Sync | Added reactive useEffect sync in ProfilePage component to dynamically listen to AppContext userProfile updates. Removed hardcoded 'Demo User' defaults from initial state to prevent state desync and flashing. |
 | 2026-08-03 | 🧠v0.7.6 | Auto-Pre-Fill Google Display Name in Onboarding Wizard | Updated Onboarding Wizard Step 1 to automatically pre-fill display name input with authenticated Google account name (userProfile.name). |
 | 2026-08-03 | 🧠v0.7.5 | NextAuth Authenticated Session Sync & SQLite Database Reset | Added automatic sync between active NextAuth Google OAuth session and AppContext user profile, overriding cached demo profiles. Reset SQLite database for fresh clean user state. |
 | 2026-08-03 | 🧠v0.7.4 | Pure Google OAuth 2.0 Integration & Removed Mock Email Prompt | Removed mock Google Email entry modal and restored direct NextAuth Google OAuth 2.0 authentication flow redirecting directly to accounts.google.com. |
