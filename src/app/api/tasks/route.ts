@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 
     // 1. Try global persistent cloud KV store
     const cloudTasks = await getCloudTasks(email);
-    if (cloudTasks && Array.isArray(cloudTasks) && cloudTasks.length > 0) {
+    if (cloudTasks !== null && Array.isArray(cloudTasks)) {
       return NextResponse.json(cloudTasks);
     }
 
@@ -34,14 +34,14 @@ export async function GET(request: Request) {
         },
       });
 
-      if (user && user.tasks && user.tasks.length > 0) {
+      if (user && user.tasks) {
         return NextResponse.json(user.tasks);
       }
     } catch (e) {
       console.warn('Prisma GET fallback warning:', e);
     }
 
-    return NextResponse.json(cloudTasks || []);
+    return NextResponse.json([]);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

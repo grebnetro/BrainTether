@@ -1,6 +1,7 @@
 # Changelog
 
 | Date | Version | Summary | Details |
+| 2026-08-03 | 🧠v0.9.3 | High-Reliability JSONBlob Global Cloud Persistence | Switched serverless cloud KV store engine to dedicated JSONBlob master store (019fc877-5dfc-742d-a4b5-b0bf9a944d5a) ensuring instant, verified cross-device task sync across Vercel Lambdas. |
 | 2026-08-03 | 🧠v0.9.2 | Global Serverless Cloud KV Task Storage | Integrated global serverless cloud KV store (cloudStore.ts) into task API routes to bypass Vercel serverless ephemeral disk isolation and guarantee real-time cross-device task sync. |
 | 2026-08-03 | 🧠v0.9.1 | Automatic Local-to-Cloud Task Migration & Auto-Sync on Focus | Added automatic migration of local browser tasks to cloud server database on first load. Added window focus listener and 10s auto-sync loop so task updates sync live between open browsers. |
 | 2026-08-03 | 🧠v0.9.0 | Cross-Device & Multi-Browser Real-Time Task Synchronization | Connected AppContext task state to server database APIs (/api/tasks & /api/tasks/sync). All to-do tasks now sync across computers, browsers, and devices for authenticated Google accounts. |
