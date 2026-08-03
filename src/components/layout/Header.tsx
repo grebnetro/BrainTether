@@ -320,75 +320,70 @@ export const Header: React.FC<HeaderProps> = ({
 
       </div>
 
-      {/* ROW 2: DEDICATED MOOD & ENERGY STRIP */}
-      <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-teal-500/30 text-xs shadow-inner">
-        <div className="flex items-center space-x-2 shrink-0">
-          <span className="text-[11px] font-bold text-teal-500 dark:text-teal-400 flex items-center gap-1.5">
-            <Smile className="w-3.5 h-3.5 text-teal-400" />
-            <span>Mood & Energy Check-in:</span>
-          </span>
-          <span className="text-[10px] text-slate-500 dark:text-slate-400 hidden sm:inline font-medium">
-            (1-click log)
+      {/* ROW 2: DEDICATED MOOD & ENERGY STRIP (LEFT-JUSTIFIED COMPACT PILL) */}
+      <div className="flex flex-wrap items-center justify-start gap-2.5 px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-teal-500/30 text-xs shadow-inner w-fit">
+        <div className="flex items-center space-x-1.5 shrink-0">
+          <Smile className="w-3.5 h-3.5 text-teal-400" />
+          <span className="text-[11px] font-bold text-teal-500 dark:text-teal-400">
+            Mood & Energy:
           </span>
         </div>
 
-        <div className="flex items-center space-x-3 overflow-x-auto py-0.5">
-          {/* Mood Selector Emojis */}
-          <div className="flex items-center space-x-1">
-            {[
-              { score: 1, emoji: '😭', label: 'L1: Burnout / Overwhelmed' },
-              { score: 2, emoji: '😰', label: 'L2: High Avoidance' },
-              { score: 3, emoji: '😐', label: 'L3: Neutral Focus' },
-              { score: 4, emoji: '😎', label: 'L4: Active Flow' },
-              { score: 5, emoji: '🥳', label: 'L5: Radiant Dopamine' },
-            ].map((m) => (
-              <button
-                key={m.score}
-                type="button"
-                onClick={() => handleQuickLog(m.score, currentEnergyLevel)}
-                className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all ${
-                  currentMoodScore === m.score
-                    ? 'bg-teal-500/30 border-2 border-teal-400 scale-110 shadow-sm'
-                    : 'hover:bg-slate-200 dark:hover:bg-slate-800 opacity-70 hover:opacity-100'
-                }`}
-                title={`Set Mood: ${m.label}`}
-              >
-                {m.emoji}
-              </button>
-            ))}
-          </div>
-
-          <div className="h-4 w-px bg-slate-300 dark:bg-slate-800"></div>
-
-          {/* Energy Level Pills */}
-          <div className="flex items-center space-x-1">
-            <span className="text-[11px] font-bold text-amber-500 dark:text-amber-400 flex items-center gap-1 shrink-0 mr-1">
-              <Zap className="w-3.5 h-3.5 text-amber-400 fill-current" />
-              <span className="hidden sm:inline">Energy:</span>
-            </span>
-            {[1, 2, 3, 4, 5].map((lvl) => (
-              <button
-                key={lvl}
-                type="button"
-                onClick={() => handleQuickLog(currentMoodScore, lvl)}
-                className={`px-1.5 py-0.5 rounded-lg text-[10px] font-mono font-bold transition-all ${
-                  currentEnergyLevel === lvl
-                    ? 'bg-amber-500/30 text-amber-500 dark:text-amber-300 border border-amber-400 scale-110 shadow-sm'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800'
-                }`}
-                title={`Set Energy Level: ${lvl} / 5`}
-              >
-                ⚡{lvl}
-              </button>
-            ))}
-          </div>
-
-          {quickSaveFeedback && (
-            <span className="text-[10px] font-bold text-emerald-400 animate-in fade-in">
-              {quickSaveFeedback}
-            </span>
-          )}
+        {/* Mood Selector Emojis */}
+        <div className="flex items-center space-x-1">
+          {[
+            { score: 1, emoji: '😭', label: 'L1: Burnout / Overwhelmed' },
+            { score: 2, emoji: '😰', label: 'L2: High Avoidance' },
+            { score: 3, emoji: '😐', label: 'L3: Neutral Focus' },
+            { score: 4, emoji: '😎', label: 'L4: Active Flow' },
+            { score: 5, emoji: '🥳', label: 'L5: Radiant Dopamine' },
+          ].map((m) => (
+            <button
+              key={m.score}
+              type="button"
+              onClick={() => handleQuickLog(m.score, currentEnergyLevel)}
+              className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all ${
+                currentMoodScore === m.score
+                  ? 'bg-teal-500/30 border-2 border-teal-400 scale-110 shadow-sm'
+                  : 'hover:bg-slate-200 dark:hover:bg-slate-800 opacity-70 hover:opacity-100'
+              }`}
+              title={`Set Mood: ${m.label}`}
+            >
+              {m.emoji}
+            </button>
+          ))}
         </div>
+
+        <div className="h-4 w-px bg-slate-300 dark:bg-slate-800 mx-0.5"></div>
+
+        {/* Energy Level Pills */}
+        <div className="flex items-center space-x-1">
+          <span className="text-[11px] font-bold text-amber-500 dark:text-amber-400 flex items-center gap-1 shrink-0 mr-1">
+            <Zap className="w-3.5 h-3.5 text-amber-400 fill-current" />
+            <span className="hidden sm:inline">Energy:</span>
+          </span>
+          {[1, 2, 3, 4, 5].map((lvl) => (
+            <button
+              key={lvl}
+              type="button"
+              onClick={() => handleQuickLog(currentMoodScore, lvl)}
+              className={`px-1.5 py-0.5 rounded-lg text-[10px] font-mono font-bold transition-all ${
+                currentEnergyLevel === lvl
+                  ? 'bg-amber-500/30 text-amber-500 dark:text-amber-300 border border-amber-400 scale-110 shadow-sm'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800'
+              }`}
+              title={`Set Energy Level: ${lvl} / 5`}
+            >
+              ⚡{lvl}
+            </button>
+          ))}
+        </div>
+
+        {quickSaveFeedback && (
+          <span className="text-[10px] font-bold text-emerald-400 animate-in fade-in ml-1">
+            {quickSaveFeedback}
+          </span>
+        )}
       </div>
     </header>
   );

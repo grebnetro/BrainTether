@@ -1,6 +1,7 @@
 # Changelog
 
 | Date | Version | Summary | Details |
+| 2026-08-03 | 🧠v0.8.2 | Left-Justified Compact Mood & Energy Pill Bar | Converted full-width Mood & Energy bar into a compact, left-justified pill container directly under page title, removing empty center whitespace. |
 | 2026-08-03 | 🧠v0.8.1 | Re-Architected Spacious Header & Dedicated Mood/Energy Sub-Strip | Re-architected top header into single clean top action row and dedicated Mood & Energy sub-strip, eliminating button wrapping and layout cramping on laptops and smaller desktop screens. |
 | 2026-08-03 | 🧠v0.8.0 | Always-Visible Persistent Top Mood & Energy Tracker Bar | Added 1-click persistent Mood (😭-🥳) & Energy (⚡1-⚡5) quick-tracker bar to the top header across all views with instant status feedback and historical sync. |
 | 2026-08-03 | 🧠v0.7.7 | Eliminate Demo Profile Flashing & Dynamic Settings State Sync | Added reactive useEffect sync in ProfilePage component to dynamically listen to AppContext userProfile updates. Removed hardcoded 'Demo User' defaults from initial state to prevent state desync and flashing. |
