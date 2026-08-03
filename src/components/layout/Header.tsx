@@ -95,10 +95,12 @@ export const Header: React.FC<HeaderProps> = ({
   const categories: (TaskCategory | 'ALL')[] = ['ALL', 'Household', 'Money', 'Self-Care', 'Work', 'Health', 'General'];
 
   return (
-    <header className="sticky top-0 z-20 bg-zen-surface-light/80 dark:bg-zen-surface-dark/80 backdrop-blur-md border-b border-zen-border-light dark:border-zen-border-dark px-6 py-3.5 transition-colors duration-300">
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+    <header className="sticky top-0 z-20 bg-zen-surface-light/90 dark:bg-zen-surface-dark/90 backdrop-blur-md border-b border-zen-border-light dark:border-zen-border-dark px-6 py-3 space-y-2.5 transition-colors duration-300">
+      
+      {/* ROW 1: View Title (Left) + Primary Action Controls (Right) */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         
-        {/* Title & Subtitle + On-Screen Version Badge */}
+        {/* Title & Subtitle + Version Badge */}
         <div className="flex items-center space-x-3 shrink-0">
           <div>
             <div className="flex items-center gap-2">
@@ -115,80 +117,25 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* ALWAYS-VISIBLE TOP MOOD & ENERGY QUICK-TRACKER BAR */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900/90 border border-teal-500/30 text-xs shadow-inner shrink-0">
-          
-          {/* Mood Quick Pills */}
-          <div className="flex items-center space-x-1">
-            <span className="text-[11px] font-bold text-teal-500 dark:text-teal-400 flex items-center gap-1 shrink-0 mr-1">
-              <Smile className="w-3.5 h-3.5 text-teal-400" />
-              <span className="hidden sm:inline">Mood:</span>
-            </span>
-            {[
-              { score: 1, emoji: '😭', label: 'L1: Burnout / Overwhelmed' },
-              { score: 2, emoji: '😰', label: 'L2: High Avoidance' },
-              { score: 3, emoji: '😐', label: 'L3: Neutral Focus' },
-              { score: 4, emoji: '😎', label: 'L4: Active Flow' },
-              { score: 5, emoji: '🥳', label: 'L5: Radiant Dopamine' },
-            ].map((m) => (
-              <button
-                key={m.score}
-                type="button"
-                onClick={() => handleQuickLog(m.score, currentEnergyLevel)}
-                className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all ${
-                  currentMoodScore === m.score
-                    ? 'bg-teal-500/30 border-2 border-teal-400 scale-110 shadow-sm'
-                    : 'hover:bg-slate-200 dark:hover:bg-slate-800 opacity-70 hover:opacity-100'
-                }`}
-                title={`Set Mood: ${m.label}`}
-              >
-                {m.emoji}
-              </button>
-            ))}
-          </div>
+        {/* Global Action Controls in Single Clean Row */}
+        <div className="flex flex-wrap items-center gap-2.5">
 
-          <div className="h-4 w-px bg-slate-300 dark:bg-slate-800 mx-1"></div>
-
-          {/* Energy Quick Pills */}
-          <div className="flex items-center space-x-1">
-            <span className="text-[11px] font-bold text-amber-500 dark:text-amber-400 flex items-center gap-1 shrink-0 mr-1">
-              <Zap className="w-3.5 h-3.5 text-amber-400 fill-current" />
-              <span className="hidden sm:inline">Energy:</span>
-            </span>
-            {[1, 2, 3, 4, 5].map((lvl) => (
-              <button
-                key={lvl}
-                type="button"
-                onClick={() => handleQuickLog(currentMoodScore, lvl)}
-                className={`px-1.5 py-0.5 rounded-lg text-[10px] font-mono font-bold transition-all ${
-                  currentEnergyLevel === lvl
-                    ? 'bg-amber-500/30 text-amber-500 dark:text-amber-300 border border-amber-400 scale-110 shadow-sm'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800'
-                }`}
-                title={`Set Energy Level: ${lvl} / 5`}
-              >
-                ⚡{lvl}
-              </button>
-            ))}
-          </div>
-
-          {quickSaveFeedback && (
-            <span className="text-[10px] font-bold text-emerald-400 animate-in fade-in ml-1">
-              {quickSaveFeedback}
-            </span>
-          )}
-        </div>
-
-        {/* Global Controls & Actions */}
-        <div className="flex flex-wrap items-center gap-3">
+          {/* Quick Add Task Button */}
+          <button
+            onClick={onOpenNewTaskModal}
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 text-xs font-bold text-white rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-md shadow-teal-500/20 active:scale-95 transition-all"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Task</span>
+          </button>
 
           {/* Overwhelm Protocol Button */}
           <button
             onClick={onOpenOverwhelmModal}
-            className="flex items-center space-x-1.5 px-3 py-2 text-xs font-bold text-amber-500 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 rounded-xl transition-all shadow-sm active:scale-95"
+            className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold text-amber-500 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 rounded-xl transition-all shadow-sm active:scale-95"
             title="Bypass executive dysfunction with 2-minute micro-starter"
           >
-            <Heart className="w-4 h-4 fill-current animate-pulse" />
+            <Heart className="w-3.5 h-3.5 fill-current animate-pulse" />
             <span>I'm Overwhelmed</span>
           </button>
 
@@ -196,7 +143,7 @@ export const Header: React.FC<HeaderProps> = ({
           {onOpenTutorial && (
             <button
               onClick={onOpenTutorial}
-              className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold text-teal-400 bg-teal-500/10 border border-teal-500/30 hover:bg-teal-500/20 rounded-xl transition-all shadow-sm"
+              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-teal-400 bg-teal-500/10 border border-teal-500/30 hover:bg-teal-500/20 rounded-xl transition-all shadow-sm"
               title="Open Interactive ADHD Workflow Tutorial"
             >
               <BookOpen className="w-3.5 h-3.5" />
@@ -206,13 +153,13 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Search Input */}
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Quick search tasks..."
+              placeholder="Search tasks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 pr-4 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50 w-44 md:w-56 transition-all"
+              className="pl-8 pr-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-zen-border-light dark:border-zen-border-dark text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50 w-36 sm:w-44 transition-all"
             />
           </div>
 
@@ -221,7 +168,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-xl border transition-all ${
+                className={`flex items-center space-x-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-xl border transition-all ${
                   stressFilter !== 'ALL' || categoryFilter !== 'ALL'
                     ? 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/30'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-zen-border-light dark:border-zen-border-dark hover:bg-slate-200 dark:hover:bg-slate-700'
@@ -277,7 +224,6 @@ export const Header: React.FC<HeaderProps> = ({
                       Category & Environment Filter
                     </label>
 
-                    {/* Quick Environment & High-level Pills */}
                     <div className="flex flex-wrap gap-1 mb-2">
                       {['ALL', ...ALL_ENVIRONMENTS, 'Household', 'Work', 'Self-Care', 'Money'].map((cat) => (
                         <button
@@ -294,7 +240,6 @@ export const Header: React.FC<HeaderProps> = ({
                       ))}
                     </div>
 
-                    {/* Detailed Sub-subcategory Selector */}
                     <select
                       value={categoryFilter}
                       onChange={(e) => setCategoryFilter(e.target.value as TaskCategory | 'ALL')}
@@ -327,7 +272,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-zen-border-light dark:border-zen-border-dark hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center"
+            className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-zen-border-light dark:border-zen-border-dark hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center"
             title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
           >
             {theme === 'dark' ? (
@@ -337,35 +282,26 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          {/* Quick Add Task */}
-          <button
-            onClick={onOpenNewTaskModal}
-            className="flex items-center space-x-1.5 px-4 py-2 text-xs font-semibold text-white rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-md shadow-teal-500/20 active:scale-95 transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Task</span>
-          </button>
-
           {/* User Profile Link */}
           <Link
             href="/profile"
-            className="flex items-center space-x-2 pl-2 border-l border-zen-border-light dark:border-zen-border-dark hover:opacity-80 transition-opacity"
+            className="flex items-center space-x-1.5 pl-1 border-l border-zen-border-light dark:border-zen-border-dark hover:opacity-80 transition-opacity"
             title="User Profile & Settings"
           >
             {userProfile?.avatarUrl ? (
               <img
                 src={userProfile.avatarUrl}
                 alt={userProfile.name || 'User Avatar'}
-                className="w-8 h-8 rounded-full border-2 border-teal-500/40 object-cover"
+                className="w-7 h-7 rounded-full border-2 border-teal-500/40 object-cover"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full border-2 border-teal-500/40 bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-xs">
+              <div className="w-7 h-7 rounded-full border-2 border-teal-500/40 bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-xs">
                 {(userProfile?.name || 'U').charAt(0)}
               </div>
             )}
           </Link>
 
-          {/* Header Sign Out Button */}
+          {/* Sign Out Button */}
           <button
             onClick={async () => {
               if (typeof window !== 'undefined') {
@@ -375,13 +311,84 @@ export const Header: React.FC<HeaderProps> = ({
               window.location.href = '/auth/signin';
             }}
             title="Sign Out of BrainTether"
-            className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold text-slate-400 hover:text-rose-400 bg-slate-100 dark:bg-slate-800/80 hover:bg-rose-500/10 border border-zen-border-light dark:border-zen-border-dark hover:border-rose-500/30 rounded-xl transition-all shadow-sm active:scale-95"
+            className="flex items-center space-x-1 px-2.5 py-1.5 text-xs font-semibold text-slate-400 hover:text-rose-400 bg-slate-100 dark:bg-slate-800/80 hover:bg-rose-500/10 border border-zen-border-light dark:border-zen-border-dark hover:border-rose-500/30 rounded-xl transition-all shadow-sm active:scale-95"
           >
             <LogOut className="w-3.5 h-3.5 text-rose-400" />
             <span className="hidden sm:inline">Sign Out</span>
           </button>
         </div>
 
+      </div>
+
+      {/* ROW 2: DEDICATED MOOD & ENERGY STRIP */}
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-teal-500/30 text-xs shadow-inner">
+        <div className="flex items-center space-x-2 shrink-0">
+          <span className="text-[11px] font-bold text-teal-500 dark:text-teal-400 flex items-center gap-1.5">
+            <Smile className="w-3.5 h-3.5 text-teal-400" />
+            <span>Mood & Energy Check-in:</span>
+          </span>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 hidden sm:inline font-medium">
+            (1-click log)
+          </span>
+        </div>
+
+        <div className="flex items-center space-x-3 overflow-x-auto py-0.5">
+          {/* Mood Selector Emojis */}
+          <div className="flex items-center space-x-1">
+            {[
+              { score: 1, emoji: '😭', label: 'L1: Burnout / Overwhelmed' },
+              { score: 2, emoji: '😰', label: 'L2: High Avoidance' },
+              { score: 3, emoji: '😐', label: 'L3: Neutral Focus' },
+              { score: 4, emoji: '😎', label: 'L4: Active Flow' },
+              { score: 5, emoji: '🥳', label: 'L5: Radiant Dopamine' },
+            ].map((m) => (
+              <button
+                key={m.score}
+                type="button"
+                onClick={() => handleQuickLog(m.score, currentEnergyLevel)}
+                className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all ${
+                  currentMoodScore === m.score
+                    ? 'bg-teal-500/30 border-2 border-teal-400 scale-110 shadow-sm'
+                    : 'hover:bg-slate-200 dark:hover:bg-slate-800 opacity-70 hover:opacity-100'
+                }`}
+                title={`Set Mood: ${m.label}`}
+              >
+                {m.emoji}
+              </button>
+            ))}
+          </div>
+
+          <div className="h-4 w-px bg-slate-300 dark:bg-slate-800"></div>
+
+          {/* Energy Level Pills */}
+          <div className="flex items-center space-x-1">
+            <span className="text-[11px] font-bold text-amber-500 dark:text-amber-400 flex items-center gap-1 shrink-0 mr-1">
+              <Zap className="w-3.5 h-3.5 text-amber-400 fill-current" />
+              <span className="hidden sm:inline">Energy:</span>
+            </span>
+            {[1, 2, 3, 4, 5].map((lvl) => (
+              <button
+                key={lvl}
+                type="button"
+                onClick={() => handleQuickLog(currentMoodScore, lvl)}
+                className={`px-1.5 py-0.5 rounded-lg text-[10px] font-mono font-bold transition-all ${
+                  currentEnergyLevel === lvl
+                    ? 'bg-amber-500/30 text-amber-500 dark:text-amber-300 border border-amber-400 scale-110 shadow-sm'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800'
+                }`}
+                title={`Set Energy Level: ${lvl} / 5`}
+              >
+                ⚡{lvl}
+              </button>
+            ))}
+          </div>
+
+          {quickSaveFeedback && (
+            <span className="text-[10px] font-bold text-emerald-400 animate-in fade-in">
+              {quickSaveFeedback}
+            </span>
+          )}
+        </div>
       </div>
     </header>
   );

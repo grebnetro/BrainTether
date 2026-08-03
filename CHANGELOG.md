@@ -1,6 +1,7 @@
 # Changelog
 
 | Date | Version | Summary | Details |
+| 2026-08-03 | 🧠v0.8.1 | Re-Architected Spacious Header & Dedicated Mood/Energy Sub-Strip | Re-architected top header into single clean top action row and dedicated Mood & Energy sub-strip, eliminating button wrapping and layout cramping on laptops and smaller desktop screens. |
 | 2026-08-03 | 🧠v0.8.0 | Always-Visible Persistent Top Mood & Energy Tracker Bar | Added 1-click persistent Mood (😭-🥳) & Energy (⚡1-⚡5) quick-tracker bar to the top header across all views with instant status feedback and historical sync. |
 | 2026-08-03 | 🧠v0.7.7 | Eliminate Demo Profile Flashing & Dynamic Settings State Sync | Added reactive useEffect sync in ProfilePage component to dynamically listen to AppContext userProfile updates. Removed hardcoded 'Demo User' defaults from initial state to prevent state desync and flashing. |
 | 2026-08-03 | 🧠v0.7.6 | Auto-Pre-Fill Google Display Name in Onboarding Wizard | Updated Onboarding Wizard Step 1 to automatically pre-fill display name input with authenticated Google account name (userProfile.name). |
