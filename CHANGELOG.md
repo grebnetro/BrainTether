@@ -1,6 +1,7 @@
 # Changelog
 
 | Date | Version | Summary | Details |
+| 2026-08-03 | 🧠v0.7.5 | NextAuth Authenticated Session Sync & SQLite Database Reset | Added automatic sync between active NextAuth Google OAuth session and AppContext user profile, overriding cached demo profiles. Reset SQLite database for fresh clean user state. |
 | 2026-08-03 | 🧠v0.7.4 | Pure Google OAuth 2.0 Integration & Removed Mock Email Prompt | Removed mock Google Email entry modal and restored direct NextAuth Google OAuth 2.0 authentication flow redirecting directly to accounts.google.com. |
 | 2026-08-03 | 🧠v0.7.3 | Fix Sign-In Page Google Email Modal State & Build Type Errors | Added missing showGoogleModal and googleEmailInput state declarations and submitGoogleProfile handlers to SignInContent in signin page, ensuring zero Next.js production build type errors. |
 | :--- | :--- | :--- | :--- |

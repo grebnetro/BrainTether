@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { 
   Task, Goal, Habit, MoodLog, ViewType, TaskStatus, TaskCategory, 
   StressLevelRange, BodyDoublingSession, AccountabilityPartner, TherapistPermission, UserProfile 
@@ -95,8 +96,44 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [categoryFilter, setCategoryFilter] = useState<TaskCategory | 'ALL'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const { data: session } = useSession();
+
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (session?.user?.email) {
+      const realName = session.user.name || session.user.email.split('@')[0] || 'User';
+      const realEmail = session.user.email;
+      const realAvatar = session.user.image || MINDSTATE_AVATARS[9].url;
+
+      const syncedProfile: UserProfile = {
+        name: realName,
+        email: realEmail,
+        avatarUrl: realAvatar,
+        dailyStressCeiling: 30,
+        defaultSoundscape: 'rain',
+        therapistAccessCode: 'BT-772-MIND',
+      };
+
+      setUserProfile(syncedProfile);
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('braintether_profile', JSON.stringify(syncedProfile));
+
+        const savedTasks = localStorage.getItem(`braintether_tasks_${realEmail}`);
+        if (savedTasks) {
+          try {
+            setTasks(JSON.parse(savedTasks));
+          } catch {
+            setTasks([]);
+          }
+        } else {
+          setTasks([]);
+        }
+      }
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !session?.user) {
       const savedProfile = localStorage.getItem('braintether_profile');
       if (savedProfile) {
         try {
