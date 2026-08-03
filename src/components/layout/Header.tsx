@@ -13,7 +13,9 @@ import {
   Filter, 
   Heart,
   BookOpen,
-  LogOut
+  LogOut,
+  Zap,
+  Smile
 } from 'lucide-react';
 import { StressLevelRange, TaskCategory } from '../../types';
 import { ALL_MAIN_CATEGORIES, ALL_ENVIRONMENTS, LEGACY_CATEGORIES, getGroupedCategoryOptions } from '../../lib/categoriesData';
@@ -39,10 +41,23 @@ export const Header: React.FC<HeaderProps> = ({
     setStressFilter,
     categoryFilter,
     setCategoryFilter,
-    userProfile
+    userProfile,
+    moodLogs,
+    addMoodLog
   } = useApp();
 
   const [showFilters, setShowFilters] = useState(false);
+  const [quickSaveFeedback, setQuickSaveFeedback] = useState('');
+
+  const latestLog = moodLogs.length > 0 ? moodLogs[0] : null;
+  const currentMoodScore = latestLog?.score || latestLog?.stressLevel || 3;
+  const currentEnergyLevel = latestLog?.energy || latestLog?.energyLevel || 3;
+
+  const handleQuickLog = (newScore: number, newEnergy: number) => {
+    addMoodLog(newScore, newEnergy);
+    setQuickSaveFeedback('✨ Saved!');
+    setTimeout(() => setQuickSaveFeedback(''), 1800);
+  };
 
   const viewTitles: Record<string, { title: string; subtitle: string }> = {
     kanban: {
@@ -80,11 +95,11 @@ export const Header: React.FC<HeaderProps> = ({
   const categories: (TaskCategory | 'ALL')[] = ['ALL', 'Household', 'Money', 'Self-Care', 'Work', 'Health', 'General'];
 
   return (
-    <header className="sticky top-0 z-20 bg-zen-surface-light/80 dark:bg-zen-surface-dark/80 backdrop-blur-md border-b border-zen-border-light dark:border-zen-border-dark px-6 py-4 transition-colors duration-300">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <header className="sticky top-0 z-20 bg-zen-surface-light/80 dark:bg-zen-surface-dark/80 backdrop-blur-md border-b border-zen-border-light dark:border-zen-border-dark px-6 py-3.5 transition-colors duration-300">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         
         {/* Title & Subtitle + On-Screen Version Badge */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 shrink-0">
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
@@ -98,6 +113,70 @@ export const Header: React.FC<HeaderProps> = ({
               {currentViewInfo.subtitle}
             </p>
           </div>
+        </div>
+
+        {/* ALWAYS-VISIBLE TOP MOOD & ENERGY QUICK-TRACKER BAR */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900/90 border border-teal-500/30 text-xs shadow-inner shrink-0">
+          
+          {/* Mood Quick Pills */}
+          <div className="flex items-center space-x-1">
+            <span className="text-[11px] font-bold text-teal-500 dark:text-teal-400 flex items-center gap-1 shrink-0 mr-1">
+              <Smile className="w-3.5 h-3.5 text-teal-400" />
+              <span className="hidden sm:inline">Mood:</span>
+            </span>
+            {[
+              { score: 1, emoji: '😭', label: 'L1: Burnout / Overwhelmed' },
+              { score: 2, emoji: '😰', label: 'L2: High Avoidance' },
+              { score: 3, emoji: '😐', label: 'L3: Neutral Focus' },
+              { score: 4, emoji: '😎', label: 'L4: Active Flow' },
+              { score: 5, emoji: '🥳', label: 'L5: Radiant Dopamine' },
+            ].map((m) => (
+              <button
+                key={m.score}
+                type="button"
+                onClick={() => handleQuickLog(m.score, currentEnergyLevel)}
+                className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all ${
+                  currentMoodScore === m.score
+                    ? 'bg-teal-500/30 border-2 border-teal-400 scale-110 shadow-sm'
+                    : 'hover:bg-slate-200 dark:hover:bg-slate-800 opacity-70 hover:opacity-100'
+                }`}
+                title={`Set Mood: ${m.label}`}
+              >
+                {m.emoji}
+              </button>
+            ))}
+          </div>
+
+          <div className="h-4 w-px bg-slate-300 dark:bg-slate-800 mx-1"></div>
+
+          {/* Energy Quick Pills */}
+          <div className="flex items-center space-x-1">
+            <span className="text-[11px] font-bold text-amber-500 dark:text-amber-400 flex items-center gap-1 shrink-0 mr-1">
+              <Zap className="w-3.5 h-3.5 text-amber-400 fill-current" />
+              <span className="hidden sm:inline">Energy:</span>
+            </span>
+            {[1, 2, 3, 4, 5].map((lvl) => (
+              <button
+                key={lvl}
+                type="button"
+                onClick={() => handleQuickLog(currentMoodScore, lvl)}
+                className={`px-1.5 py-0.5 rounded-lg text-[10px] font-mono font-bold transition-all ${
+                  currentEnergyLevel === lvl
+                    ? 'bg-amber-500/30 text-amber-500 dark:text-amber-300 border border-amber-400 scale-110 shadow-sm'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800'
+                }`}
+                title={`Set Energy Level: ${lvl} / 5`}
+              >
+                ⚡{lvl}
+              </button>
+            ))}
+          </div>
+
+          {quickSaveFeedback && (
+            <span className="text-[10px] font-bold text-emerald-400 animate-in fade-in ml-1">
+              {quickSaveFeedback}
+            </span>
+          )}
         </div>
 
         {/* Global Controls & Actions */}
