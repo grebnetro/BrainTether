@@ -28,15 +28,23 @@ export async function POST(request: Request) {
       });
     }
 
-    // Replace user tasks with synced batch
+    // Delete previous task entries for this user before saving updated batch
     await prisma.task.deleteMany({
       where: { userId: user.id },
     });
 
     if (tasks.length > 0) {
-      await prisma.task.createMany({
-        data: tasks.map((t: any) => ({
-          id: typeof t.id === 'string' && t.id.length > 0 ? t.id : undefined,
+      // Filter unique IDs to avoid primary key collision
+      const usedIds = new Set<string>();
+      const safeTasks = tasks.map((t: any, idx: number) => {
+        let taskId = typeof t.id === 'string' && t.id.length > 3 ? t.id : `task-${Date.now()}-${idx}`;
+        if (usedIds.has(taskId)) {
+          taskId = `task-${Date.now()}-${idx}-${Math.random().toString(36).substring(2, 7)}`;
+        }
+        usedIds.add(taskId);
+
+        return {
+          id: taskId,
           userId: user.id,
           title: t.title || 'Untitled Task',
           description: t.description || '',
@@ -45,7 +53,11 @@ export async function POST(request: Request) {
           stressPoints: typeof t.stressPoints === 'number' ? t.stressPoints : 5,
           category: t.category || 'General',
           dueDate: t.dueDate ? new Date(t.dueDate) : undefined,
-        })),
+        };
+      });
+
+      await prisma.task.createMany({
+        data: safeTasks,
       });
     }
 

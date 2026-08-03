@@ -1,6 +1,7 @@
 # Changelog
 
 | Date | Version | Summary | Details |
+| 2026-08-03 | 🧠v0.9.1 | Automatic Local-to-Cloud Task Migration & Auto-Sync on Focus | Added automatic migration of local browser tasks to cloud server database on first load. Added window focus listener and 10s auto-sync loop so task updates sync live between open browsers. |
 | 2026-08-03 | 🧠v0.9.0 | Cross-Device & Multi-Browser Real-Time Task Synchronization | Connected AppContext task state to server database APIs (/api/tasks & /api/tasks/sync). All to-do tasks now sync across computers, browsers, and devices for authenticated Google accounts. |
 | 2026-08-03 | 🧠v0.8.2 | Left-Justified Compact Mood & Energy Pill Bar | Converted full-width Mood & Energy bar into a compact, left-justified pill container directly under page title, removing empty center whitespace. |
 | 2026-08-03 | 🧠v0.8.1 | Re-Architected Spacious Header & Dedicated Mood/Energy Sub-Strip | Re-architected top header into single clean top action row and dedicated Mood & Energy sub-strip, eliminating button wrapping and layout cramping on laptops and smaller desktop screens. |

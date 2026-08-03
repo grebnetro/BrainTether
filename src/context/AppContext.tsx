@@ -117,34 +117,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const loadUserTasks = async (targetEmail: string) => {
+    let localTasks: Task[] = [];
+    if (typeof window !== 'undefined') {
+      const savedTasks = localStorage.getItem(`braintether_tasks_${targetEmail}`);
+      if (savedTasks) {
+        try {
+          localTasks = JSON.parse(savedTasks);
+        } catch {
+          localTasks = [];
+        }
+      }
+    }
+
     try {
       const res = await fetch(`/api/tasks?email=${encodeURIComponent(targetEmail)}`);
       if (res.ok) {
         const remoteTasks = await res.json();
-        if (Array.isArray(remoteTasks) && remoteTasks.length > 0) {
-          setTasks(remoteTasks);
-          if (typeof window !== 'undefined') {
-            localStorage.setItem(`braintether_tasks_${targetEmail}`, JSON.stringify(remoteTasks));
+        if (Array.isArray(remoteTasks)) {
+          if (remoteTasks.length > 0) {
+            setTasks(remoteTasks);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem(`braintether_tasks_${targetEmail}`, JSON.stringify(remoteTasks));
+            }
+            return;
+          } else if (localTasks.length > 0) {
+            // Cloud DB is empty, but local browser has existing tasks -> Upload local tasks to cloud DB!
+            setTasks(localTasks);
+            await saveTasks(localTasks, targetEmail);
+            return;
           }
-          return;
         }
       }
     } catch (e) {
       console.warn('Fallback to local task cache:', e);
     }
 
-    if (typeof window !== 'undefined') {
-      const savedTasks = localStorage.getItem(`braintether_tasks_${targetEmail}`);
-      if (savedTasks) {
-        try {
-          setTasks(JSON.parse(savedTasks));
-        } catch {
-          setTasks([]);
-        }
-      } else {
-        setTasks([]);
-      }
-    }
+    setTasks(localTasks);
   };
 
   useEffect(() => {
@@ -171,6 +179,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       loadUserTasks(realEmail);
     }
   }, [session]);
+
+  // Window Focus & Interval Auto-Sync across open tabs/browsers
+  useEffect(() => {
+    const activeEmail = session?.user?.email || userProfile.email;
+    if (activeEmail && activeEmail !== 'guest@braintether.app') {
+      const handleFocus = () => {
+        loadUserTasks(activeEmail);
+      };
+
+      window.addEventListener('focus', handleFocus);
+      const interval = setInterval(() => {
+        loadUserTasks(activeEmail);
+      }, 10000); // Auto-sync every 10 seconds across active browser windows
+
+      return () => {
+        window.removeEventListener('focus', handleFocus);
+        clearInterval(interval);
+      };
+    }
+  }, [session, userProfile.email]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && !session?.user) {
